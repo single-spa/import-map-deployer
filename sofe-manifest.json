@@ -1,0 +1,9 @@
+{
+  "sofe": {
+    "manifest": {
+      "bob": "test",
+      "dan": "locl.dev/billy",
+      "joel": "locl.dev/some"
+    }
+  }
+}

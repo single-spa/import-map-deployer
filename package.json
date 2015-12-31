@@ -1,0 +1,27 @@
+{
+  "name": "sofe-deplanifester",
+  "version": "0.1.0",
+  "description": "a manifest deployer for sofe",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CanopyTax/sofe-deplanifester.git"
+  },
+  "keywords": [
+    "sofe"
+  ],
+  "author": "nhumrich",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/CanopyTax/sofe-deplanifester/issues"
+  },
+  "homepage": "https://github.com/CanopyTax/sofe-deplanifester#readme",
+  "dependencies": {
+    "body-parser": "^1.14.2",
+    "express": "^4.13.3",
+    "rwlock": "^5.0.0"
+  }
+}
