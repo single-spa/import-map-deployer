@@ -10,19 +10,43 @@ This service exposes the following endpoints
 
 You can request the sofe-manifest.json file by making a get request at /sofe-manifest.json
 
+Example using [HTTPie](https://github.com/jkbrzt/httpie):
+
+    http 0.0.0.0:5000/sofe-manifest.json
+
+Example using cURL:
+
+    curl 0.0.0.0:5000/sofe-manifest.json
+
 #### PATCH /services
 
 You can PATCH services to add or update a service, the following json body is expected: 
 
     {
         "service": "my-service",
-        "url": "example.com/my-service.js"
+        "url": "http://example.com/my-service.js"
     }
+
+Example using HTTPie:
+
+    http PATCH 0.0.0.0:5000/services service=my-service url=http://example.com/my-service.js
+
+Example using cURL:
+
+    curl -d '{ "service":"my-service","url":"http://example.com/my-service.js" }' -X PATCH 0.0.0.0:5000/services -H "Accept: application/json" -H "Content-Type: application/json"
 
 #### DELETE /services/{SERVICE_NAME}
 
 You can remove a service by sending a DELETE with the service name. No request body needs to be sent. Example:
 
     DELETE /services/my-service
+
+Example using HTTPie:
+
+    http DELETE 0.0.0.0:5000/services/my-service
+
+Example using cURL:
+
+    curl -X DELETE 0.0.0.0:5000/services/my-service
 
 
