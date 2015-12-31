@@ -4,7 +4,8 @@
   "description": "a manifest deployer for sofe",
   "main": "index.js",
   "scripts": {
-    "test": "npm test"
+    "test": "echo 'no tests yet'",
+    "start": "node index.js"
   },
   "repository": {
     "type": "git",
