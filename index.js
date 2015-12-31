@@ -1,4 +1,5 @@
 //Setup
+
 var express = require('express')
   , bodyParser = require('body-parser')
   , app = express()
@@ -77,7 +78,7 @@ app.patch('/services', function(req, res) {
   res.send(req.body)
 })
 
-app.delete('/service/:serviceName', function(req, res) {
+app.delete('/services/:serviceName', function(req, res) {
   modifyService(req.params.serviceName, null, true)
   res.send('Successfully deleted service: ' + req.params.serviceName)
 })
