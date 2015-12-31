@@ -16,13 +16,13 @@ var fileName = 'sofe-manifest.json'
 
 function modifyService(serviceName, url, remove) {
   // obtain lock (we need a global lock so deploys dont have a race condition)
+  var json
   lock.writeLock(function (release) {
     // create file if not exists
     fs.openSync(fileName, 'a')
     
     // read file as json
     var data = fs.readFileSync(fileName, 'utf8')
-    var json
     if ( data==='' ) {
       json = {"sofe":{"manifest":{}}};
     } else {
@@ -42,6 +42,7 @@ function modifyService(serviceName, url, remove) {
     // release lock
     release()
   })
+  return json
 }
 
 
@@ -73,14 +74,14 @@ app.patch('/services', function(req, res) {
   } else {
     res.status(400).send('url key is missing')
   }
-  modifyService(service, url)
-  console.log(req.body)
-  res.send(req.body)
+  var json = modifyService(service, url)
+  //console.log(req.body)
+  res.send(json)
 })
 
 app.delete('/services/:serviceName', function(req, res) {
-  modifyService(req.params.serviceName, null, true)
-  res.send('Successfully deleted service: ' + req.params.serviceName)
+  var json = modifyService(req.params.serviceName, null, true)
+  res.send(json)
 })
 
 var server = app.listen(5000, function () {
