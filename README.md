@@ -2,7 +2,7 @@
 A manifest deployment service for sofe
 
 
-### Endpoints
+## Endpoints
 
 This service exposes the following endpoints
 
