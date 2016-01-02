@@ -60,14 +60,18 @@ app.patch('/services', function(req, res) {
 });
 
 app.delete('/services/:serviceName', function(req, res) {
-  var json = modify.modifyService(req.params.serviceName, null, true);
-  res.send(json);
+  modify.modifyService(req.params.serviceName, null, true)
+  .then((data) => {
+    res.send(data);
+  })
+  .catch((ex) => {
+    console.error(ex);
+    res.status(500).send(`Could not delete service ${req.params.serviceName}`);
+  });
 });
 
 var server = app.listen(5000, function () {
-  var port = server.address().port;
-
-  console.log('Listening at http://localhost:%s', port);
+  console.log('Listening at http://localhost:%s', server.address().port);
 });
 
 exports.close = server.close;

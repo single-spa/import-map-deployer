@@ -69,7 +69,7 @@ describe('filesystem end to end tests', () => {
     });
   });
 
-  it('can delete a service from the manifest', (done) => {
+  it('can delete a service from the manifest, returning the new manifest', (done) => {
     const service4 = 'fs-service-4';
     const url4 = 'http://example.com/4.js';
     const service5 = 'fs-service-5';
@@ -78,17 +78,18 @@ describe('filesystem end to end tests', () => {
     api.patchService(service4, url4)
     .then(() => {
       api.patchService(service5, url5)
-      .then((result) => {
+      .then(() => {
         api.deleteService(service4)
-        .then(() => {
+        .then((delRes) => {
+          expect(delRes.sofe.manifest[service4]).toBe(undefined);
           api.getManifest()
-          .then((data) => {
-            expect(data.sofe.manifest[service4]).toBe(undefined);
-            done();
+          .then((getRes) => {
+            expect(delRes.sofe.manifest[service4]).toBe(undefined);
           })
           .catch((ex) => {
             throw ex;
-          })
+          });
+          done();
         })
         .catch((ex) => {
           throw ex;
