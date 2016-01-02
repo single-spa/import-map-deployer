@@ -2,10 +2,10 @@
   "name": "sofe-deplanifester",
   "version": "0.1.0",
   "description": "a manifest deployer for sofe",
-  "main": "index.js",
+  "main": "src/web-server.js",
   "scripts": {
-    "test": "echo 'no tests yet'",
-    "start": "node index.js"
+    "test": "rm -f sofe-manifest.json && jasmine",
+    "start": "node src/web-server.js"
   },
   "repository": {
     "type": "git",
@@ -23,6 +23,15 @@
   "dependencies": {
     "body-parser": "^1.14.2",
     "express": "^4.13.3",
+    "minimist": "^1.2.0",
     "rwlock": "^5.0.0"
+  },
+  "devDependencies": {
+    "chai": "^3.4.1",
+    "jasmine": "^2.4.1",
+    "jasmine-node": "^1.14.5",
+    "mocha": "^2.3.4",
+    "request": "^2.67.0",
+    "superagent": "^1.6.1"
   }
 }
