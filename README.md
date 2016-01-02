@@ -1,5 +1,5 @@
 # sofe-deplanifester
-A manifest deployment service for sofe
+A manifest deployment service for [sofe](https://github.com/CanopyTax/sofe). Also can host the manifest file.
 
 
 ## Endpoints
@@ -8,7 +8,7 @@ This service exposes the following endpoints
 
 #### GET /sofe-manifest.json
 
-You can request the sofe-manifest.json file by making a get request at /sofe-manifest.json
+You can request the sofe-manifest.json file by making a GET request at /sofe-manifest.json
 
 Example using [HTTPie](https://github.com/jkbrzt/httpie):
 
@@ -22,10 +22,12 @@ Example using cURL:
 
 You can PATCH services to add or update a service, the following json body is expected: 
 
-    {
-        "service": "my-service",
-        "url": "http://example.com/my-service.js"
-    }
+```json
+{
+    "service": "my-service",
+    "url": "http://example.com/my-service.js"
+}
+```
 
 Example using HTTPie:
 
