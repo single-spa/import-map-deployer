@@ -1,6 +1,40 @@
 # sofe-deplanifester
 A manifest deployment service for [sofe](https://github.com/CanopyTax/sofe). Also can host the manifest file.
 
+## Installation and usage
+1. `npm install -g sofe-deplanifester`
+2. `sofe-deplanifester conf.js`
+
+## Configuration file
+If no configuration file is present, sofe-deplanifester defaults to using the filesystem to host the manifest file, which is called `sofe-manifest.json` and created in the current working directory.
+
+## Option 1: javascript module
+Example conf.js
+```js
+//conf.js
+exports = {
+    readManifest: function() {
+        return new Promise((resolve, reject) => {
+            const manifest = ''; //read a string from somewhere
+            resolve(manifest); //must resolve a string
+        });
+    },
+    
+    writeManifest: function() {
+        return new Promise((resolve, reject) => {
+            //write the file....
+            resolve(); //you don't have to call resolve with any value
+        }
+    }
+}
+```
+## Option 2: json file (more options to come)
+Example conf.json
+```json
+{
+    "manifestFilePath": "./custom-manifest-file-path",
+}
+```
 
 ## Endpoints
 
