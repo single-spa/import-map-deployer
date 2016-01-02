@@ -22,10 +22,12 @@ Example using cURL:
 
 You can PATCH services to add or update a service, the following json body is expected: 
 
-    {
-        "service": "my-service",
-        "url": "http://example.com/my-service.js"
-    }
+```json
+{
+    "service": "my-service",
+    "url": "http://example.com/my-service.js"
+}
+```
 
 Example using HTTPie:
 
