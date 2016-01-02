@@ -8,7 +8,7 @@ A manifest deployment service for [sofe](https://github.com/CanopyTax/sofe). Als
 ## Configuration file
 If no configuration file is present, sofe-deplanifester defaults to using the filesystem to host the manifest file, which is called `sofe-manifest.json` and created in the current working directory.
 
-## Option 1: javascript module
+### Option 1: javascript module
 Example conf.js
 ```js
 //conf.js
@@ -28,7 +28,7 @@ exports = {
     }
 }
 ```
-## Option 2: json file (more options to come)
+### Option 2: json file (more options to come)
 Example conf.json
 ```json
 {
