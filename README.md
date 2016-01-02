@@ -1,5 +1,5 @@
 # sofe-deplanifester
-A manifest deployment service for sofe
+A manifest deployment service for [sofe](https://github.com/CanopyTax/sofe). Also can host the manifest file.
 
 
 ## Endpoints
@@ -8,7 +8,7 @@ This service exposes the following endpoints
 
 #### GET /sofe-manifest.json
 
-You can request the sofe-manifest.json file by making a get request at /sofe-manifest.json
+You can request the sofe-manifest.json file by making a GET request at /sofe-manifest.json
 
 Example using [HTTPie](https://github.com/jkbrzt/httpie):
 
