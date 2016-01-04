@@ -1,59 +1,53 @@
-'use strict';
-const argv = require('minimist')(process.argv.slice(2));
-
-if (argv._.length > 1)
-  throw new Error(`sofe-deplanifester expects only a single argument, which is the configuration file`);
-
-let readManifest, writeManifest;
-if (argv._.length === 1) {
-  const config = require(argv._[0]);
+'use strict'
+const config = require('./config.js').config
+let readManifest, writeManifest
+if ( config ) {
   if (typeof config.readManifest === 'function' && typeof config.writeManifest === 'function') {
-    readManifest = function() {
-      const promise = config.readManifest();
+    readManifest = function(env) {
+      const promise = config.readManifest(env)
       if (!(promise instanceof Promise))
-        throw new Error(`Configuration file provided invalid readManifest function -- expected a Promise to be returned`);
-      return promise;
+        throw new Error(`Configuration file provided invalid readManifest function -- expected a Promise to be returned`)
+      return promise
     }
 
-    writeManifest = function(string) {
-      const promise = config.writeManifest(string);
+    writeManifest = function(string, env) {
+      const promise = config.writeManifest(string, env)
       if (!(promise instanceof Promise))
-        throw new Error(`Configuration file provided invalid writeManifest function -- expected a Promise to be returned`);
-      return promise;
+        throw new Error(`Configuration file provided invalid writeManifest function -- expected a Promise to be returned`)
+      return promise
     }
   } else if (config.readManifest || config.writeManifest) {
-    throw new Error(`Invalid config file -- readManifest and writeManifest should both be functions`);
+    throw new Error(`Invalid config file -- readManifest and writeManifest should both be functions`)
   } else {
-    useDefaultIOMethod(config.manifestFilePath);
+    useDefaultIOMethod()
   }
 } else {
-  useDefaultIOMethod();
+  useDefaultIOMethod()
 }
 
-function useDefaultIOMethod(filePath) {
-  const defaultIOMethod = require('./io-methods/filesystem.js');
-  defaultIOMethod.setFilePath(filePath || 'sofe-manifest.json');
-  readManifest = defaultIOMethod.readManifest;
-  writeManifest = defaultIOMethod.writeManifest;
+function useDefaultIOMethod() {
+  const defaultIOMethod = require('./io-methods/default.js')
+  readManifest = defaultIOMethod.readManifest
+  writeManifest = defaultIOMethod.writeManifest
 }
 
-exports.readManifest = () => {
+exports.readManifest = (env) => {
   return new Promise((resolve, reject) => {
-    readManifest()
+    readManifest(env)
     .then((manifest) => {
       if (manifest === '') {
         manifest = JSON.stringify({
           sofe: {
             manifest: {}
           }
-        });
+        })
       }
-      resolve(manifest);
+      resolve(manifest)
     })
     .catch((ex) => {
-      reject(ex);
-    });
-  });
+      reject(ex)
+    })
+  })
 }
 
-exports.writeManifest = writeManifest;
+exports.writeManifest = writeManifest

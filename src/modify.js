@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 // File editing
 const lock = new (require('rwlock'))()
     , ioOperations = require('./io-operations.js')
@@ -10,42 +10,42 @@ exports.modifyService = function(serviceName, url, remove) {
       // read file as json
       ioOperations.readManifest()
       .then((data) => {
-        var json;
+        var json
         if ( data==='' ) {
-          json = {"sofe":{"manifest":{}}};
+          json = {"sofe":{"manifest":{}}}
         } else {
           try {
             json = JSON.parse(data)
           } catch(ex) {
-            release();
-            reject('Manifest is not valid json -- ' + ex);
-            return;
+            release()
+            reject('Manifest is not valid json -- ' + ex)
+            return
           }
         }
 
         // modify json
         if ( remove ) {
-          delete json.sofe.manifest[serviceName];
+          delete json.sofe.manifest[serviceName]
         } else {
-          json.sofe.manifest[serviceName] = url;
+          json.sofe.manifest[serviceName] = url
         }
 
         // write json to file
         var string = JSON.stringify(json, null, 2)
         ioOperations.writeManifest(string)
         .then(() => {
-          release();
-          resolve(json);
+          release()
+          resolve(json)
         })
         .catch((ex) => {
-          release();
-          throw ex;
-        });
+          release()
+          throw ex
+        })
       })
       .catch((ex) => {
-        release();
-        throw ex;
-      });
-    });
-  });
+        release()
+        throw ex
+      })
+    })
+  })
 }
