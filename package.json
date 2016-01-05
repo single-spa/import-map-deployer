@@ -23,6 +23,7 @@
   "dependencies": {
     "body-parser": "^1.14.2",
     "express": "^4.13.3",
+    "lodash": "^3.10.1",
     "minimist": "^1.2.0",
     "rwlock": "^5.0.0"
   },

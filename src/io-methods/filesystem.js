@@ -1,13 +1,7 @@
 'use strict'
 const fs = require('fs')
 
-let filePath
-
-exports.setFilePath = function(location) {
-  filePath = location
-}
-
-exports.readManifest = function() {
+exports.readManifest = function(filePath) {
   return new Promise((resolve, reject) => {
     //create file if not already created
     fs.open(filePath, 'a', function(err, fd) {
@@ -27,7 +21,7 @@ exports.readManifest = function() {
   })
 }
 
-exports.writeManifest = function(data) {
+exports.writeManifest = function(filePath, data) {
   return new Promise((resolve, reject) => {
     fs.writeFile(filePath, data, function(err) {
       if (err)

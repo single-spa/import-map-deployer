@@ -7,6 +7,7 @@ const express = require('express')
     , ioOperations = require('./io-operations.js')
     , modify = require('./modify.js')
     , healthCheck = require('./health-check.js')
+    , auth = require('./auth.js')
 
 healthCheck.runCheck()
 .catch((ex) => {
@@ -17,6 +18,7 @@ healthCheck.runCheck()
 
 app.set('etag', false)
 app.use(bodyParser.json())
+app.use(auth)
 
 // --------- //
 // ENDPOINTS //

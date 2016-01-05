@@ -1,6 +1,6 @@
 'use strict'
 const config = require('./config.js').config
-let readManifest, writeManifest
+let readManifest, writeManifest, username, password
 if ( config ) {
   if (typeof config.readManifest === 'function' && typeof config.writeManifest === 'function') {
     readManifest = function(env) {
@@ -23,6 +23,16 @@ if ( config ) {
   }
 } else {
   useDefaultIOMethod()
+}
+
+if ( config ) {
+  if ( (typeof config.username === 'string' && typeof config.password === 'string') 
+        || (config.username === undefined && config.password === undefined) ) {
+    username = config.username
+    password = config.password
+  } else {
+    throw new Error(`Invalid config file -- username and password should either be strings or missing completely`)
+  }
 }
 
 function useDefaultIOMethod() {
@@ -51,3 +61,5 @@ exports.readManifest = (env) => {
 }
 
 exports.writeManifest = writeManifest
+exports.username = username
+exports.password = password
