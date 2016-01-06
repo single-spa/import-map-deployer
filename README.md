@@ -6,13 +6,15 @@ A manifest deployment service for [sofe](https://github.com/CanopyTax/sofe). Als
 2. `sofe-deplanifester conf.js`
 
 ## Configuration file
-If no configuration file is present, sofe-deplanifester defaults to using the filesystem to host the manifest file, which is called `sofe-manifest.json` and created in the current working directory.
+If no configuration file is present, sofe-deplanifester defaults to using the filesystem to host the manifest file, which is called `sofe-manifest.json` and created in the current working directory. If username and password is included, http basic auth will be required. If username and password is not provided, no http auth will be needed.
 
 ### Option 1: javascript module
 Example conf.js
 ```js
 //conf.js
 exports = {
+    username: "admin",
+    password: "1234",
     readManifest: function() {
         return new Promise((resolve, reject) => {
             const manifest = ''; //read a string from somewhere
@@ -32,9 +34,17 @@ exports = {
 Example conf.json
 ```json
 {
-    "manifestFilePath": "./custom-manifest-file-path",
+  "username":"admin",
+  "password":"1234",
+  "region": "us-west-2",
+  "locations": {
+    "default": "sofe-manifest.json",
+    "prod": "s3://cdn.canopytax.com/sofe-manifest.json",
+    "test": "sofe-manifest2.json"
+  }
 }
 ```
+The `region` is the s3 endpoint region (not needed if not using s3).
 
 ## Endpoints
 
