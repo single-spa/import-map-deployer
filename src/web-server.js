@@ -20,6 +20,15 @@ app.set('etag', false)
 app.use(bodyParser.json())
 app.use(auth)
 
+
+function getEnv(req) {
+  if ( req.query.env === undefined ) {
+    return 'default'
+  } else {
+    return req.query.env
+  }
+}
+
 // --------- //
 // ENDPOINTS //
 // --------- //
@@ -28,7 +37,8 @@ app.get('/', function(req, res) {
 })
 
 app.get('/sofe-manifest.json', function(req, res) {
-  ioOperations.readManifest()
+  let env = getEnv(req)
+  ioOperations.readManifest(env)
   .then((data) => {
     var json = JSON.parse(data)
     res.send(json)
@@ -40,7 +50,8 @@ app.get('/sofe-manifest.json', function(req, res) {
 })
 
 app.patch('/services', function(req, res) {
-  var service, url
+  let service, url
+  let env = getEnv(req)
   if ( req.body != undefined && req.body.hasOwnProperty('service') ) {
     service = req.body.service
   } else {
@@ -51,7 +62,7 @@ app.patch('/services', function(req, res) {
   } else {
     res.status(400).send('url key is missing')
   }
-  modify.modifyService(service, url)
+  modify.modifyService(env, service, url)
   .then((json) => {
     res.send(json)
   })
@@ -62,7 +73,8 @@ app.patch('/services', function(req, res) {
 })
 
 app.delete('/services/:serviceName', function(req, res) {
-  modify.modifyService(req.params.serviceName, null, true)
+  let env = getEnv(req)
+  modify.modifyService(env, req.params.serviceName, null, true)
   .then((data) => {
     res.send(data)
   })

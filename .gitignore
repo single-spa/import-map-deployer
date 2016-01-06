@@ -1,6 +1,8 @@
-## sofe file
+# sofe file
 sofe-manifest.json
 
+# default config file
+config.json
 
 
 # Logs

@@ -6,7 +6,7 @@ const auth = require('basic-auth')
 let admins = {}
 
 if ( io.username ) {
-  admins[io.username] = { password: io.username }
+  admins[io.username] = { password: io.password }
 }
 
 module.exports = function(req, res, next) {

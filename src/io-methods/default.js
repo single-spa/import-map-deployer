@@ -7,10 +7,10 @@ const _ = require('lodash')
 const defaultFilePath = 'sofe-manifest.json'
 
 function getFilePath(env) {
-  if ( _.has(config, [env, 'location']) ) {
-    return config[env].location
-  } else if ( _.has(config, ['default', 'location']) ) {
-    return config.default.location
+  if ( _.has(config, ['locations', env]) ) {
+    return config.locations[env]
+  } else if ( _.has(config, ['locations', 'default']) ) {
+    return config.locations.default
   } else {
     return defaultFilePath
   }
@@ -31,9 +31,9 @@ exports.writeManifest = function(data, env) {
   var filePath = getFilePath(env)
   if ( _.startsWith(filePath, 's3://') ) {
     //use s3
-    return s3.readManifest(filePath)
+    return s3.writeManifest(filePath, data)
   } else {
     //use local file
-    return fs.readManifest(filePath, data)
+    return fs.writeManifest(filePath, data)
   }
 }

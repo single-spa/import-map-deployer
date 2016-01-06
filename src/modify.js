@@ -3,12 +3,12 @@
 const lock = new (require('rwlock'))()
     , ioOperations = require('./io-operations.js')
 
-exports.modifyService = function(serviceName, url, remove) {
+exports.modifyService = function(env, serviceName, url, remove) {
   return new Promise((resolve, reject) => {
     // obtain lock (we need a global lock so deploys dont have a race condition)
     lock.writeLock(function (release) {
       // read file as json
-      ioOperations.readManifest()
+      ioOperations.readManifest(env)
       .then((data) => {
         var json
         if ( data==='' ) {
@@ -32,7 +32,7 @@ exports.modifyService = function(serviceName, url, remove) {
 
         // write json to file
         var string = JSON.stringify(json, null, 2)
-        ioOperations.writeManifest(string)
+        ioOperations.writeManifest(string, env)
         .then(() => {
           release()
           resolve(json)
