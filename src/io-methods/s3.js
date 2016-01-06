@@ -4,7 +4,9 @@ const aws = require('aws-sdk')
     , config = require('../config').config
 
 
-aws.config.update({'region': config.region})
+if ( config) {
+  aws.config.update({'region': config.region})
+}
 
 function parseFilePath(filePath) {
   let file = filePath.split('s3://')[1]
