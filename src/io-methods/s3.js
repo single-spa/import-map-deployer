@@ -33,7 +33,13 @@ exports.readManifest = function(filePath) {
 exports.writeManifest = function(filePath, data) {
   return new Promise(function(resolve, reject) {
     let file = parseFilePath(filePath)
-    s3.putObject({Bucket: file.bucket, Key: file.key, Body:data}, function(err) {
+    s3.putObject({
+        Bucket: file.bucket, 
+        Key: file.key, 
+        Body: data, 
+        ContentType: 'application/json', 
+        CacheControl: 'public, must-revalidate, max-age=0'
+    }, function(err) {
       if (err)
         reject(err)
       resolve()
