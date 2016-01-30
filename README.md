@@ -50,6 +50,35 @@ The `region` is the s3 endpoint region (not needed if not using s3).
 
 This service exposes the following endpoints
 
+#### GET /environments
+
+You can retrieve the list of environments (each having its own sofe-manifest.json) by making a GET request at /environments
+
+Example using [HTTPie](https://github.com/jkbrzt/httpie):
+
+    http :5000/environments
+
+Example using cURL:
+
+    curl localhost:5000/environments
+
+Response:
+```json
+{
+  "environments": [
+    {
+      "name": "default"
+    },
+    {
+      "name": "prod"
+    },
+    {
+      "name": "staging"
+    }
+  ]
+}
+```
+
 #### GET /sofe-manifest.json
 
 You can request the sofe-manifest.json file by making a GET request at /sofe-manifest.json
