@@ -67,13 +67,19 @@ Response:
 {
   "environments": [
     {
-      "name": "default"
+      "name": "default",
+      "aliases": ["prod"],
+      "isDefault": true
     },
     {
-      "name": "prod"
+      "name": "prod",
+      "aliases": ["default"],
+      "isDefault": true
     },
     {
-      "name": "staging"
+      "name": "staging",
+      "aliases": [],
+      "isDefault": false
     }
   ]
 }
