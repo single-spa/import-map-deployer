@@ -35,3 +35,6 @@ node_modules
 
 #editor stuff
 .lvimrc
+
+# elm stuff
+src/elm/elm-stuff

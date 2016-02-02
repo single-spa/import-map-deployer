@@ -8,6 +8,8 @@ const express = require('express')
     , modify = require('./modify.js')
     , healthCheck = require('./health-check.js')
     , auth = require('./auth.js')
+    , envHelpers = require('./environment-helpers.js')
+    , _ = require('lodash')
 
 healthCheck.runCheck()
 .catch((ex) => {
@@ -19,7 +21,7 @@ healthCheck.runCheck()
 app.set('etag', false)
 app.use(bodyParser.json())
 app.use(auth)
-
+app.use(express.static(__dirname + "/public"))
 
 function getEnv(req) {
   if ( req.query.env === undefined ) {
@@ -32,8 +34,34 @@ function getEnv(req) {
 // --------- //
 // ENDPOINTS //
 // --------- //
-app.get('/', function(req, res) {
-  res.send(`try doing a GET on /sofe-manifest, a PATCH on /services, or a DELETE on /services/:serviceName`)
+// app.get('/', function(req, res) {
+//   res.send(`try doing a GET on /sofe-manifest, a PATCH on /services, or a DELETE on /services/:serviceName`)
+// })
+
+app.get('/environments', function(req, res) {
+  res.send({environments: notEmpty(envHelpers.getEnvNames()).map(toEnvObject)})
+
+  function notEmpty(envs) {
+    return envs.length > 0 ? envs : ['default']
+  }
+
+  function toEnvObject(name) {
+    return {
+      name: name,
+      isDefault: isDefault(name),
+      aliases: aliases(name),
+    }
+  }
+
+  function isDefault(name) {
+    return name === 'default' || envHelpers.getEnvLocation(name) === envHelpers.getEnvLocation('default')
+  }
+
+  function aliases(envName) {
+    return envHelpers.getEnvNames().filter((name) => {
+      return envName !== name && envHelpers.getEnvLocation(name) === envHelpers.getEnvLocation(envName);
+    })
+  }
 })
 
 app.get('/sofe-manifest.json', function(req, res) {
