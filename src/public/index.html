@@ -10720,24 +10720,7 @@ Elm.Environments.make = function (_elm) {
    var _U = Elm.Native.Utils.make(_elm),
    $Basics = Elm.Basics.make(_elm),
    $Debug = Elm.Debug.make(_elm),
-   $List = Elm.List.make(_elm),
-   $Maybe = Elm.Maybe.make(_elm),
-   $Result = Elm.Result.make(_elm),
-   $Signal = Elm.Signal.make(_elm);
-   var _op = {};
-   var Environment = F2(function (a,b) {    return {name: a,isDefault: b};});
-   var Environments = function (a) {    return {environments: a};};
-   return _elm.Environments.values = {_op: _op,Environments: Environments,Environment: Environment};
-};Elm.Ajax = Elm.Ajax || {};
-Elm.Ajax.make = function (_elm) {
-   "use strict";
-   _elm.Ajax = _elm.Ajax || {};
-   if (_elm.Ajax.values) return _elm.Ajax.values;
-   var _U = Elm.Native.Utils.make(_elm),
-   $Basics = Elm.Basics.make(_elm),
-   $Debug = Elm.Debug.make(_elm),
    $Effects = Elm.Effects.make(_elm),
-   $Environments = Elm.Environments.make(_elm),
    $Html = Elm.Html.make(_elm),
    $Html$Events = Elm.Html.Events.make(_elm),
    $Http = Elm.Http.make(_elm),
@@ -10748,34 +10731,9 @@ Elm.Ajax.make = function (_elm) {
    $Signal = Elm.Signal.make(_elm),
    $Task = Elm.Task.make(_elm);
    var _op = {};
-   var safeDecodeEnvironment = function (result) {
-      var _p0 = result;
-      if (_p0.ctor === "Err") {
-            return {environments: _U.list([])};
-         } else {
-            return {environments: _p0._0};
-         }
-   };
-   var environmentsDecoder = A2($Json$Decode.at,
-   _U.list(["environments"]),
-   $Json$Decode.list(A3($Json$Decode.object2,
-   $Environments.Environment,
-   A2($Json$Decode._op[":="],"name",$Json$Decode.string),
-   A2($Json$Decode._op[":="],"isDefault",$Json$Decode.bool))));
-   var parseEnvironments = function (jsonString) {    return safeDecodeEnvironment(A2($Json$Decode.decodeString,environmentsDecoder,jsonString));};
+   var safeDecodeEnvironment = function (result) {    var _p0 = result;if (_p0.ctor === "Err") {    return _U.list([]);} else {    return _p0._0;}};
+   var Model = F2(function (a,b) {    return {environments: a,selectedEnviro: b};});
    var GotEnvironments = function (a) {    return {ctor: "GotEnvironments",_0: a};};
-   var getEnvironments = $Effects.task(A2($Task.map,
-   GotEnvironments,
-   $Task.toMaybe(A2($Task.map,parseEnvironments,$Http.getString("http://localhost:5000/environments")))));
-   var init = function (model) {    return {ctor: "_Tuple2",_0: model,_1: getEnvironments};};
-   var update = F2(function (action,model) {
-      var _p1 = action;
-      if (_p1.ctor === "GetEnvironments") {
-            return {ctor: "_Tuple2",_0: model,_1: getEnvironments};
-         } else {
-            return {ctor: "_Tuple2",_0: A2($Maybe.withDefault,{environments: _U.list([])},_p1._0),_1: $Effects.none};
-         }
-   });
    var GetEnvironments = {ctor: "GetEnvironments"};
    var view = F2(function (address,model) {
       return A2($Html.div,
@@ -10783,26 +10741,48 @@ Elm.Ajax.make = function (_elm) {
       _U.list([A2($Html.div,_U.list([]),A2($List.map,function (env) {    return A2($Html.div,_U.list([]),_U.list([$Html.text(env.name)]));},model.environments))
               ,A2($Html.button,_U.list([A2($Html$Events.onClick,address,GetEnvironments)]),_U.list([$Html.text("Get Enviros")]))]));
    });
-   return _elm.Ajax.values = {_op: _op
-                             ,GetEnvironments: GetEnvironments
-                             ,GotEnvironments: GotEnvironments
-                             ,init: init
-                             ,update: update
-                             ,view: view
-                             ,getEnvironments: getEnvironments
-                             ,environmentsDecoder: environmentsDecoder
-                             ,safeDecodeEnvironment: safeDecodeEnvironment
-                             ,parseEnvironments: parseEnvironments};
+   var Environment = F2(function (a,b) {    return {name: a,isDefault: b};});
+   var environmentsDecoder = A2($Json$Decode.at,
+   _U.list(["environments"]),
+   $Json$Decode.list(A3($Json$Decode.object2,
+   Environment,
+   A2($Json$Decode._op[":="],"name",$Json$Decode.string),
+   A2($Json$Decode._op[":="],"isDefault",$Json$Decode.bool))));
+   var parseEnvironments = function (jsonString) {    return safeDecodeEnvironment(A2($Json$Decode.decodeString,environmentsDecoder,jsonString));};
+   var getEnvironments = $Effects.task(A2($Task.map,
+   GotEnvironments,
+   $Task.toMaybe(A2($Task.map,parseEnvironments,$Http.getString("http://localhost:5000/environments")))));
+   var init = {ctor: "_Tuple2",_0: {environments: _U.list([]),selectedEnviro: {name: "",isDefault: false}},_1: getEnvironments};
+   var update = F2(function (action,model) {
+      var _p1 = action;
+      if (_p1.ctor === "GetEnvironments") {
+            return {ctor: "_Tuple2",_0: model,_1: getEnvironments};
+         } else {
+            return {ctor: "_Tuple2",_0: _U.update(model,{environments: A2($Maybe.withDefault,_U.list([]),_p1._0)}),_1: $Effects.none};
+         }
+   });
+   return _elm.Environments.values = {_op: _op
+                                     ,Environment: Environment
+                                     ,GetEnvironments: GetEnvironments
+                                     ,GotEnvironments: GotEnvironments
+                                     ,Model: Model
+                                     ,init: init
+                                     ,update: update
+                                     ,view: view
+                                     ,getEnvironments: getEnvironments
+                                     ,environmentsDecoder: environmentsDecoder
+                                     ,safeDecodeEnvironment: safeDecodeEnvironment
+                                     ,parseEnvironments: parseEnvironments};
 };Elm.Main = Elm.Main || {};
 Elm.Main.make = function (_elm) {
    "use strict";
    _elm.Main = _elm.Main || {};
    if (_elm.Main.values) return _elm.Main.values;
    var _U = Elm.Native.Utils.make(_elm),
-   $Ajax = Elm.Ajax.make(_elm),
    $Basics = Elm.Basics.make(_elm),
    $Debug = Elm.Debug.make(_elm),
    $Effects = Elm.Effects.make(_elm),
+   $Environments = Elm.Environments.make(_elm),
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
    $Result = Elm.Result.make(_elm),
@@ -10812,7 +10792,7 @@ Elm.Main.make = function (_elm) {
    var _op = {};
    var Service = F2(function (a,b) {    return {name: a,url: b};});
    var Manifest = function (a) {    return {sofe: a};};
-   var app = $StartApp.start({init: $Ajax.init({environments: _U.list([])}),update: $Ajax.update,view: $Ajax.view,inputs: _U.list([])});
+   var app = $StartApp.start({init: $Environments.init,update: $Environments.update,view: $Environments.view,inputs: _U.list([])});
    var main = app.html;
    var tasks = Elm.Native.Task.make(_elm).performSignal("tasks",app.tasks);
    return _elm.Main.values = {_op: _op,app: app,main: main,Manifest: Manifest,Service: Service};

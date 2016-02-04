@@ -1,0 +1,6 @@
+{
+  "locations": {
+    "default": "sofe-manifest.json",
+    "test": "sofe-manifest2.json"
+  }
+}

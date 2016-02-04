@@ -5,14 +5,13 @@ import Signal
 import Task
 import Effects exposing (Never)
 
-import Ajax
 import Environments
 
 app =
   StartApp.start
-    { init = Ajax.init {environments = []}
-    , update = Ajax.update
-    , view = Ajax.view
+    { init = Environments.init
+    , update = Environments.update
+    , view = Environments.view
     , inputs = []
     }
 
