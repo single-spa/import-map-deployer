@@ -5,28 +5,20 @@ import Signal
 import Task
 import Effects exposing (Never)
 
+import Model
+import Update
 import Environments
 
 app =
   StartApp.start
-    { init = Environments.init
-    , update = Environments.update
+    { init = Update.init
+    , update = Update.update
     , view = Environments.view
     , inputs = []
     }
 
 main =
   app.html
-
-type alias Manifest =
-  { sofe :
-    { manifest : List Service }
-  }
-
-type alias Service =
-  { name: String
-  , url: String
-  }
 
 port tasks : Signal (Task.Task Never ())
 port tasks =

@@ -30,6 +30,7 @@
     "rwlock": "^5.0.0"
   },
   "devDependencies": {
+    "babel-eslint": "^5.0.0-beta6",
     "jasmine": "^2.4.1",
     "superagent": "^1.6.1"
   },
