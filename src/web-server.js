@@ -21,7 +21,7 @@ healthCheck.runCheck()
 app.set('etag', false)
 app.use(bodyParser.json())
 app.use(auth)
-
+app.use(express.static(__dirname + "/public"))
 
 function getEnv(req) {
   if ( req.query.env === undefined ) {
@@ -34,9 +34,9 @@ function getEnv(req) {
 // --------- //
 // ENDPOINTS //
 // --------- //
-app.get('/', function(req, res) {
-  res.send(`try doing a GET on /sofe-manifest, a PATCH on /services, or a DELETE on /services/:serviceName`)
-})
+// app.get('/', function(req, res) {
+//   res.send(`try doing a GET on /sofe-manifest, a PATCH on /services, or a DELETE on /services/:serviceName`)
+// })
 
 app.get('/environments', function(req, res) {
   res.send({environments: notEmpty(envHelpers.getEnvNames()).map(toEnvObject)})

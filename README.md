@@ -21,7 +21,7 @@ exports = {
             resolve(manifest); //must resolve a string
         });
     },
-    
+
     writeManifest: function() {
         return new Promise((resolve, reject) => {
             //write the file....
@@ -85,21 +85,21 @@ Response:
 }
 ```
 
-#### GET /sofe-manifest.json
+#### GET /sofe-manifest.json?env=prod
 
 You can request the sofe-manifest.json file by making a GET request at /sofe-manifest.json
 
 Example using [HTTPie](https://github.com/jkbrzt/httpie):
 
-    http :5000/sofe-manifest.json
+    http :5000/sofe-manifest.json\?env=prod
 
 Example using cURL:
 
-    curl localhost:5000/sofe-manifest.json
+    curl localhost:5000/sofe-manifest.json\?env=prod
 
-#### PATCH /services
+#### PATCH /services?env=stage
 
-You can PATCH services to add or update a service, the following json body is expected: 
+You can PATCH services to add or update a service, the following json body is expected:
 
 ```json
 {
@@ -110,13 +110,13 @@ You can PATCH services to add or update a service, the following json body is ex
 
 Example using HTTPie:
 
-    http PATCH :5000/services service=my-service url=http://example.com/my-service.js
+    http PATCH :5000/services\?env=stage service=my-service url=http://example.com/my-service.js
 
 Example using cURL:
 
-    curl -d '{ "service":"my-service","url":"http://example.com/my-service.js" }' -X PATCH localhost:5000/services -H "Accept: application/json" -H "Content-Type: application/json"
+    curl -d '{ "service":"my-service","url":"http://example.com/my-service.js" }' -X PATCH localhost:5000/services\?env=beta -H "Accept: application/json" -H "Content-Type: application/json"
 
-#### DELETE /services/{SERVICE_NAME}
+#### DELETE /services/{SERVICE_NAME}?env=alpha
 
 You can remove a service by sending a DELETE with the service name. No request body needs to be sent. Example:
 
@@ -129,5 +129,3 @@ Example using HTTPie:
 Example using cURL:
 
     curl -X DELETE localhost:5000/services/my-service
-
-
