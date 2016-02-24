@@ -4,7 +4,8 @@ import Models.Environment exposing (Environment)
 import Models.Manifest exposing (Manifest)
 
 type Action
-  = GetEnvironments
+  = RouteChanged String
+  | GetEnvironments
   | GotEnvironments (Maybe (List Environment))
   | GetManifest
   | GotManifest (Maybe Manifest)

@@ -32,7 +32,11 @@
   "devDependencies": {
     "babel-eslint": "^5.0.0-beta6",
     "jasmine": "^2.4.1",
-    "superagent": "^1.6.1"
+    "superagent": "^1.6.1",
+    "babel-core": "^6.5.2",
+    "babel-loader": "^6.2.3",
+    "webpack": "^2.0.7-beta",
+    "elm-webpack-loader": "^2.0.0"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
