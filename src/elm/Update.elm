@@ -3,6 +3,7 @@ module Update where
 import Effects exposing (Effects)
 import Actions exposing (Action)
 import Dict
+import Maybe exposing (Maybe)
 
 import Model exposing (Model)
 import Environments
@@ -34,5 +35,9 @@ update action model =
       )
     Actions.GotManifest manifest ->
       ( {model | manifest = (Manifest.update manifest)}
+      , Effects.none
+      )
+    Actions.ServiceChange key value ->
+      ( {model | manifest = Dict.update key (\v-> Just value) model.manifest}
       , Effects.none
       )

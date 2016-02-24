@@ -1,9 +1,9 @@
 module Manifest where
 
 import Http exposing (Error)
-import Html exposing (Html, div, text, button)
-import Html.Attributes exposing (style)
-import Html.Events exposing (onClick)
+import Html exposing (Html, div, text, button, input)
+import Html.Attributes exposing (style, value)
+import Html.Events exposing (onClick, targetValue, on)
 import Dict exposing (Dict)
 import Task exposing (Task)
 import Signal exposing (Address)
@@ -36,7 +36,22 @@ view address manifest =
               [ text ((fst tup) ++ ": ")]
             , div
               []
-              [ text (snd tup)]
+              [ input
+                [ value (snd tup)
+                , on "input" targetValue ((Signal.message address) << Actions.ServiceChange (fst tup))
+                ]
+                []
+              ]
+            , button
+              []
+              [text "Save"]
+            , button
+              [style
+                [ ("background", "red")
+                , ("color", "white")
+                ]
+              ]
+              [text "Delete"]
             ]
         )))
 

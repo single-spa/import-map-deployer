@@ -8,4 +8,4 @@ type Action
   | GotEnvironments (Maybe (List Environment))
   | GetManifest
   | GotManifest (Maybe Manifest)
-
+  | ServiceChange String String
