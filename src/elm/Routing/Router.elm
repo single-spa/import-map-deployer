@@ -14,8 +14,8 @@ route : Address Action -> Model -> Html
 route address model =
   case model.activeRoute of
     Routing.Routes.EnvironmentsIndex ->
-      Routes.Environments.view address model
+      Routes.Environments.view address model "none"
     Routing.Routes.Manifest envId ->
-      Routes.Environments.view address model
+      Routes.Environments.view address model envId
     Routing.Routes.NotFound ->
       Routes.NotFound.view address model

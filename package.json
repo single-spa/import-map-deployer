@@ -24,19 +24,23 @@
     "aws-sdk": "^2.2.27",
     "basic-auth": "^1.0.3",
     "body-parser": "^1.14.2",
+    "canopy-styleguide": "^4.1.16",
     "express": "^4.13.3",
     "lodash": "^3.10.1",
     "minimist": "^1.2.0",
     "rwlock": "^5.0.0"
   },
   "devDependencies": {
-    "babel-eslint": "^5.0.0-beta6",
-    "jasmine": "^2.4.1",
-    "superagent": "^1.6.1",
     "babel-core": "^6.5.2",
+    "babel-eslint": "^5.0.0-beta6",
     "babel-loader": "^6.2.3",
-    "webpack": "^2.0.7-beta",
-    "elm-webpack-loader": "^2.0.0"
+    "css-loader": "^0.23.1",
+    "elm-webpack-loader": "^2.0.0",
+    "file-loader": "^0.8.5",
+    "jasmine": "^2.4.1",
+    "style-loader": "^0.13.0",
+    "superagent": "^1.6.1",
+    "webpack": "^2.0.7-beta"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org"

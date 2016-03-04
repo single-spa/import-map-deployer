@@ -1,87 +1,46 @@
 module Routes.Manifest where
 
-import Http exposing (Error)
 import Html exposing (Html, div, text, button, input)
-import Html.Attributes exposing (style, value)
+import Html.Attributes exposing (style, value, class)
 import Html.Events exposing (onClick, targetValue, on)
 import Dict exposing (Dict)
-import Task exposing (Task)
 import Signal exposing (Address)
-import Effects exposing (Effects, Never)
-import Json.Decode as Json exposing ((:=), at)
 import Debug
 
 import Actions exposing (Action)
 import Models.Manifest exposing (Manifest)
 
-view : Address Action -> Manifest -> Html
-view address manifest =
+view : Address Action -> Manifest -> String -> Html
+view address manifest envId =
   div
-    []
-    ((button
-      [onClick address Actions.GetManifest]
-      [text "Get Manifest"]
-    ) ::
+    [ class "cps-form-horizontal"]
     ((Dict.toList manifest)
       |> List.map
         (\tup ->
           div
             [ style
               [("display", "flex"), ("flex-direction", "row")]
+            , class "cps-form-group"
             ]
             [ div
-              [ style
-                [("font-weight", "bold")]
+              [ style [("font-weight", "bold")]
+              , class "cps-col-xs-2 cps-control-label"
               ]
               [ text ((fst tup) ++ ": ")]
-            , div
-              []
-              [ input
-                [ value (snd tup)
-                , on "input" targetValue ((Signal.message address) << Actions.ServiceChange (fst tup))
-                ]
-                []
+            , input
+              [ value (snd tup)
+              , on "input" targetValue ((Signal.message address) << Actions.ServiceChange (fst tup))
+              , class "cps-form-control"
+              , style [("width", "500px")]
               ]
-            , button
               []
+            , button
+              [ class "cps-btn +primary cps-margin-left-24"
+              , onClick address (Actions.SaveManifest tup envId)]
               [text "Save"]
             , button
-              [style
-                [ ("background", "red")
-                , ("color", "white")
-                ]
+              [ class "cps-btn +secondary"
               ]
               [text "Delete"]
             ]
-        )))
-
-update: Maybe Manifest -> Manifest
-update manifest =
-    Maybe.withDefault Dict.empty manifest
-
-getManifest : Effects Action
-getManifest =
-  Http.getString "/sofe-manifest.json?env=prod"
-    |> Task.map parseManifest
-    |> Task.toMaybe
-    |> Task.map Actions.GotManifest
-    |> Effects.task
-
-parseManifest : String -> Manifest
-parseManifest jsonString =
-  safeDecodeManifest
-  (Json.decodeString manifestDecoder jsonString)
-
-safeDecodeManifest : Result String Manifest -> Manifest
-safeDecodeManifest result =
-  case result of
-    Err msg ->
-      Dict.empty
-    Ok manifest ->
-      manifest
-
-manifestDecoder : Json.Decoder Manifest
-manifestDecoder =
-  at ["sofe"]
-    <| at ["manifest"]
-    <| Json.dict Json.string
+        ))

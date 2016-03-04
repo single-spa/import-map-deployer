@@ -1,4 +1,5 @@
 module Update where
+import Debug
 
 import Effects exposing (Effects)
 import Actions exposing (Action)
@@ -11,40 +12,48 @@ import Model exposing (Model)
 import Routes.Environments
 import Routes.Manifest
 
+import Resources.Environments
+import Resources.Manifest
+import Models.Manifest
+
 init : String -> (Model, Effects Action)
 init initialPath =
+  let
+    activeRoute = Routing.Routes.matchRoute initialPath
+  in
   ( { environments = []
     , selectedEnviro = {name  = "", isDefault = False}
     , manifest = Dict.empty
-    , activeRoute = Routing.Routes.matchRoute initialPath
+    , activeRoute = activeRoute
     }
-  , Routes.Environments.getEnvironments
+  , Effects.batch [Routing.Routes.getRouteEffects activeRoute, Resources.Environments.getEnvironments]
   )
 
 update : Action -> Model -> (Model, Effects Action)
 update action model =
   case action of
     Actions.RouteChanged routePath ->
-      ( {model | activeRoute = Routing.Routes.matchRoute routePath}
-      , Effects.none
-      )
-    Actions.GetEnvironments ->
-      ( model
-      , Routes.Environments.getEnvironments
+      let
+        activeRoute = Routing.Routes.matchRoute routePath
+      in
+      ( {model | activeRoute = activeRoute}
+      , Routing.Routes.getRouteEffects activeRoute
       )
     Actions.GotEnvironments environments ->
       ( {model | environments = ( Maybe.withDefault [] environments )}
       , Effects.none
       )
-    Actions.GetManifest ->
-      ( model
-      , Routes.Manifest.getManifest
-      )
     Actions.GotManifest manifest ->
-      ( {model | manifest = (Routes.Manifest.update manifest)}
+      ( {model | manifest = (Models.Manifest.update manifest)}
       , Effects.none
       )
     Actions.ServiceChange key value ->
       ( {model | manifest = Dict.update key (\v-> Just value) model.manifest}
       , Effects.none
       )
+    Actions.SaveManifest service env ->
+      ( model
+      , Resources.Manifest.patchManifest service env
+      )
+    Actions.NoOp ->
+      ( model, Effects.none )

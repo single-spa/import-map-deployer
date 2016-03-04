@@ -19,7 +19,24 @@ module.exports = {
         test: /\.js$/,
         exclude: [/elm-stuff/, /node_modules/],
         loader: "babel-loader"
-      }
+      },
+      {
+        test:/\.css$/,
+        loader: "style-loader!css-loader"
+      },
+      {
+			test: /\.eot$/,
+			loader: 'file'
+		}, {
+			test: /\.svg$/,
+			loader: 'file'
+		}, {
+			test: /\.ttf$/,
+			loader: 'file'
+		}, {
+			test: /\.woff$/,
+			loader: 'file'
+		}
     ],
     noParse: /\.elm$/
   },

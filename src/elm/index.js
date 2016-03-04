@@ -1,4 +1,5 @@
 var Elm = require("./Main.elm");
+require("canopy-styleguide");
 
 document.addEventListener("DOMContentLoaded", function() {
   var app =

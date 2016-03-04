@@ -1,6 +1,12 @@
 module Routing.Routes where
 
+import Effects exposing (Effects)
+
+import Actions exposing (Action)
 import RouteParser exposing (..)
+import Resources.Environments
+import Resources.Manifest
+
 
 type Route
   = EnvironmentsIndex
@@ -23,3 +29,13 @@ matchRoute urlPath =
         r
       Nothing ->
         NotFound
+
+getRouteEffects : Route -> Effects Action
+getRouteEffects route =
+  case route of
+    Manifest  env ->
+      Resources.Manifest.getManifest
+    EnvironmentsIndex ->
+      Resources.Environments.getEnvironments
+    _ ->
+      Effects.none

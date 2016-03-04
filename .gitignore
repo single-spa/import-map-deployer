@@ -37,8 +37,8 @@ node_modules
 .lvimrc
 
 #Elm
-src/public/index.html
 elm-stuff
 
 # build
-src/public/bundle.js
+src/public/*
+!src/public/index.html
