@@ -33,8 +33,8 @@ matchRoute urlPath =
 getRouteEffects : Route -> Effects Action
 getRouteEffects route =
   case route of
-    Manifest  env ->
-      Resources.Manifest.getManifest
+    Manifest env ->
+      Resources.Manifest.getManifest env
     EnvironmentsIndex ->
       Resources.Environments.getEnvironments
     _ ->

@@ -10,9 +10,9 @@ import Dict
 import Actions exposing (Action)
 import Models.Manifest exposing (Manifest)
 
-getManifest : Effects Action
-getManifest =
-  Http.getString "/sofe-manifest.json?env=prod"
+getManifest : String -> Effects Action
+getManifest env =
+  Http.getString ("/sofe-manifest.json?env=" ++ env)
     |> Task.map parseManifest
     |> Task.toMaybe
     |> Task.map Actions.GotManifest
