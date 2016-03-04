@@ -38,7 +38,7 @@ node_modules
 
 #Elm
 src/public/index.html
-src/elm/elm-stuff
+elm-stuff
 
 # build
-src/public/index.html
+src/public/bundle.js
