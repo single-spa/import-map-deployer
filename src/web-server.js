@@ -92,7 +92,7 @@ app.patch('/services', function(req, res) {
     return res.status(400).send('url key is missing')
   }
 
-  request(url, (error, response, body) => {
+  request({url: url, strictSSL: false}, (error, response, body) => {
     if (!error && response.statusCode == 200) {
       modify.modifyService(env, service, url)
       .then((json) => {
