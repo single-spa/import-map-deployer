@@ -7,9 +7,9 @@ let config = configHelper.config;
 
 const file = new nodeStatic.Server('./spec/mockServices');
 require('http').createServer(function (request, response) {
-	request.addListener('end', function() {
-		file.serve(request, response);
-	}).resume();
+  request.addListener('end', function() {
+    file.serve(request, response);
+  }).resume();
 }).listen(7654);
 
 console.log('Static server listening on http://localhost:7654');

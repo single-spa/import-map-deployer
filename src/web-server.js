@@ -10,7 +10,7 @@ const express = require('express')
     , auth = require('./auth.js')
     , envHelpers = require('./environment-helpers.js')
     , _ = require('lodash')
-		, request = require('request')
+    , request = require('request')
 
 healthCheck.runCheck()
 .catch((ex) => {
@@ -92,20 +92,20 @@ app.patch('/services', function(req, res) {
     return res.status(400).send('url key is missing')
   }
 
-	request(url, (error, response, body) => {
-		if (!error && response.statusCode == 200) {
-			modify.modifyService(env, service, url)
-			.then((json) => {
-				res.send(json)
-			})
-			.catch((ex) => {
-				console.error(ex)
-				res.status(500).send(`Could not write manifest file -- ${ex.toString()}`)
-			})
-		} else {
-			res.status(400).send(`The url does not exist for service ${service}: ${url}`);
-		}
-	});
+  request(url, (error, response, body) => {
+    if (!error && response.statusCode == 200) {
+      modify.modifyService(env, service, url)
+      .then((json) => {
+        res.send(json)
+      })
+      .catch((ex) => {
+        console.error(ex)
+        res.status(500).send(`Could not write manifest file -- ${ex.toString()}`)
+      })
+    } else {
+      res.status(400).send(`The url does not exist for service ${service}: ${url}`);
+    }
+  });
 
 })
 
