@@ -28,16 +28,16 @@ describe('filesystem end to end tests', () => {
   });
 
   it(`error when patching a service with an invalid url`, (done) => {
-    const serviceName = 'fs-service-1';
+		const serviceName = 'fs-service-1';
 		const url = 'http://localhost:7654/noExisty.js';
-    api.patchService(serviceName, url)
-    .then(() => {
+		api.patchService(serviceName, url)
+		.then(() => {
 			fail("should have errored");
-    })
-    .catch(ex => {
+		})
+		.catch(ex => {
 			expect(ex.response.text).toBe('The url does not exist for service fs-service-1: http://localhost:7654/noExisty.js');
 			done();
-    });
+		});
   });
 
   it(`can write a manifest, even if you've never written a manifest`, (done) => {
