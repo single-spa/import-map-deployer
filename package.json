@@ -24,7 +24,6 @@
     "aws-sdk": "^2.2.27",
     "basic-auth": "^1.0.3",
     "body-parser": "^1.14.2",
-    "canopy-styleguide": "^4.1.16",
     "express": "^4.13.3",
     "lodash": "^3.10.1",
     "minimist": "^1.2.0",
