@@ -32,7 +32,7 @@ describe('GET /environments', () => {
       }]);
       done();
     })
-    .catch((ex) => {throw ex});
+    .catch(ex => fail(ex));
   });
 
   it('returns all the envs in the config, including default if present', (done) => {
@@ -64,7 +64,7 @@ describe('GET /environments', () => {
       ]);
       done();
     })
-    .catch((ex) => {throw ex});
+    .catch(ex => fail(ex));
   });
 
   it('does not return "default" if it\'s not in the config', (done) => {
@@ -90,6 +90,6 @@ describe('GET /environments', () => {
       ]);
       done();
     })
-    .catch((ex) => {throw ex});
+    .catch(ex => fail(ex));
   })
 });
