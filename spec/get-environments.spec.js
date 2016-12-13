@@ -1,8 +1,18 @@
 'use strict';
 const webServer = require('../src/web-server.js');
+const nodeStatic = require('node-static');
 const api = require('./http-api.js');
 let configHelper = require('../src/config.js');
 let config = configHelper.config;
+
+const file = new nodeStatic.Server('./spec/mockServices');
+require('http').createServer(function (request, response) {
+  request.addListener('end', function() {
+    file.serve(request, response);
+  }).resume();
+}).listen(7654);
+
+console.log('Static server listening on http://localhost:7654');
 
 describe('GET /environments', () => {
   const originalConfig = config;
@@ -22,7 +32,7 @@ describe('GET /environments', () => {
       }]);
       done();
     })
-    .catch((ex) => {throw ex});
+    .catch(ex => fail(ex));
   });
 
   it('returns all the envs in the config, including default if present', (done) => {
@@ -54,7 +64,7 @@ describe('GET /environments', () => {
       ]);
       done();
     })
-    .catch((ex) => {throw ex});
+    .catch(ex => fail(ex));
   });
 
   it('does not return "default" if it\'s not in the config', (done) => {
@@ -80,6 +90,6 @@ describe('GET /environments', () => {
       ]);
       done();
     })
-    .catch((ex) => {throw ex});
+    .catch(ex => fail(ex));
   })
 });

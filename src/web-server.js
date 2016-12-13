@@ -10,6 +10,7 @@ const express = require('express')
     , auth = require('./auth.js')
     , envHelpers = require('./environment-helpers.js')
     , _ = require('lodash')
+    , request = require('request')
 
 healthCheck.runCheck()
 .catch((ex) => {
@@ -83,21 +84,29 @@ app.patch('/services', function(req, res) {
   if ( req.body != undefined && req.body.hasOwnProperty('service') ) {
     service = req.body.service
   } else {
-    res.status(400).send('service key is missing')
+    return res.status(400).send('service key is missing')
   }
   if ( req.body != undefined && req.body.hasOwnProperty('url') ) {
     url = req.body.url
   } else {
-    res.status(400).send('url key is missing')
+    return res.status(400).send('url key is missing')
   }
-  modify.modifyService(env, service, url)
-  .then((json) => {
-    res.send(json)
-  })
-  .catch((ex) => {
-    console.error(ex)
-    res.status(500).send(`Could not write manifest file -- ${ex.toString()}`)
-  })
+
+  request(url, (error, response, body) => {
+    if (!error && response.statusCode == 200) {
+      modify.modifyService(env, service, url)
+      .then((json) => {
+        res.send(json)
+      })
+      .catch((ex) => {
+        console.error(ex)
+        res.status(500).send(`Could not write manifest file -- ${ex.toString()}`)
+      })
+    } else {
+      res.status(400).send(`The url does not exist for service ${service}: ${url}`);
+    }
+  });
+
 })
 
 app.delete('/services/:serviceName', function(req, res) {
