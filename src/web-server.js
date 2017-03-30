@@ -11,6 +11,7 @@ const express = require('express')
     , envHelpers = require('./environment-helpers.js')
     , _ = require('lodash')
     , request = require('request')
+    , morgan = require('morgan')
 
 healthCheck.runCheck()
 .catch((ex) => {
@@ -20,7 +21,15 @@ healthCheck.runCheck()
 })
 
 app.set('etag', false)
-app.use(bodyParser.json())
+app.use(bodyParser.text({type: '*/*'}))
+app.use(morgan(function (tokens, req, res) {
+  return [
+    tokens.method(req, res),
+    tokens.url(req, res),
+    tokens.status(req, res),
+    JSON.stringify(req.body),
+  ].join(' ')
+}))
 app.use(auth)
 app.use(express.static(__dirname + "/public"))
 
@@ -79,6 +88,7 @@ app.get('/sofe-manifest.json', function(req, res) {
 })
 
 app.patch('/services', function(req, res) {
+  req.body = JSON.parse(req.body);
   let service, url
   let env = getEnv(req)
   if ( req.body != undefined && req.body.hasOwnProperty('service') ) {

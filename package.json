@@ -27,6 +27,7 @@
     "express": "^4.13.3",
     "lodash": "^3.10.1",
     "minimist": "^1.2.0",
+    "morgan": "^1.8.1",
     "request": "^2.79.0",
     "rwlock": "^5.0.0"
   },
