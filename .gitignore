@@ -1,5 +1,6 @@
 # sofe file
 sofe-manifest.json
+sofe-manifest.js
 
 # default config file
 config.json
