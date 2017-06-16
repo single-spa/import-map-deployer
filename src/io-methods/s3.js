@@ -58,7 +58,7 @@ exports.writeManifest = function(filePath, data) {
         Bucket: file.bucket,
         Key: jsKey,
         Body: jsHelpers.createJsString(data),
-        ContentType: 'application/json',
+        ContentType: 'application/javascript',
         CacheControl: 'public, must-revalidate, max-age=0'
       }, function(err) {
         if (err)
