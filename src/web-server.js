@@ -89,7 +89,7 @@ app.get('/sofe-manifest.json', function(req, res) {
 
 app.get('/', function(req, res) {
     res.send('everything ok')
-}
+})
 
 app.patch('/services', function(req, res) {
   req.body = JSON.parse(req.body);
