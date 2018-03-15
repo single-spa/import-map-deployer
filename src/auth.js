@@ -15,7 +15,7 @@ module.exports = function(req, res, next) {
     return next()
   }
   var user = auth(req)
-  if (!user || !admins[user.name] || admins[user.name].password !== user.pass) {
+  if ((!user || !admins[user.name] || admins[user.name].password !== user.pass) && req.url != '/') {
     res.set('WWW-Authenticate', 'Basic realm="sofe-deplanifester"')
     return res.status(401).send()
   }
