@@ -31,8 +31,8 @@ exports = {
     }
 }
 ```
-### Option 2: json file (more options to come)
-Example conf.json
+### Option 2: json file
+Example config.json
 ```json
 {
   "username":"admin",
