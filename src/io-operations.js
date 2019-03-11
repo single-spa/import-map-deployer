@@ -1,5 +1,7 @@
 'use strict'
 const config = require('./config.js').config
+const getEmptyManifest = require('./modify').getEmptyManifest
+
 let readManifest, writeManifest, username, password
 if ( config ) {
   if (typeof config.readManifest === 'function' && typeof config.writeManifest === 'function') {
@@ -46,11 +48,7 @@ exports.readManifest = (env) => {
     readManifest(env)
     .then((manifest) => {
       if (manifest === '') {
-        manifest = JSON.stringify({
-          sofe: {
-            manifest: {}
-          }
-        })
+        manifest = JSON.stringify(getEmptyManifest())
       }
       resolve(manifest)
     })

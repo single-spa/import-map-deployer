@@ -1,51 +1,62 @@
 'use strict'
 // File editing
 const lock = new (require('rwlock'))()
-    , ioOperations = require('./io-operations.js')
+const ioOperations = require('./io-operations.js')
+const config = require('./config').config
+
+const isImportMap = config && config.manifestFormat === 'import-map'
+
+function getMapFromManifest(manifest) {
+  return isImportMap ? manifest.imports : manifest.sofe.manifest
+}
+
+function getEmptyManifest() {
+  return isImportMap ? {imports: {}} : {sofe: {manifest: {}}}
+}
+
+exports.getEmptyManifest = getEmptyManifest
 
 exports.modifyService = function(env, serviceName, url, remove) {
   return new Promise((resolve, reject) => {
     // obtain lock (we need a global lock so deploys dont have a race condition)
     lock.writeLock(function (release) {
       // read file as json
-      ioOperations.readManifest(env)
-      .then((data) => {
-        var json
-        if ( data==='' ) {
-          json = {"sofe":{"manifest":{}}}
-        } else {
-          try {
-            json = JSON.parse(data)
-          } catch(ex) {
-            release()
-            reject('Manifest is not valid json -- ' + ex)
-            return
+      const manifestPromise = ioOperations.readManifest(env)
+        .then((data) => {
+          var json
+          if ( data==='' ) {
+            json = getEmptyManifest()
+          } else {
+            try {
+              json = JSON.parse(data)
+            } catch(ex) {
+              release()
+              reject('Manifest is not valid json -- ' + ex)
+              return
+            }
           }
-        }
 
-        // modify json
-        if ( remove ) {
-          delete json.sofe.manifest[serviceName]
-        } else {
-          json.sofe.manifest[serviceName] = url
-        }
+          // modify json
+          if ( remove ) {
+            delete getMapFromManifest(json)[serviceName]
+          } else {
+            getMapFromManifest(json)[serviceName] = url
+          }
 
-        // write json to file
-        var string = JSON.stringify(json, null, 2)
-        ioOperations.writeManifest(string, env)
-        .then(() => {
-          release()
-          resolve(json)
+          // write json to file
+          var string = JSON.stringify(json, null, 2)
+          return ioOperations.writeManifest(string, env)
+            .then(() => {
+              release()
+              return json
+            })
         })
         .catch((ex) => {
           release()
           throw ex
         })
-      })
-      .catch((ex) => {
-        release()
-        throw ex
-      })
+
+      resolve(manifestPromise)
     })
   })
 }

@@ -74,7 +74,10 @@ app.get('/environments', function(req, res) {
   }
 })
 
-app.get('/sofe-manifest.json', function(req, res) {
+app.get('/sofe-manifest.json', handleGetManifest)
+app.get('/import-map.json', handleGetManifest)
+
+function handleGetManifest(req, res) {
   let env = getEnv(req)
   ioOperations.readManifest(env)
   .then((data) => {
@@ -85,7 +88,7 @@ app.get('/sofe-manifest.json', function(req, res) {
     console.error(ex)
     res.status(500).send(`Could not read manifest file -- ${ex.toString()}`)
   })
-})
+}
 
 app.get('/', function(req, res) {
     res.send('everything ok')
@@ -110,6 +113,7 @@ app.patch('/services', function(req, res) {
     if (!error && response.statusCode == 200) {
       modify.modifyService(env, service, url)
       .then((json) => {
+        console.log('sending response json', json)
         res.send(json)
       })
       .catch((ex) => {
