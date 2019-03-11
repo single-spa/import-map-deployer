@@ -1,7 +1,6 @@
-FROM canopytax/minimal-node
+FROM mhart/alpine-node:10
 COPY . /www/
 WORKDIR /www
 EXPOSE 5000
-RUN npm install
-CMD npm start
-
+RUN yarn install
+CMD yarn start

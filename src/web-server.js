@@ -74,7 +74,10 @@ app.get('/environments', function(req, res) {
   }
 })
 
-app.get('/sofe-manifest.json', function(req, res) {
+app.get('/sofe-manifest.json', handleGetManifest)
+app.get('/import-map.json', handleGetManifest)
+
+function handleGetManifest(req, res) {
   let env = getEnv(req)
   ioOperations.readManifest(env)
   .then((data) => {
@@ -85,7 +88,7 @@ app.get('/sofe-manifest.json', function(req, res) {
     console.error(ex)
     res.status(500).send(`Could not read manifest file -- ${ex.toString()}`)
   })
-})
+}
 
 app.get('/', function(req, res) {
     res.send('everything ok')

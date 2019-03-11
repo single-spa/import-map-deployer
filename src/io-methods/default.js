@@ -4,7 +4,7 @@ const _ = require('lodash')
     , s3 = require('./s3')
     , config = require('../config').config
 
-const defaultFilePath = 'sofe-manifest.json'
+const defaultFilePath = config && config.manifestFormat === 'import-map' ? 'import-map.json' : 'sofe-manifest.json'
 
 function getFilePath(env) {
   if ( _.has(config, ['locations', env]) ) {
