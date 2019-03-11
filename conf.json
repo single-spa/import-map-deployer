@@ -1,5 +1,5 @@
 {
-  "manifestFormat": "import-map",
+  "manifestFormat": "sofe",
   "locations": {
     "default": "sofe-manifest.json",
     "test": "sofe-manifest2.json"

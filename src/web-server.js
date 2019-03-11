@@ -113,7 +113,6 @@ app.patch('/services', function(req, res) {
     if (!error && response.statusCode == 200) {
       modify.modifyService(env, service, url)
       .then((json) => {
-        console.log('sending response json', json)
         res.send(json)
       })
       .catch((ex) => {
