@@ -7,6 +7,7 @@ const config = require('./config').config
 const isImportMap = config && config.manifestFormat === 'import-map'
 
 function getMapFromManifest(manifest) {
+  console.log('config.manifestFormat', config.manifestFormat)
   return isImportMap ? manifest.imports : manifest.sofe.manifest
 }
 

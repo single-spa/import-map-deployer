@@ -15,7 +15,7 @@ Example conf.js
 exports = {
     username: "admin",
     password: "1234",
-    manifestFormat: "sofe|importmap",
+    manifestFormat: "sofe|import-map",
     readManifest: function() {
         return new Promise((resolve, reject) => {
             const manifest = ''; //read a string from somewhere
@@ -38,7 +38,7 @@ Example config.json
   "username":"admin",
   "password":"1234",
   "region": "us-west-2",
-  "manifestFormat": "sofe|importmap",
+  "manifestFormat": "sofe|import-map",
   "locations": {
     "default": "sofe-manifest.json",
     "prod": "s3://cdn.canopytax.com/sofe-manifest.json",

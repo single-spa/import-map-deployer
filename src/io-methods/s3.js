@@ -13,19 +13,24 @@ function parseFilePath(filePath) {
   let bucket = file.substr(0, file.indexOf('/'))
   let key = file.substr(file.indexOf('/') + 1)
   return {
-    bucket: bucket,
+    bucket: 'spa-modules',
     key: key
   }
 }
 
-const s3 = new aws.S3()
+const s3 = new aws.S3({
+  endpoint: 'https://nyc3.digitaloceanspaces.com',
+})
 exports.readManifest = function(filePath) {
   return new Promise(function(resolve, reject) {
     let file = parseFilePath(filePath)
     s3.getObject({Bucket: file.bucket, Key: file.key}, function(err, data) {
-      if (err)
+      if (err) {
         reject(err)
-      resolve(data.Body.toString())
+      } else {
+        console.log('data', data)
+        resolve(data.Body.toString())
+      }
     })
   })
 }
@@ -38,7 +43,8 @@ exports.writeManifest = function(filePath, data) {
         Key: file.key,
         Body: data,
         ContentType: 'application/json',
-        CacheControl: 'public, must-revalidate, max-age=0'
+        CacheControl: 'public, must-revalidate, max-age=0',
+        ACL: 'public-read',
     }, function(err) {
       if (err)
         reject(err)
@@ -59,7 +65,8 @@ exports.writeManifest = function(filePath, data) {
         Key: jsKey,
         Body: jsHelpers.createJsString(data),
         ContentType: 'application/javascript',
-        CacheControl: 'public, must-revalidate, max-age=0'
+        CacheControl: 'public, must-revalidate, max-age=0',
+        ACL: 'public-read',
       }, function(err) {
         if (err)
           reject(err)
