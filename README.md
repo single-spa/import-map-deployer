@@ -142,13 +142,13 @@ You can retrieve the list of environments (locations) a GET request at /environm
 
 Example using [HTTPie](https://github.com/jkbrzt/httpie):
 
-```bash
+```sh
 http :5000/environments
 ```
 
 Example using cURL:
 
-```bash
+```sh
 curl localhost:5000/environments
 ```
 
