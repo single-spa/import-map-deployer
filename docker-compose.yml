@@ -1,0 +1,11 @@
+version: '3.7'
+services:
+   sofe-deplanifester:
+        build:
+          context: ./
+        ports:
+          - 5000:5000
+        ## Make sure you have the config.json file created in this directory
+        ## If using conf.js make sure to create it and add it as a volume
+        volumes:
+          - ./config.json:/www/config.json
