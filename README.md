@@ -41,7 +41,7 @@ Here are the properties available in the config file:
   in S3.
 - `readManifest(env)` (optional): A javascript function that will be called to read the import map. One argument is provided, a string `env` indicating
   which location to read from. This allows you to implement your own way of reading the import map. The function must return
-  a Promise that resolves with the import map as an object. Since javascript functions are not part of JSON, this option is only available if you provide a config.js file (instead
+  a Promise that resolves with the import map as a **string**. Since javascript functions are not part of JSON, this option is only available if you provide a config.js file (instead
   of config.json).
 - `writeManifest(importMapAsString, env)` (optional): A javascript function that will be called to write the import map. Two arguments are provided, 
   the first being the import map as a string to be written, and the second is the string `env` that should be updated. This allows you to implement your
