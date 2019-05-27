@@ -1,8 +1,0 @@
-{
-  "manifestFormat": "sofe",
-  "locations": {
-    "default": "sofe-manifest.json",
-    "test": "sofe-manifest2.json"
-  },
-  "writeJsFile": true
-}

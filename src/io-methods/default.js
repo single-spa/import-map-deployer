@@ -1,8 +1,8 @@
 'use strict'
 const _ = require('lodash')
-    , fs = require('./filesystem')
-    , s3 = require('./s3')
-    , config = require('../config').config
+const fs = require('./filesystem')
+const s3 = require('./s3')
+const config = require('../config').config
 
 const defaultFilePath = config && config.manifestFormat === 'import-map' ? 'import-map.json' : 'sofe-manifest.json'
 
@@ -18,7 +18,7 @@ function getFilePath(env) {
 
 exports.readManifest = function(env) {
   var filePath = getFilePath(env)
-  if ( _.startsWith(filePath, 's3://') ) {
+  if (useS3(filePath)) {
     //use s3
     return s3.readManifest(filePath)
   } else {
@@ -29,11 +29,15 @@ exports.readManifest = function(env) {
 
 exports.writeManifest = function(data, env) {
   var filePath = getFilePath(env)
-  if ( _.startsWith(filePath, 's3://') ) {
+  if (useS3(filePath)) {
     //use s3
     return s3.writeManifest(filePath, data)
   } else {
     //use local file
     return fs.writeManifest(filePath, data)
   }
+}
+
+function useS3(filePath) {
+  return filePath.startsWith('spaces://') || filePath.startsWith('s3://')
 }

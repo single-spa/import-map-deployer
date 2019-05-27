@@ -114,10 +114,6 @@ config.json:
 {
   "manifestFormat": "importmap",
   "region": "us-west-2",
-<<<<<<< HEAD
-  "manifestFormat": "sofe|import-map",
-=======
->>>>>>> origin/master
   "locations": {
     "prod": "s3://mycdn.com/import-map.json",
   }
