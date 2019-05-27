@@ -21,17 +21,15 @@ function parseFilePath(filePath) {
   }
 }
 
-const digitalOceanEndpoint = 'https://nyc3.digitaloceanspaces.com'
-
 const s3 = new aws.S3()
 
 exports.readManifest = function(filePath) {
   return new Promise(function(resolve, reject) {
     let file = parseFilePath(filePath)
     s3.getObject({
+      endpoint: config.s3Endpoint,
       Bucket: file.bucket,
       Key: file.key,
-      endpoint: isDigitalOcean(filePath) ? digitalOceanEndpoint : null
     }, function(err, data) {
       if (err) {
         reject(err)
@@ -46,7 +44,7 @@ exports.writeManifest = function(filePath, data) {
   const jsonPromise = new Promise(function(resolve, reject) {
     const file = parseFilePath(filePath)
     s3.putObject({
-      endpoint: isDigitalOcean(filePath) ? digitalOceanEndpoint : null,
+      endpoint: config.s3Endpoint,
       Bucket: file.bucket,
       Key: file.key,
       Body: data,
@@ -69,7 +67,7 @@ exports.writeManifest = function(filePath, data) {
       const jsKey = jsHelpers.getJsPath(file.key);
 
       s3.putObject({
-        endpoint: isDigitalOcean(filePath) ? digitalOceanEndpoint : null,
+        endpoint: config.s3Endpoint,
         Bucket: file.bucket,
         Key: jsKey,
         Body: jsHelpers.createJsString(data),

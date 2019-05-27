@@ -37,8 +37,8 @@ Here are the properties available in the config file:
   username *is not* related to authenticating with S3/Digital Ocean/Other, but rather is the username your CI process will use in its HTTP request to the import-map-deployer.
 - `password` (optional): The password for HTTP auth when calling the import-map-deployer. If username and password are omitted, anyone can update the import map without authenticating. This
   password *is not* related to authenticating with S3/Digital Ocean/Other, but rather is the password your CI process will use in its HTTP request to the import-map-deployer.
-- `region` (optional): The [AWS region](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html) to be used when retrieving and updating the import map
-  in S3.
+- `region` (optional): The [AWS region](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html) to be used when retrieving and updating the import map.
+  This can also be specified via the [AWS_DEFAULT_REGION environment variable](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-envvars.html), which is the preferred method.
 - `readManifest(env)` (optional): A javascript function that will be called to read the import map. One argument is provided, a string `env` indicating
   which location to read from. This allows you to implement your own way of reading the import map. The function must return
   a Promise that resolves with the import map as a **string**. Since javascript functions are not part of JSON, this option is only available if you provide a config.js file (instead
@@ -59,7 +59,6 @@ The below configuration file will set up the import-map-deployer to do the follo
 {
   "username": "admin",
   "password": "1234",
-  "region": "us-west-2",
   "manifestFormat": "importmap|sofe",
   "locations": {
     "default": "import-map.json",
@@ -100,9 +99,9 @@ exports = {
 ## Built-in IO Methods
 The import-map-deployer knows how to update import maps that are stored in the following ways:
 
-#### AWS S3
+### AWS S3
 If your import map json file is hosted by AWS S3, you can use the import-map-deployer to modify the import map file
-by specifying in your config `s3://` in the `locations` config object and by providing a `region`.
+by specifying in your config `s3://` in the `locations` config object.
 
 The format of the string is `s3://bucket-name/file-name.json`
 
@@ -113,14 +112,38 @@ config.json:
 ```json
 {
   "manifestFormat": "importmap",
-  "region": "us-west-2",
   "locations": {
     "prod": "s3://mycdn.com/import-map.json",
   }
 }
 ```
 
-## File system
+### Digital Ocean Spaces
+If your import map json file is hosted by Digital Ocean Spaces, you can use the import-map-deployer to modify the import map file
+by specifying in your config `spaces://` in the `locations` config object.
+
+The format of the string is `spaces://bucket-name.digital-ocean-domain-stuff.com/file-name.json`. Note that the name of the Bucket
+is everything after `spaces://` and before the first `.` character.
+
+Since the API Digital Ocean Spaces is compatible with the AWS S3 API, import-map-deployer uses `aws-sdk` to communicate with Digital Ocean Spaces. As such,
+all options that can be passed for AWS S3 also are applied to Digital Ocean Spaces. You need to provide
+[AWS CLI environment variables](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-envvars.html) for authentication with Digital Ocean Spaces, since
+import-map-deployer is using `aws-sdk` to communicate with Digital Ocean.
+
+Instead of an AWS region, you should provide an `s3Endpoint` config value that points to a Digital Ocean region.
+
+config.json:
+```json
+{
+  "manifestFormat": "importmap",
+  "s3Endpoint": "https://nyc3.digitaloceanspaces.com",
+  "locations": {
+    "prod": "spaces://mycdn.com/import-map.json",
+  }
+}
+```
+
+### File system
 If you'd like to store the import map locally on the file system, provide the name of a file in your `locations` instead.
 
 ```json
