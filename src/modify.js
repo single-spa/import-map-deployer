@@ -4,7 +4,7 @@ const lock = new (require('rwlock'))()
 const ioOperations = require('./io-operations.js')
 const config = require('./config').config
 
-const isImportMap = config && config.manifestFormat === 'import-map'
+const isImportMap = config && (config.manifestFormat === 'import-map' || config.manifestFormat === 'importmap')
 
 function getMapFromManifest(manifest) {
   return isImportMap ? manifest.imports : manifest.sofe.manifest
