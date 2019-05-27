@@ -4,7 +4,7 @@ const fs = require('./filesystem')
 const s3 = require('./s3')
 const config = require('../config').config
 
-const defaultFilePath = config && config.manifestFormat === 'import-map' ? 'import-map.json' : 'sofe-manifest.json'
+const defaultFilePath = config && config.manifestFormat === 'importmap' ? 'import-map.json' : 'sofe-manifest.json'
 
 function getFilePath(env) {
   if ( _.has(config, ['locations', env]) ) {
