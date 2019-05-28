@@ -4,28 +4,39 @@ const aws = require('aws-sdk'),
   config = require('../config').config,
   jsHelpers = require('./js-file-helpers.js')
 
-if ( config) {
+if (config && config.region) {
   aws.config.update({'region': config.region})
 }
 
 function parseFilePath(filePath) {
-  let file = filePath.split('s3://')[1]
-  let bucket = file.substr(0, file.indexOf('/'))
-  let key = file.substr(file.indexOf('/') + 1)
+  const prefix = isDigitalOcean(filePath) ? 'spaces://' : 's3://'
+  const file = filePath.split(prefix)[1]
+  const bucketDelimiter = isDigitalOcean(filePath) ? '.' : '/'
+  const bucket = file.substr(0, file.indexOf(bucketDelimiter))
+  const key = file.substr(file.indexOf('/') + 1)
+
   return {
-    bucket: bucket,
-    key: key
+    bucket,
+    key,
   }
 }
 
-const s3 = new aws.S3()
+const s3 = new aws.S3({
+  endpoint: config.s3Endpoint,
+})
+
 exports.readManifest = function(filePath) {
   return new Promise(function(resolve, reject) {
     let file = parseFilePath(filePath)
-    s3.getObject({Bucket: file.bucket, Key: file.key}, function(err, data) {
-      if (err)
+    s3.getObject({
+      Bucket: file.bucket,
+      Key: file.key,
+    }, function(err, data) {
+      if (err) {
         reject(err)
-      resolve(data.Body.toString())
+      } else {
+        resolve(data.Body.toString())
+      }
     })
   })
 }
@@ -34,11 +45,12 @@ exports.writeManifest = function(filePath, data) {
   const jsonPromise = new Promise(function(resolve, reject) {
     const file = parseFilePath(filePath)
     s3.putObject({
-        Bucket: file.bucket,
-        Key: file.key,
-        Body: data,
-        ContentType: 'application/json',
-        CacheControl: 'public, must-revalidate, max-age=0'
+      Bucket: file.bucket,
+      Key: file.key,
+      Body: data,
+      ContentType: 'application/json',
+      CacheControl: 'public, must-revalidate, max-age=0',
+      ACL: 'public-read',
     }, function(err) {
       if (err)
         reject(err)
@@ -59,7 +71,8 @@ exports.writeManifest = function(filePath, data) {
         Key: jsKey,
         Body: jsHelpers.createJsString(data),
         ContentType: 'application/javascript',
-        CacheControl: 'public, must-revalidate, max-age=0'
+        CacheControl: 'public, must-revalidate, max-age=0',
+        ACL: 'public-read',
       }, function(err) {
         if (err)
           reject(err)
@@ -68,6 +81,9 @@ exports.writeManifest = function(filePath, data) {
       })
     }
   })
-
   return Promise.all([jsonPromise, jsPromise])
+}
+
+function isDigitalOcean(filePath) {
+  return filePath.startsWith('spaces://')
 }
