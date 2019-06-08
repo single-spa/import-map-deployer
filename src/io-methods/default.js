@@ -19,7 +19,7 @@ function getFilePath(env) {
 
 exports.readManifest = function(env) {
   var filePath = getFilePath(env)
-  console.log(filePath, usesAzure(filePath));
+  
   if (usesAzure(filePath)) {
     //uses azure
     return azure.readManifest(filePath);
