@@ -1,7 +1,14 @@
 const azure = require("azure-storage");
-const blobService = azure.createBlobService();
+let blobService;
+
+function getBlobService() {
+  blobService = azure.createBlobService();
+  return blobService;
+}
 
 exports.readManifest = function(target) {
+  const blobService = getBlobService();
+
   return new Promise(function(resolve, reject) {
     blobService.getBlobToText(target.azureContainer, target.azureBlob, function(
       error,
@@ -14,6 +21,8 @@ exports.readManifest = function(target) {
 };
 
 exports.writeManifest = function(target, content) {
+  const blobService = getBlobService();
+  
   return new Promise(function(resolve, reject) {
     blobService.createBlockBlobFromText(
       target.azureContainer,
