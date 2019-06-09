@@ -2,7 +2,7 @@ const azure = require("azure-storage");
 let blobService;
 
 function getBlobService() {
-  blobService = azure.createBlobService();
+  blobService = blobService || azure.createBlobService();
   return blobService;
 }
 
