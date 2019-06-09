@@ -2,6 +2,7 @@
 const _ = require('lodash')
 const fs = require('./filesystem')
 const s3 = require('./s3')
+const azure = require('./azure');
 const config = require('../config').config
 
 const defaultFilePath = config && config.manifestFormat === 'importmap' ? 'import-map.json' : 'sofe-manifest.json'
@@ -18,7 +19,11 @@ function getFilePath(env) {
 
 exports.readManifest = function(env) {
   var filePath = getFilePath(env)
-  if (useS3(filePath)) {
+  
+  if (usesAzure(filePath)) {
+    //uses azure
+    return azure.readManifest(filePath);
+  } else if (useS3(filePath)) {
     //use s3
     return s3.readManifest(filePath)
   } else {
@@ -29,13 +34,21 @@ exports.readManifest = function(env) {
 
 exports.writeManifest = function(data, env) {
   var filePath = getFilePath(env)
-  if (useS3(filePath)) {
+
+  if (usesAzure(filePath)) {
+    //uses azure
+    return azure.writeManifest(filePath, data);
+  } else if (useS3(filePath)) {
     //use s3
     return s3.writeManifest(filePath, data)
   } else {
     //use local file
     return fs.writeManifest(filePath, data)
   }
+}
+
+function usesAzure(filePath) {
+  return _.isObject(filePath) && filePath.azureContainer && filePath.azureBlob;
 }
 
 function useS3(filePath) {

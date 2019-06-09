@@ -22,6 +22,7 @@
   "homepage": "https://github.com/CanopyTax/sofe-deplanifester#readme",
   "dependencies": {
     "aws-sdk": "^2.2.27",
+    "azure-storage": "^2.10.3",
     "basic-auth": "^1.0.3",
     "body-parser": "^1.14.2",
     "express": "^4.13.3",
@@ -32,17 +33,9 @@
     "rwlock": "^5.0.0"
   },
   "devDependencies": {
-    "babel-core": "^6.5.2",
-    "babel-eslint": "^5.0.0-beta6",
-    "babel-loader": "^6.2.3",
-    "css-loader": "^0.23.1",
-    "elm-webpack-loader": "^2.0.0",
-    "file-loader": "^0.8.5",
     "jasmine": "^2.4.1",
     "node-static": "^0.7.9",
-    "style-loader": "^0.13.0",
-    "superagent": "^1.6.1",
-    "webpack": "^2.0.7-beta"
+    "superagent": "^1.6.1"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org"

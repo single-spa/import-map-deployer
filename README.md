@@ -2,7 +2,7 @@
 The import-map-deployer is a backend service that updates [import map json files](https://github.com/WICG/import-maps#installation). When using
 import-map-deployer, a frontend deployment is completed in two steps:
 
-1. Upload a javascript file to a static server or CDN, such as AWS S3, Digital Ocean Spaces, or similar.
+1. Upload a javascript file to a static server or CDN, such as AWS S3, Azure Storage, Digital Ocean Spaces, or similar.
 2. Make an HTTP request (e.g. via `curl` or `httpie`) to modify an existing import map to point to the new file.
 
 These two steps are often performed during a CI process, to automate deployments of frontend code.
@@ -141,6 +141,22 @@ config.json:
   "s3Endpoint": "https://nyc3.digitaloceanspaces.com",
   "locations": {
     "prod": "spaces://mycdn.com/import-map.json",
+  }
+}
+```
+
+### Azure Storage
+Note, that you must have environment variables `AZURE_STORAGE_ACCOUNT` and `AZURE_STORAGE_ACCESS_KEY`, or `AZURE_STORAGE_CONNECTION_STRING` defined for authentication.
+
+config.json:
+```json
+{
+  "manifestFormat": "importmap",
+  "locations": {
+    "prod": {
+      "azureContainer": "static",
+      "azureBlob": "import-map.js"
+    },
   }
 }
 ```
