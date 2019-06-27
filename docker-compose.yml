@@ -1,6 +1,6 @@
 version: '3.7'
 services:
-   sofe-deplanifester:
+   import-map-deployer:
         build:
           context: ./
         ports:
