@@ -131,11 +131,8 @@ app.patch('/import-map.json', (req, res) => {
     throw Error(`The following url in the request body is not reachable: ${url}`)
   }))
 
-  console.log('here1')
   Promise.all(validImportUrlPromises).then(() => {
-    console.log('here2')
     modify.modifyMultipleServices(env, req.body.imports).then((newImportMap => {
-      console.log('here3')
       res.status(200).send(newImportMap)
     })).catch(err => {
       console.error(err)

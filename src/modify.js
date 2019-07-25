@@ -79,10 +79,8 @@ exports.modifyMultipleServices = function(env, newImports) {
           Object.assign(imports, newImports)
 
           const newImportMapString = JSON.stringify(json, null, 2)
-          console.log(newImportMapString)
           return ioOperations.writeManifest(newImportMapString, env)
             .then(() => {
-              console.log('finished writing releasing now')
               releaseLock()
               return json
             })
