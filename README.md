@@ -23,7 +23,7 @@ To run the import-map-deployer in Node, run the following command:
 The import-map-deployer expects a configuration file to be present so it (1) can password protect deployments, and (2) knows where and how
 to download and update the "live" import map.
 
-If no configuration file is present, sofe-deplanifester defaults to using the filesystem to host the manifest file, which is called `sofe-manifest.json` and created in the current working directory. If username and password are included, http basic auth will be required. If username and password is not provided, no http auth will be needed.
+If no configuration file is present, import-map-deployer defaults to using the filesystem to host the manifest file, which is called `sofe-manifest.json` and created in the current working directory. If username and password are included, http basic auth will be required. If username and password is not provided, no http auth will be needed.
 
 Here are the properties available in the config file:
 - `manifestFormat` (required): A string that is either `"importmap"` or `"sofe"`, which indicates whether the import-map-deployer is
@@ -216,17 +216,36 @@ Response:
 }
 ```
 
-#### GET /sofe-manifest.json?env=prod
+#### GET /import-map.json?env=prod
 
-You can request the sofe-manifest.json file by making a GET request at /sofe-manifest.json
+You can request the importmap.json file by making a GET request.
 
 Example using [HTTPie](https://github.com/jkbrzt/httpie):
 
-    http :5000/sofe-manifest.json\?env=prod
+    http :5000/import-map.json\?env=prod
 
 Example using cURL:
 
-    curl localhost:5000/sofe-manifest.json\?env=prod
+    curl localhost:5000/import-map.json\?env=prod
+
+#### PATCH /import-map.json?env=prod
+
+You can modify the import map by making a PATCH request. The import map should be sent in the HTTP request body
+and will be merged into the import map controlled by import-map-deployer.
+
+If you have an import map called `importmap.json`, here is how you can merge it into the import map deployer's import map.
+
+Example using [HTTPie](https://github.com/jkbrzt/httpie):
+
+```sh
+http PATCH :5000/import-map.json\?env=prod < importmap.json
+```
+
+Example using cURL:
+
+```sh
+curl -X PATCH localhost:5000/import-map.json\?env=prod --data "@import-map.json" -H "Accept: application/json" -H "Content-Type: application/json"
+```
 
 #### PATCH /services?env=stage
 
@@ -241,22 +260,31 @@ You can PATCH services to add or update a service, the following json body is ex
 
 Example using HTTPie:
 
-    http PATCH :5000/services\?env=stage service=my-service url=http://example.com/my-service.js
+```sh
+http PATCH :5000/services\?env=stage service=my-service url=http://example.com/my-service.js
+```
 
 Example using cURL:
 
-    curl -d '{ "service":"my-service","url":"http://example.com/my-service.js" }' -X PATCH localhost:5000/services\?env=beta -H "Accept: application/json" -H "Content-Type: application/json"
+```sh
+curl -d '{ "service":"my-service","url":"http://example.com/my-service.js" }' -X PATCH localhost:5000/services\?env=beta -H "Accept: application/json" -H "Content-Type: application/json"
+```
 
 #### DELETE /services/{SERVICE_NAME}?env=alpha
 
 You can remove a service by sending a DELETE with the service name. No request body needs to be sent. Example:
 
-    DELETE /services/my-service
+```sh
+DELETE /services/my-service
+```
 
 Example using HTTPie:
 
-    http DELETE :5000/services/my-service
+```sh
+http DELETE :5000/services/my-service
+```
 
 Example using cURL:
 
-    curl -X DELETE localhost:5000/services/my-service
+```sh
+curl -X DELETE localhost:5000/services/my-service

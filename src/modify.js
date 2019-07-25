@@ -60,3 +60,39 @@ exports.modifyService = function(env, serviceName, url, remove) {
     })
   })
 }
+
+exports.modifyMultipleServices = function(env, newImports) {
+  return new Promise((resolve, reject) => {
+    lock.writeLock(releaseLock => {
+      const resultPromise = ioOperations.readManifest(env)
+        .then(data => {
+          let json
+          try {
+            json = data ? JSON.parse(data) : getEmptyManifest()
+          } catch (err) {
+            releaseLock()
+            reject('Could not read import map -- ' + err)
+            return
+          }
+
+          const imports = getMapFromManifest(json)
+          Object.assign(imports, newImports)
+
+          const newImportMapString = JSON.stringify(json, null, 2)
+          console.log(newImportMapString)
+          return ioOperations.writeManifest(newImportMapString, env)
+            .then(() => {
+              console.log('finished writing releasing now')
+              releaseLock()
+              return json
+            })
+        })
+        .catch(err => {
+          releaseLock()
+          throw err
+        })
+
+      resolve(resultPromise)
+    })
+  })
+}
