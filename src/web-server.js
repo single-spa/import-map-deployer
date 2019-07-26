@@ -12,6 +12,9 @@ const express = require('express')
     , _ = require('lodash')
     , request = require('request')
     , morgan = require('morgan')
+    , util = require('util')
+
+const requestAsPromise = util.promisify(request)
 
 healthCheck.runCheck()
 .catch((ex) => {
@@ -90,8 +93,58 @@ function handleGetManifest(req, res) {
   })
 }
 
+app.patch('/import-map.json', (req, res) => {
+  const env = getEnv(req)
+
+  try {
+    req.body = JSON.parse(req.body)
+  } catch (err) {
+    console.error(err)
+    res.status(400).send("Patching the import map requires a json request body")
+    return
+  }
+
+  if (req.body.scopes) {
+    res.status(400).send("import-map-deployer does not support import map scopes")
+    return
+  }
+
+  if (!req.body.imports || Object.keys(req.body.imports).length === 0) {
+    res.status(400).send("Invalid import map in request body -- 'imports' object required with modules in it.")
+    return
+  }
+
+  for (let moduleName in req.body.imports) {
+    if (typeof req.body.imports[moduleName] !== 'string') {
+      res.status(400).send(`Invalid import map in request body -- module with name '${moduleName}' does not have a string url`)
+      return
+    }
+  }
+
+  const importUrls = Object.values(req.body.imports)
+  const validImportUrlPromises = importUrls.map(url => requestAsPromise({url, strictSSL: false}).then(resp => {
+    if (resp.statusCode !== 200) {
+      throw Error(`The following url in the request body is not reachable: ${url}`)
+    }
+  }).catch(err => {
+    console.error(err)
+    throw Error(`The following url in the request body is not reachable: ${url}`)
+  }))
+
+  Promise.all(validImportUrlPromises).then(() => {
+    modify.modifyMultipleServices(env, req.body.imports).then((newImportMap => {
+      res.status(200).send(newImportMap)
+    })).catch(err => {
+      console.error(err)
+      res.status(500).send(`Could not update import map`)
+    })
+  }).catch(err => {
+    res.status(400).send(err.message)
+  })
+})
+
 app.get('/', function(req, res) {
-    res.send('everything ok')
+  res.send('everything ok')
 })
 
 app.patch('/services', function(req, res) {

@@ -60,3 +60,30 @@ exports.modifyService = function(env, serviceName, url, remove) {
     })
   })
 }
+
+exports.modifyMultipleServices = function(env, newImports) {
+  return new Promise((resolve, reject) => {
+    lock.writeLock(releaseLock => {
+      const resultPromise = ioOperations.readManifest(env)
+        .then(data => {
+          const json = data ? JSON.parse(data) : getEmptyManifest()
+
+          const imports = getMapFromManifest(json)
+          Object.assign(imports, newImports)
+
+          const newImportMapString = JSON.stringify(json, null, 2)
+          return ioOperations.writeManifest(newImportMapString, env)
+            .then(() => {
+              releaseLock()
+              return json
+            })
+        })
+        .catch(err => {
+          releaseLock()
+          throw err
+        })
+
+      resolve(resultPromise)
+    })
+  })
+}
