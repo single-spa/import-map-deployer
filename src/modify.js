@@ -66,14 +66,7 @@ exports.modifyMultipleServices = function(env, newImports) {
     lock.writeLock(releaseLock => {
       const resultPromise = ioOperations.readManifest(env)
         .then(data => {
-          let json
-          try {
-            json = data ? JSON.parse(data) : getEmptyManifest()
-          } catch (err) {
-            releaseLock()
-            reject('Could not read import map -- ' + err)
-            return
-          }
+          const json = data ? JSON.parse(data) : getEmptyManifest()
 
           const imports = getMapFromManifest(json)
           Object.assign(imports, newImports)

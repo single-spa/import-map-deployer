@@ -288,3 +288,4 @@ Example using cURL:
 
 ```sh
 curl -X DELETE localhost:5000/services/my-service
+```
