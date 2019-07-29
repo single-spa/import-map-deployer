@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/CanopyTax/sofe-deplanifester#readme",
   "dependencies": {
+    "@google-cloud/storage": "^3.0.3",
     "aws-sdk": "^2.2.27",
     "azure-storage": "^2.10.3",
     "basic-auth": "^1.0.3",
