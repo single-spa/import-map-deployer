@@ -3,6 +3,7 @@ const _ = require('lodash')
 const fs = require('./filesystem')
 const s3 = require('./s3')
 const azure = require('./azure');
+const google = require('./google-cloud-storage');
 const config = require('../config').config
 
 const defaultFilePath = config && config.manifestFormat === 'importmap' ? 'import-map.json' : 'sofe-manifest.json'
@@ -23,6 +24,8 @@ exports.readManifest = function(env) {
   if (usesAzure(filePath)) {
     //uses azure
     return azure.readManifest(filePath);
+  } else if (usesGoogle(filePath)) {
+    return google.readManifest(filePath)
   } else if (useS3(filePath)) {
     //use s3
     return s3.readManifest(filePath)
@@ -38,6 +41,8 @@ exports.writeManifest = function(data, env) {
   if (usesAzure(filePath)) {
     //uses azure
     return azure.writeManifest(filePath, data);
+  } else if (usesGoogle(filePath)) {
+    return google.writeManifest(filePath, data)
   } else if (useS3(filePath)) {
     //use s3
     return s3.writeManifest(filePath, data)
@@ -53,4 +58,8 @@ function usesAzure(filePath) {
 
 function useS3(filePath) {
   return filePath.startsWith('spaces://') || filePath.startsWith('s3://')
+}
+
+function usesGoogle(filePath) {
+  return filePath.startsWith('google://')
 }

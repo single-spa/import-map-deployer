@@ -155,8 +155,21 @@ config.json:
   "locations": {
     "prod": {
       "azureContainer": "static",
-      "azureBlob": "import-map.js"
+      "azureBlob": "importmap.json"
     },
+  }
+}
+```
+
+### Google Cloud Storage
+Note that you must have the `GOOGLE_APPLICATION_CREDENTIALS` environment variable set for authentication.
+
+config.json:
+```json
+{
+  "manifestFormat": "importmap",
+  "locations": {
+    "prod": "google://name-of-bucket/importmap.json"
   }
 }
 ```
