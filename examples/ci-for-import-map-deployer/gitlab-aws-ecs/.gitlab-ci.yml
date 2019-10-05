@@ -32,7 +32,7 @@ build:
 
 .deploy:
   stage: deploy
-  image: registry.gitlab.com/jump-software/aws-tools:latest
+  image: registry.gitlab.com/my-company/aws-tools:latest
   script:
     - ecs deploy --no-deregister $CI_ENVIRONMENT_NAME $CI_PROJECT_NAME --image $CI_PROJECT_NAME "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA"
   only:
@@ -42,7 +42,7 @@ deploy:staging:
   extends: .deploy
   environment:
     name: staging
-    url: https://deployer.$CI_ENVIRONMENT_NAME.jumpsoftware.com
+    url: https://deployer.$CI_ENVIRONMENT_NAME.somecompany.com
   before_script:
     - echo deploying to $CI_ENVIRONMENT_NAME
 
@@ -50,7 +50,7 @@ deploy:production:
   extends: .deploy
   environment:
     name: production
-    url: https://deployer.jumpsoftware.com
+    url: https://deployer.somecompany.com
   before_script:
     - echo deploying to $CI_ENVIRONMENT_NAME
   when: manual
