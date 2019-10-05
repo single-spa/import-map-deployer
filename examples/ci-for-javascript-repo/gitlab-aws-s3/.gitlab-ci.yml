@@ -33,13 +33,13 @@ build:
       - build
 
 .deploy:
-  image: registry.gitlab.com/jump-software/aws-tools:latest
+  image: registry.gitlab.com/mycompany/aws-tools:latest
   before_script:
     - echo "Commit sha is $CI_COMMIT_SHORT_SHA. This will be the directory name under $CI_PROJECT_NAME in S3."
   script:
     - aws s3 sync build/ s3://$DEPLOYER_BUCKET/$CI_PROJECT_NAME/$CI_COMMIT_SHORT_SHA --cache-control max-age=31536000
     - echo "Updating import map"
-    - curl -u $DEPLOYER_USERNAME:$DEPLOYER_PASSWORD -d '{ "service":"@jump/'"$CI_PROJECT_NAME"'","url":"https://'"$CF_PUBLIC_URL"'/'"$CI_PROJECT_NAME"'/'"$CI_COMMIT_SHORT_SHA"'/'"$CI_PROJECT_NAME"'.js" }' -X PATCH https://$DEPLOYER_HOST/services\?env=$CI_ENVIRONMENT_NAME -H "Accept:application/json" -H "Content-Type:application/json"
+    - curl -u $DEPLOYER_USERNAME:$DEPLOYER_PASSWORD -d '{ "service":"@mycompany/'"$CI_PROJECT_NAME"'","url":"https://'"$CF_PUBLIC_URL"'/'"$CI_PROJECT_NAME"'/'"$CI_COMMIT_SHORT_SHA"'/'"$CI_PROJECT_NAME"'.js" }' -X PATCH https://$DEPLOYER_HOST/services\?env=$CI_ENVIRONMENT_NAME -H "Accept:application/json" -H "Content-Type:application/json"
   dependencies:
     - build
   only:
@@ -53,7 +53,7 @@ deploy-stage:
   variables:
     DEPLOYER_BUCKET: '$STAGING_SINGLESPA_BUCKET'
     DEPLOYER_HOST: '$STAGING_DEPLOYER_HOST'
-    CF_PUBLIC_URL: app.staging.jumpsoftware.com
+    CF_PUBLIC_URL: app.staging.somecompany.com
 
 deploy-prod:
   extends: .deploy
@@ -63,5 +63,5 @@ deploy-prod:
   variables:
     DEPLOYER_BUCKET: '$PRODUCTION_SINGLESPA_BUCKET'
     DEPLOYER_HOST: '$PRODUCTION_DEPLOYER_HOST'
-    CF_PUBLIC_URL: app.jumpsoftware.com
+    CF_PUBLIC_URL: app.somecompany.com
   when: manual
