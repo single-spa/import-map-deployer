@@ -6,14 +6,14 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: redx-import-map-deployer
-  name: redx-import-map-deployer
+    app: import-map-deployer
+  name: import-map-deployer
 spec:
   replicas: 1
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-      app: redx-import-map-deployer
+      app: import-map-deployer
       team: two
       web: "true"
   strategy:
@@ -25,7 +25,7 @@ spec:
     metadata:
       creationTimestamp: null
       labels:
-        app: redx-import-map-deployer
+        app: import-map-deployer
         team: two
         web: "true"
     spec:
@@ -38,7 +38,7 @@ spec:
                 - key: app
                   operator: In
                   values:
-                  - redx-import-map-deployer
+                  - import-map-deployer
               topologyKey: kubernetes.io/hostname
             weight: 100
       containers:
@@ -69,7 +69,7 @@ spec:
             secretKeyRef:
               name: import-map-secrets
               key: prod_import_map_url
-        image: greenseedtech/redx-import-map-deployer:{{ tag }}
+        image: mycompanyname/import-map-deployer
         imagePullPolicy: Always
         lifecycle:
           preStop:
@@ -77,32 +77,15 @@ spec:
               command:
               - sleep
               - "10"
-        name: redx-import-map-deployer
+        name: import-map-deployer
         ports:
         - containerPort: 5000
           protocol: TCP
         resources: {}
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
-      imagePullSecrets:
-        - name: dockerhub-regcred
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       schedulerName: default-scheduler
       securityContext: {}
       terminationGracePeriodSeconds: 30
-
----
-
-apiVersion: autoscaling/v1
-kind: HorizontalPodAutoscaler
-metadata:
-  name: redx-import-map-deployer
-spec:
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: redx-import-map-deployer
-  minReplicas: 3
-  maxReplicas: 9
-  targetCPUUtilizationPercentage: 60
