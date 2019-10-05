@@ -11,7 +11,7 @@ stages:
     # - deploy-prod
 
 variables:
-  REPO_NAME: greenseedtech/redx-import-map-deployer
+  REPO_NAME: mycompanyname/import-map-deployer
   CONTAINER_IMAGE: $REPO_NAME:$CI_COMMIT_SHA
 
 build:
