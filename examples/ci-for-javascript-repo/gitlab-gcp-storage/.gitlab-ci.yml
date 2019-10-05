@@ -42,7 +42,7 @@ build:
     - gcloud auth activate-service-account --key-file google-application-credentials.json
     - gsutil cp ./dist/** gs://$DEPLOYER_BUCKET/$CI_PROJECT_NAME/$CI_COMMIT_SHORT_SHA
     - echo "Updating import map"
-    - echo '{ "service":"@redx/'"$CI_PROJECT_NAME"'","url":"https://'"$CF_PUBLIC_URL"'/'"$CI_PROJECT_NAME"'/'"$CI_COMMIT_SHORT_SHA"'/'"$CI_PROJECT_NAME"'.js" }'
+    - echo '{ "service":"@mycompany/'"$CI_PROJECT_NAME"'","url":"https://'"$CF_PUBLIC_URL"'/'"$CI_PROJECT_NAME"'/'"$CI_COMMIT_SHORT_SHA"'/'"$CI_PROJECT_NAME"'.js" }'
     - curl -u $DEPLOYER_USERNAME:$DEPLOYER_PASSWORD -d '{ "service":"@redx/'"$CI_PROJECT_NAME"'","url":"https://'"$CF_PUBLIC_URL"'/'"$CI_PROJECT_NAME"'/'"$CI_COMMIT_SHORT_SHA"'/'"$CI_PROJECT_NAME"'.js" }' -X PATCH https://$DEPLOYER_HOST/services\?env=$CI_ENVIRONMENT_NAME -H "Accept:application/json" -H "Content-Type:application/json" --fail --insecure -i
   dependencies:
     - build
@@ -56,7 +56,7 @@ deploy-dev:
     name: dev
   variables:
     DEPLOYER_BUCKET: '$DEV_SINGLESPA_BUCKET'
-    CF_PUBLIC_URL: storage.googleapis.com/vortex-frontend-dev
+    CF_PUBLIC_URL: storage.googleapis.com/mycompany-frontend-dev
 
 deploy-stage:
   extends: .deploy
@@ -65,7 +65,7 @@ deploy-stage:
     name: stage
   variables:
     DEPLOYER_BUCKET: '$STAGING_SINGLESPA_BUCKET'
-    CF_PUBLIC_URL: storage.googleapis.com/vortex-frontend-stage
+    CF_PUBLIC_URL: storage.googleapis.com/mycompany-frontend-stage
 
 deploy-prod:
   extends: .deploy
@@ -74,4 +74,4 @@ deploy-prod:
     name: prod
   variables:
     DEPLOYER_BUCKET: '$PRODUCTION_SINGLESPA_BUCKET'
-    CF_PUBLIC_URL: storage.googleapis.com/vortex-frontend-prod
+    CF_PUBLIC_URL: storage.googleapis.com/mycompany-frontend-prod
