@@ -1,0 +1,31 @@
+# Originally copied from https://github.com/openmrs/openmrs-esm-login/blob/master/.travis.yml
+# See import map at https://openmrs-spa.org/openmrs/frontend/import-map.json
+
+language: node_js
+node_js:
+  - node
+script:
+  - npm run lint
+  - npm test
+  - npm run typescript
+  - npm run build
+  - echo "Folder name in Digital Ocean Spaces - $TRAVIS_COMMIT"
+  - mkdir -p dist/@openmrs/esm-login/$TRAVIS_COMMIT
+  - mv dist/*.* dist/@openmrs/esm-login/$TRAVIS_COMMIT/
+deploy:
+  provider: s3
+  access_key_id: "$DIGITAL_OCEAN_SPACES_KEY_ID"
+  secret_access_key: "$DIGITAL_OCEAN_SPACES_ACCESS_KEY"
+  bucket: "$DIGITAL_OCEAN_SPACES_BUCKET"
+  endpoint: "$DIGITAL_OCEAN_SPACES_ENDPOINT"
+  cache-control: "max-age=31536000"
+  local_dir: dist
+  skip_cleanup: true
+  acl: public_read
+  on:
+    branch: master
+after_deploy:
+  - echo "Updating import map to point to new version of @openmrs/esm-login"
+  - statuscode=$(curl --output /dev/null --write-out %{http_code} -u $DEPLOYER_USERNAME:$DEPLOYER_PASSWORD -d '{ "service":"@openmrs/esm-login","url":"https://spa-modules.nyc3.digitaloceanspaces.com/@openmrs/esm-login/'$TRAVIS_COMMIT'/openmrs-esm-login.js" }' -X PATCH $DEPLOYER_HOST/services\?env=prod -H "Accept:application/json" -H "Content-Type:application/json")
+  - echo "Deployment Status Code --> ${statuscode}"
+  - if [ "$statuscode" -ne 200 ]; then travis_terminate "$statuscode"; fi
