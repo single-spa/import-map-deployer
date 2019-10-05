@@ -1,0 +1,108 @@
+# Originall from REDX (closed source)
+# Note that this file is preprocessed by a script at runtime, so it doesn't work 100% out-of-the-box.
+# However, this will get you close to what you need
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: redx-import-map-deployer
+  name: redx-import-map-deployer
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: redx-import-map-deployer
+      team: two
+      web: "true"
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: redx-import-map-deployer
+        team: two
+        web: "true"
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - redx-import-map-deployer
+              topologyKey: kubernetes.io/hostname
+            weight: 100
+      containers:
+      # environment vars  go here ???
+      - env:
+        - name: HTTP_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: import-map-secrets
+              key: http_username
+        - name: HTTP_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: import-map-secrets
+              key: http_password
+        - name: DEV_IMPORT_MAP_URL
+          valueFrom:
+            secretKeyRef:
+              name: import-map-secrets
+              key: dev_import_map_url
+        - name: STAGE_IMPORT_MAP_URL
+          valueFrom:
+            secretKeyRef:
+              name: import-map-secrets
+              key: stage_import_map_url
+        - name: PROD_IMPORT_MAP_URL
+          valueFrom:
+            secretKeyRef:
+              name: import-map-secrets
+              key: prod_import_map_url
+        image: greenseedtech/redx-import-map-deployer:{{ tag }}
+        imagePullPolicy: Always
+        lifecycle:
+          preStop:
+            exec:
+              command:
+              - sleep
+              - "10"
+        name: redx-import-map-deployer
+        ports:
+        - containerPort: 5000
+          protocol: TCP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      imagePullSecrets:
+        - name: dockerhub-regcred
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+
+---
+
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: redx-import-map-deployer
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: redx-import-map-deployer
+  minReplicas: 3
+  maxReplicas: 9
+  targetCPUUtilizationPercentage: 60

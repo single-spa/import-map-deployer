@@ -1,0 +1,74 @@
+image: node
+
+stages:
+  - setup
+  - build
+  - deploy-dev
+  - deploy-stage
+  - deploy-prod
+
+install:
+  stage: setup
+  script: yarn install --frozen-lockfile
+  artifacts:
+    paths:
+      - node_modules
+
+test:
+  stage: build
+  script: yarn test
+  dependencies:
+    - install
+
+build:
+  stage: build
+  script: yarn build
+  dependencies:
+    - install
+  artifacts:
+    paths:
+      - dist
+
+.deploy:
+  image: google/cloud-sdk
+  script:
+    - echo "Creating google application credentials json file"
+    - echo $GOOGLE_APPLICATION_CREDENTIALS_JSON > google-application-credentials.json
+    - echo "Commit sha is $CI_COMMIT_SHORT_SHA. This will be the directory name under $CI_PROJECT_NAME in Cloud Storage."
+    - gcloud auth activate-service-account --key-file google-application-credentials.json
+    - gsutil cp ./dist/** gs://$DEPLOYER_BUCKET/$CI_PROJECT_NAME/$CI_COMMIT_SHORT_SHA
+    - echo "Updating import map"
+    - export NEW_FILE_URL=https://'"$CF_PUBLIC_URL"'/'"$CI_PROJECT_NAME"'/'"$CI_COMMIT_SHORT_SHA"'/'"$CI_PROJECT_NAME"'.js
+    - echo "The following file must exist for this to work $NEW_FILE_URL"
+    - curl -u $DEPLOYER_USERNAME:$DEPLOYER_PASSWORD -d '{ "service":"@redx/'"$CI_PROJECT_NAME"'","url":"$NEW_FILE_URL" }' -X PATCH https://$DEPLOYER_HOST/services\?env=$CI_ENVIRONMENT_NAME -H "Accept:application/json" -H "Content-Type:application/json" --fail --insecure -i
+  dependencies:
+    - build
+  only:
+    - master
+
+deploy-dev:
+  extends: .deploy
+  stage: deploy-dev
+  environment:
+    name: dev
+  variables:
+    DEPLOYER_BUCKET: '$DEV_SINGLESPA_BUCKET'
+    CF_PUBLIC_URL: storage.googleapis.com/vortex-frontend-dev
+
+deploy-stage:
+  extends: .deploy
+  stage: deploy-stage
+  environment:
+    name: stage
+  variables:
+    DEPLOYER_BUCKET: '$STAGING_SINGLESPA_BUCKET'
+    CF_PUBLIC_URL: storage.googleapis.com/vortex-frontend-stage
+
+deploy-prod:
+  extends: .deploy
+  stage: deploy-prod
+  environment:
+    name: prod
+  variables:
+    DEPLOYER_BUCKET: '$PRODUCTION_SINGLESPA_BUCKET'
+    CF_PUBLIC_URL: storage.googleapis.com/vortex-frontend-prod

@@ -1,0 +1,56 @@
+# Originall copied from Jump Software's import-map-deployer repo (closed source)
+
+image: docker:stable
+
+services:
+  - docker:dind
+  
+stages:
+  - build
+  - deploy
+
+before_script:
+  - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+
+build-master:
+  stage: build
+  script:
+    - docker build --pull -t "$CI_REGISTRY_IMAGE" .
+    - docker tag "$CI_REGISTRY_IMAGE" "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA"
+    - docker push "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA"
+    - docker push "$CI_REGISTRY_IMAGE"
+  only:
+    - master
+
+build:
+  stage: build
+  script:
+    - docker build --pull -t "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG" .
+    - docker push "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG"
+  except:
+    - master
+
+.deploy:
+  stage: deploy
+  image: registry.gitlab.com/jump-software/aws-tools:latest
+  script:
+    - ecs deploy --no-deregister $CI_ENVIRONMENT_NAME $CI_PROJECT_NAME --image $CI_PROJECT_NAME "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA"
+  only:
+    - master
+
+deploy:staging:
+  extends: .deploy
+  environment:
+    name: staging
+    url: https://deployer.$CI_ENVIRONMENT_NAME.jumpsoftware.com
+  before_script:
+    - echo deploying to $CI_ENVIRONMENT_NAME
+
+deploy:production:
+  extends: .deploy
+  environment:
+    name: production
+    url: https://deployer.jumpsoftware.com
+  before_script:
+    - echo deploying to $CI_ENVIRONMENT_NAME
+  when: manual

@@ -1,0 +1,83 @@
+image: docker
+
+# stages basically defines groups that jobs can belong to and the order in which they will run.
+# we have multiple jobs that are part of the test stage. They will all run before any jobs belonging to push-to-dockerhub stage
+stages:
+    - build
+    #- test
+    - push-to-dockerhub
+    - deploy-dev
+    # - deploy-stage
+    # - deploy-prod
+
+variables:
+  REPO_NAME: greenseedtech/redx-import-map-deployer
+  CONTAINER_IMAGE: $REPO_NAME:$CI_COMMIT_SHA
+
+build:
+  stage: build
+  services:
+    - docker:dind
+  before_script:
+    - mkdir -p $HOME/.docker
+    - echo $DOCKER_AUTH_CONFIG > $HOME/.docker/config.json
+  script:
+    - docker build --pull -t $CONTAINER_IMAGE .
+
+.lint:
+  image: $REPO_NAME:$CI_COMMIT_SHA
+  stage: test
+  script:
+    - npm run lint
+
+.test:
+  services:
+    - postgres:9.6-alpine
+  image: $REPO_NAME:$CI_COMMIT_SHA
+  stage: test
+  script:
+    - export DATABASE_URL=postgres
+    - npm run test
+
+push-to-dockerhub:
+  stage: push-to-dockerhub
+  services:
+    - docker:dind
+  before_script:
+    - mkdir -p $HOME/.docker
+    - echo $DOCKER_AUTH_CONFIG > $HOME/.docker/config.json
+  script:
+    - docker build -t $REPO_NAME:$CI_COMMIT_SHA .
+    - docker tag $REPO_NAME:$CI_COMMIT_SHA $REPO_NAME:latest
+    - docker push $REPO_NAME:latest
+  only:
+    - master
+
+# . before a job name prevents it from running (like commenting out the entire job)
+# & gives a job a name that can then be referenced by other jobs using << essentially an include
+.deploy: &deploy
+  image: nhumrich/k8s-deploy
+  script:
+    - /scripts/k8s-deploy.py --tag "$CI_COMMIT_SHA"
+  only:
+    - master
+  allow_failure: false
+
+deploy-dev:
+  <<: *deploy
+  stage: deploy-dev
+
+# deploy-stage:
+#   <<: *deploy
+#   stage: deploy-stage
+#   environment:
+#     name: stage
+#     url: https://some.stage.url
+
+# deploy-prod:
+#   <<: *deploy
+#   stage: deploy-prod
+#   environment:
+#     name: production
+#     url: https://some.url
+#   when: manual
