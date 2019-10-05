@@ -42,9 +42,8 @@ build:
     - gcloud auth activate-service-account --key-file google-application-credentials.json
     - gsutil cp ./dist/** gs://$DEPLOYER_BUCKET/$CI_PROJECT_NAME/$CI_COMMIT_SHORT_SHA
     - echo "Updating import map"
-    - export NEW_MODULE_URL=https://'"$CF_PUBLIC_URL"'/'"$CI_PROJECT_NAME"'/'"$CI_COMMIT_SHORT_SHA"'/'"$CI_PROJECT_NAME"'.js
-    - echo "The following file must exist for this to work '"$NEW_MODULE_URL"'"
-    - curl -u $DEPLOYER_USERNAME:$DEPLOYER_PASSWORD -d '{ "service":"@redx/'"$CI_PROJECT_NAME"'","url":'"$NEW_MODULE_URL"'" }' -X PATCH https://$DEPLOYER_HOST/services\?env=$CI_ENVIRONMENT_NAME -H "Accept:application/json" -H "Content-Type:application/json" --fail --insecure -i
+    - echo '{ "service":"@redx/'"$CI_PROJECT_NAME"'","url":"https://'"$CF_PUBLIC_URL"'/'"$CI_PROJECT_NAME"'/'"$CI_COMMIT_SHORT_SHA"'/'"$CI_PROJECT_NAME"'.js" }'
+    - curl -u $DEPLOYER_USERNAME:$DEPLOYER_PASSWORD -d '{ "service":"@redx/'"$CI_PROJECT_NAME"'","url":"https://'"$CF_PUBLIC_URL"'/'"$CI_PROJECT_NAME"'/'"$CI_COMMIT_SHORT_SHA"'/'"$CI_PROJECT_NAME"'.js" }' -X PATCH https://$DEPLOYER_HOST/services\?env=$CI_ENVIRONMENT_NAME -H "Accept:application/json" -H "Content-Type:application/json" --fail --insecure -i
   dependencies:
     - build
   only:
