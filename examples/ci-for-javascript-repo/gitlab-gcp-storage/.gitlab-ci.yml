@@ -1,3 +1,7 @@
+# Originally copied from REDX.
+# See import map at https://storage.googleapis.com/vortex-frontend-dev/importmap.json
+# This assumes the name of the javascript output file is the same as the name of the gitlab repo.
+
 image: node
 
 stages:
