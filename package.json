@@ -36,7 +36,7 @@
   "devDependencies": {
     "jasmine": "^2.4.1",
     "node-static": "^0.7.9",
-    "superagent": "^1.6.1"
+    "superagent": "^5.0.2"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
