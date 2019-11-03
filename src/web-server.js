@@ -195,4 +195,5 @@ var server = app.listen(5000, function () {
   console.log('Listening at http://localhost:%s', server.address().port)
 })
 
+exports.server = server
 exports.close = server.close

@@ -4,8 +4,14 @@
   "description": "a manifest deployer for sofe",
   "main": "src/web-server.js",
   "scripts": {
-    "test": "rm -f sofe-manifest.json && jasmine",
+    "lint": "eslint src",
+    "test": "jest",
     "start": "node src/web-server.js"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "concurrently -n lint,test 'yarn:lint' 'yarn:test'"
+    }
   },
   "repository": {
     "type": "git",
@@ -21,10 +27,10 @@
   },
   "homepage": "https://github.com/CanopyTax/sofe-deplanifester#readme",
   "dependencies": {
-    "@google-cloud/storage": "^3.0.3",
-    "aws-sdk": "^2.2.27",
+    "@google-cloud/storage": "^4.1.0",
+    "aws-sdk": "^2.562.0",
     "azure-storage": "^2.10.3",
-    "basic-auth": "^1.0.3",
+    "basic-auth": "^2.0.1",
     "body-parser": "^1.14.2",
     "express": "^4.13.3",
     "lodash": "^4.17.11",
@@ -34,9 +40,14 @@
     "rwlock": "^5.0.0"
   },
   "devDependencies": {
-    "jasmine": "^2.4.1",
+    "concurrently": "^5.0.0",
+    "eslint": "^6.6.0",
+    "eslint-config-node-important-stuff": "^1.0.0",
+    "husky": "^3.0.9",
+    "jest": "^24.9.0",
+    "jest-cli": "^24.9.0",
     "node-static": "^0.7.9",
-    "superagent": "^1.6.1"
+    "superagent": "^5.1.0"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org"

@@ -21,11 +21,11 @@ function parseFilePath(filePath) {
   }
 }
 
-const s3 = new aws.S3({
-  endpoint: config.s3Endpoint,
-})
-
 exports.readManifest = function(filePath) {
+  const s3 = new aws.S3({
+    endpoint: config.s3Endpoint,
+  })
+
   return new Promise(function(resolve, reject) {
     let file = parseFilePath(filePath)
     s3.getObject({
@@ -42,6 +42,10 @@ exports.readManifest = function(filePath) {
 }
 
 exports.writeManifest = function(filePath, data) {
+  const s3 = new aws.S3({
+    endpoint: config.s3Endpoint,
+  })
+
   const jsonPromise = new Promise(function(resolve, reject) {
     const file = parseFilePath(filePath)
     s3.putObject({

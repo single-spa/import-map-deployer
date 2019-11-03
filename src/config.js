@@ -14,6 +14,7 @@ if (argv._.length === 1) {
 if (argv._.length === 0) {
   //see if the default config.json exists
   if ( fs.existsSync(path.resolve(__dirname, '../config.json')) ) {
+    // eslint-disable-next-line
     config = require('../config.json')
   }
 }

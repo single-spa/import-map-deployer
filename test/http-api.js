@@ -19,12 +19,14 @@ exports.clearManifest = () => {
   return new Promise((resolve, reject) => {
     const filename = 'sofe-manifest.json';
     fs.stat(filename, (err, stats) => {
-      if (err)
-        reject();
+      if (err) {
+        // If the sofe-manifest.json file doesn't exist, that's fine
+        resolve()
+      }
       else {
         fs.unlink(filename, (ex) => {
           if (ex)
-            reject()
+            reject(ex)
           else
             resolve();
         });
