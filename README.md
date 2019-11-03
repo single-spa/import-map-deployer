@@ -1,4 +1,6 @@
 # import-map-deployer
+[![Build Status](https://travis-ci.org/CanopyTax/import-map-deployer?branch=master)](https://travis-ci.com/CanopyTax/import-map-deployer)
+
 The import-map-deployer is a backend service that updates [import map json files](https://github.com/WICG/import-maps#installation). When using
 import-map-deployer, a frontend deployment is completed in two steps:
 
