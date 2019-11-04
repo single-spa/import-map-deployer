@@ -44,3 +44,4 @@ elm-stuff
 # build
 src/public/*
 !src/public/index.html
+
