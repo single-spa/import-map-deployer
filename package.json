@@ -3,6 +3,9 @@
   "version": "0.2.0",
   "description": "a manifest deployer for sofe",
   "main": "src/web-server.js",
+  "bin": {
+    "import-map-deployer": "./bin/import-map-deployer"
+  },
   "scripts": {
     "test": "rm -f sofe-manifest.json && jasmine",
     "start": "node src/web-server.js"
