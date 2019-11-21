@@ -1,6 +1,6 @@
 {
   "name": "sofe-deplanifester",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "description": "a manifest deployer for sofe",
   "main": "src/web-server.js",
   "bin": {
