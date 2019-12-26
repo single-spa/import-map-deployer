@@ -9,6 +9,9 @@ These two steps are often performed during a CI process, to automate deployments
 
 <img src="https://drive.google.com/uc?id=1tkDltyzV-jpVLT9U5DvRDfslPyiEAB6y" alt="import-map-deployer demo">
 
+## Explanation video
+[![Tutorial video for import map deployer](http://img.youtube.com/vi/QHunH3MFPZs/0.jpg)](https://www.youtube.com/watch?v=QHunH3MFPZs&list=PLLUD8RtHvsAOhtHnyGx57EYXoaNsxGrTU&index=6&t=0s "Deploying Microfrontends Part 1 - Import Map Deployer")
+
 ## Installation and usage
 #### Docker
 import-map-deployer is available on DockerHub as canopytax/import-map-deployer. If you want to run just the single container,
