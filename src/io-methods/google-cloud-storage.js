@@ -30,6 +30,6 @@ exports.writeManifest = function(filePath, data) {
     return storage
       .bucket(bucketName)
       .file(fileName)
-      .save(data, {contentType: 'application/json'})
+      .save(data, {contentType: 'application/json', cacheControl: 'public, must-revalidate, max-age=0'})
   })
 }
