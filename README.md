@@ -11,7 +11,7 @@ These two steps are often performed during a CI process, to automate deployments
 
 ## Installation and usage
 #### Docker
-import-map-deployer is available on DockerHub as canopytax/import-map-deployer. If you want to run just the single container,
+import-map-deployer is available on DockerHub as single-spa/import-map-deployer. If you want to run just the single container,
 you can run `docker-compose up` from the project root. When running via docker-compose, it will mount a volume in the project root's directory,
 expecting a `config.json` file to be present.
 
@@ -27,7 +27,7 @@ If no configuration file is present, import-map-deployer defaults to using the f
 
 Here are the properties available in the config file:
 - `manifestFormat` (required): A string that is either `"importmap"` or `"sofe"`, which indicates whether the import-map-deployer is
-  interacting with an [import map](https://github.com/WICG/import-maps) or a [sofe manifest](https://github.com/CanopyTax/sofe).
+  interacting with an [import map](https://github.com/WICG/import-maps) or a [sofe manifest](https://github.com/single-spa/sofe).
 - `locations` (required): An object specifying one or more "locations" (or "environments") for which you want the import-map-deployer to control the import map. The special `default`
   location is what will be used when no query parameter `?env=` is provided in calls to the import-map-deployer. If no `default` is provided, the import-map-deployer will create
   a local file called `import-map.json` that will be used as the import map. The keys in the `locations` object are the names of environments, and the values are
