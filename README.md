@@ -11,7 +11,7 @@ These two steps are often performed during a CI process, to automate deployments
 
 ## Installation and usage
 #### Docker
-import-map-deployer is available on DockerHub as canopytax/import-map-deployer. If you want to run just the single container,
+import-map-deployer is available on DockerHub as singlespa/import-map-deployer. If you want to run just the single container,
 you can run `docker-compose up` from the project root. When running via docker-compose, it will mount a volume in the project root's directory,
 expecting a `config.json` file to be present.
 
