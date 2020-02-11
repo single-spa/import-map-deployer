@@ -13,6 +13,7 @@ const express = require('express')
     , request = require('request')
     , morgan = require('morgan')
     , util = require('util')
+    , config = require('./config.js').config
 
 const requestAsPromise = util.promisify(request)
 
@@ -143,9 +144,12 @@ app.patch('/import-map.json', (req, res) => {
   })
 })
 
-app.get('/', function(req, res) {
-  res.send('everything ok')
-})
+app.get('/', healthEndpoint);
+app.get('/health', healthEndpoint);
+
+function healthEndpoint(req, res) {
+  res.send('everything ok');
+}
 
 app.patch('/services', function(req, res) {
   req.body = JSON.parse(req.body);
@@ -191,7 +195,7 @@ app.delete('/services/:serviceName', function(req, res) {
   })
 })
 
-var server = app.listen(5000, function () {
+var server = app.listen(config.port || 5000, function () {
   console.log('Listening at http://localhost:%s', server.address().port)
 })
 

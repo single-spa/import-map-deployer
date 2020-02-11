@@ -11,9 +11,12 @@ These two steps are often performed during a CI process, to automate deployments
 
 <img src="https://drive.google.com/uc?id=1tkDltyzV-jpVLT9U5DvRDfslPyiEAB6y" alt="import-map-deployer demo">
 
+## Explanation video
+[![Tutorial video for import map deployer](http://img.youtube.com/vi/QHunH3MFPZs/0.jpg)](https://www.youtube.com/watch?v=QHunH3MFPZs&list=PLLUD8RtHvsAOhtHnyGx57EYXoaNsxGrTU&index=6&t=0s "Deploying Microfrontends Part 1 - Import Map Deployer")
+
 ## Installation and usage
 #### Docker
-import-map-deployer is available on DockerHub as canopytax/import-map-deployer. If you want to run just the single container,
+import-map-deployer is available on DockerHub as [`singlespa/import-map-deployer`(https://hub.docker.com/repository/docker/singlespa/import-map-deployer). If you want to run just the single container,
 you can run `docker-compose up` from the project root. When running via docker-compose, it will mount a volume in the project root's directory,
 expecting a `config.json` file to be present.
 
@@ -39,6 +42,7 @@ Here are the properties available in the config file:
   username *is not* related to authenticating with S3/Digital Ocean/Other, but rather is the username your CI process will use in its HTTP request to the import-map-deployer.
 - `password` (optional): The password for HTTP auth when calling the import-map-deployer. If username and password are omitted, anyone can update the import map without authenticating. This
   password *is not* related to authenticating with S3/Digital Ocean/Other, but rather is the password your CI process will use in its HTTP request to the import-map-deployer.
+- `port` (optional): The port to run the import-map-deployer on. Defaults to 5000.
 - `region` (optional): The [AWS region](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html) to be used when retrieving and updating the import map.
   This can also be specified via the [AWS_DEFAULT_REGION environment variable](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-envvars.html), which is the preferred method.
 - `s3Endpoint` (optional): The url for aws-sdk to call when interacting with S3. Defaults to AWS' default domain, but can be configured for
@@ -191,6 +195,10 @@ If you'd like to store the import map locally on the file system, provide the na
 ## Endpoints
 
 This service exposes the following endpoints
+
+#### GET /health
+
+An endpoint for health checks. It will return an HTTP 200 with a textual response body saying that everything is okay. You may also call `/` as a health check endpoint.
 
 #### GET /environments
 
