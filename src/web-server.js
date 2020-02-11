@@ -13,6 +13,7 @@ const express = require('express')
     , request = require('request')
     , morgan = require('morgan')
     , util = require('util')
+    , config = require('./config.js').config
 
 const requestAsPromise = util.promisify(request)
 
@@ -191,7 +192,7 @@ app.delete('/services/:serviceName', function(req, res) {
   })
 })
 
-var server = app.listen(5000, function () {
+var server = app.listen(config.port || 5000, function () {
   console.log('Listening at http://localhost:%s', server.address().port)
 })
 
