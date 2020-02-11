@@ -144,9 +144,12 @@ app.patch('/import-map.json', (req, res) => {
   })
 })
 
-app.get('/', function(req, res) {
-  res.send('everything ok')
-})
+app.get('/', healthEndpoint);
+app.get('/health', healthEndpoint);
+
+function healthEndpoint(req, res) {
+  res.send('everything ok');
+}
 
 app.patch('/services', function(req, res) {
   req.body = JSON.parse(req.body);

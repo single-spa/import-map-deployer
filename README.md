@@ -14,7 +14,7 @@ These two steps are often performed during a CI process, to automate deployments
 
 ## Installation and usage
 #### Docker
-import-map-deployer is available on DockerHub as singlespa/import-map-deployer. If you want to run just the single container,
+import-map-deployer is available on DockerHub as [`singlespa/import-map-deployer`(https://hub.docker.com/repository/docker/singlespa/import-map-deployer). If you want to run just the single container,
 you can run `docker-compose up` from the project root. When running via docker-compose, it will mount a volume in the project root's directory,
 expecting a `config.json` file to be present.
 
@@ -193,6 +193,10 @@ If you'd like to store the import map locally on the file system, provide the na
 ## Endpoints
 
 This service exposes the following endpoints
+
+#### GET /health
+
+An endpoint for health checks. It will return an HTTP 200 with a textual response body saying that everything is okay. You may also call `/` as a health check endpoint.
 
 #### GET /environments
 
