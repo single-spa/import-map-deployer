@@ -28,7 +28,7 @@ The import-map-deployer must have read / write access to the CDN / bucket that i
 The following security constraints are highly recommended to secure the import-map-deployer
 
 1. The import-map-deployer's web server is only exposed within your VPC.
-2. Your CI runners are also within the VPC (or can tunnel into it) in order to call the import-map-deployer.
+2. Your CI runners should either be within the VPC or tunnel into it when calling the import-map-deployer.
 3. The import-map-deployer has HTTP basic authentication enabled, and only the CI runners know the username and password.
 4. You have configured `urlSafeList` with a list of URL prefixes that are trusted. Any attempts to modify the state of production
 
