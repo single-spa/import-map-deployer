@@ -125,8 +125,6 @@ app.patch('/import-map.json', (req, res) => {
 
   const importUrls = Object.values(req.body.imports)
 
-  console.log('importUrls', importUrls)
-
   const unsafeUrls = importUrls.map(checkUrlUnsafe).filter(Boolean)
 
   if (unsafeUrls.length > 0) {
