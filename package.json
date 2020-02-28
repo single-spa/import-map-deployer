@@ -13,7 +13,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "concurrently -n lint,test 'yarn:lint' 'yarn:test'"
+      "pre-commit": "concurrently -n yarn:lint yarn:test"
     }
   },
   "repository": {
@@ -30,8 +30,8 @@
   },
   "homepage": "https://github.com/single-spa/sofe-deplanifester#readme",
   "dependencies": {
-    "@google-cloud/storage": "^4.1.0",
-    "aws-sdk": "^2.562.0",
+    "@google-cloud/storage": "^4.3.1",
+    "aws-sdk": "^2.615.0",
     "azure-storage": "^2.10.3",
     "basic-auth": "^2.0.1",
     "body-parser": "^1.14.2",
@@ -39,18 +39,20 @@
     "lodash": "^4.17.11",
     "minimist": "^1.2.0",
     "morgan": "^1.8.1",
-    "request": "^2.79.0",
+    "request": "^2.88.2",
     "rwlock": "^5.0.0"
   },
   "devDependencies": {
-    "concurrently": "^5.0.0",
-    "eslint": "^6.6.0",
+    "concurrently": "^5.1.0",
+    "eslint": "^6.8.0",
     "eslint-config-node-important-stuff": "^1.0.0",
-    "husky": "^3.0.9",
-    "jest": "^24.9.0",
-    "jest-cli": "^24.9.0",
+    "husky": "^4.2.1",
+    "jest": "^25.1.0",
+    "jest-cli": "^25.1.0",
     "node-static": "^0.7.9",
-    "superagent": "^5.1.0"
+    "prettier": "^1.19.1",
+    "pretty-quick": "^2.0.1",
+    "superagent": "^5.2.1"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
