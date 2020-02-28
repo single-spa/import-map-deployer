@@ -45,14 +45,16 @@ If you do want to address the deployment race condition without using import-map
 [This github repository](https://github.com/joeldenning/live-import-map-deployer) shows an example of setting up your own Docker image that can be configured specifically for your organization.
 
 ## Installation and usage
-#### Docker
+### Docker
 import-map-deployer is available on DockerHub as [`singlespa/import-map-deployer`(https://hub.docker.com/repository/docker/singlespa/import-map-deployer). If you want to run just the single container,
 you can run `docker-compose up` from the project root. When running via docker-compose, it will mount a volume in the project root's directory,
 expecting a `config.json` file to be present.
 
-#### Node
+### Node
 To run the import-map-deployer in Node, run the following command:
 `npx import-map-deployer config.json`
+
+It is available as `import-map-deployer` [on npm](https://npmjs.com/package/import-map-deployer).
 
 ## Configuration file
 The import-map-deployer expects a configuration file to be present so it (1) can password protect deployments, and (2) knows where and how
