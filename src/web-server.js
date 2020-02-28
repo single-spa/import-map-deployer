@@ -125,9 +125,11 @@ app.patch('/import-map.json', (req, res) => {
 
   const importUrls = Object.values(req.body.imports)
 
+  console.log('importUrls', importUrls)
+
   const unsafeUrls = importUrls.map(checkUrlUnsafe).filter(Boolean)
 
-  if (unsafeUrls) {
+  if (unsafeUrls.length > 0) {
     return res.status(400).send({
       error: `The following URLs are not trusted - ${unsafeUrls.join(', ')}`,
     })
