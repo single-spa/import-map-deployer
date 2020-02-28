@@ -1,4 +1,5 @@
 # import-map-deployer
+
 The import-map-deployer is a backend service that updates [import map json files](https://github.com/WICG/import-maps#installation). When using
 import-map-deployer, a frontend deployment is completed in two steps:
 
@@ -9,18 +10,51 @@ These two steps are often performed during a CI process, to automate deployments
 
 <img src="https://drive.google.com/uc?id=1tkDltyzV-jpVLT9U5DvRDfslPyiEAB6y" alt="import-map-deployer demo">
 
+## Why does this exist?
+
+The alternative to the import-map-deployer is to pull down the import map file, modify it, and reupload it during your CI process. That alternative has one problem: it doesn't properly handle concurrency. If two deployments occur in separate CI pipelines at the same time, it is possible they pull down the import map at the same time, modify it, and reupload. In that case, there is a race condition where the "last reupload wins," overwriting the deployment that the first reupload did.
+
+When you have a single import map file and multiple services' deployment process modifies that import map, there is a (small) chance for a race condition where two deployments attempt to modify the import map at the same time. This could result in a CI pipeline indicating that it successfully deployed the frontend module, even though the deployment was overwritten with a stale version.
+
 ## Explanation video
 [![Tutorial video for import map deployer](http://img.youtube.com/vi/QHunH3MFPZs/0.jpg)](https://www.youtube.com/watch?v=QHunH3MFPZs&list=PLLUD8RtHvsAOhtHnyGx57EYXoaNsxGrTU&index=6&t=0s "Deploying Microfrontends Part 1 - Import Map Deployer")
 
+## Security
+
+The import-map-deployer must have read / write access to the CDN / bucket that is storing your production import map. It exposes a web server that allows for modifying the state of your production application. It is password protected with HTTP basic authentication.
+
+### Securing the import-map-deployer
+
+The following security constraints are highly recommended to secure the import-map-deployer
+
+1. The import-map-deployer's web server is only exposed within your VPC.
+2. Your CI runners should either be within the VPC or tunnel into it when calling the import-map-deployer.
+3. The import-map-deployer has HTTP basic authentication enabled, and only the CI runners know the username and password.
+4. You have configured `urlSafeList` with a list of URL prefixes that are trusted. Any attempts to modify the state of production
+
+### Secure alternative
+
+If you are not comfortable with running the import-map-deployer at all, you do not have to. Instead, give read/write access to your CI runners for modifying your import map file. Perform all import map modifications the import map inside of your CI process.
+
+If you do this, decide whether you care about the deployment race condition scenario described in the [Why does this exist?](#why-does-this-exist) section. If you are willing to live with that unlikely race condition, see [this example](/examples/ci-for-javascript-repo/gitlab-aws-no-import-map-deployer) for some example CI commands.
+
+If you do want to address the deployment race condition without using import-map-deployer, we'd love to hear what you come up with. Consider leaving a PR to these docs that explain what you did!
+
+## Example repository
+
+[This github repository](https://github.com/joeldenning/live-import-map-deployer) shows an example of setting up your own Docker image that can be configured specifically for your organization.
+
 ## Installation and usage
-#### Docker
+### Docker
 import-map-deployer is available on DockerHub as [`singlespa/import-map-deployer`(https://hub.docker.com/repository/docker/singlespa/import-map-deployer). If you want to run just the single container,
 you can run `docker-compose up` from the project root. When running via docker-compose, it will mount a volume in the project root's directory,
 expecting a `config.json` file to be present.
 
-#### Node
+### Node
 To run the import-map-deployer in Node, run the following command:
 `npx import-map-deployer config.json`
+
+It is available as `import-map-deployer` [on npm](https://npmjs.com/package/import-map-deployer).
 
 ## Configuration file
 The import-map-deployer expects a configuration file to be present so it (1) can password protect deployments, and (2) knows where and how
@@ -29,6 +63,7 @@ to download and update the "live" import map.
 If no configuration file is present, import-map-deployer defaults to using the filesystem to host the manifest file, which is called `sofe-manifest.json` and created in the current working directory. If username and password are included, http basic auth will be required. If username and password is not provided, no http auth will be needed.
 
 Here are the properties available in the config file:
+- `urlSafeList` (optional, but **highly** recommended): An array of strings and/or functions that indicate which URLs are trusted when updating the import map. A string value is treated as a URL prefix - for example `https://unpkg.com/`. A function value is called with a [URL object](https://developer.mozilla.org/en-US/docs/Web/API/URL) and must return a truthy value when the URL is trusted. Any attempt to update the import map to include an untrusted URL will be rejected. If you omit `urlSafeList`, all URLs are considered trusted (not recommended).
 - `manifestFormat` (required): A string that is either `"importmap"` or `"sofe"`, which indicates whether the import-map-deployer is
   interacting with an [import map](https://github.com/WICG/import-maps) or a [sofe manifest](https://github.com/CanopyTax/sofe).
 - `locations` (required): An object specifying one or more "locations" (or "environments") for which you want the import-map-deployer to control the import map. The special `default`
@@ -63,6 +98,10 @@ The below configuration file will set up the import-map-deployer to do the follo
 
 ```json
 {
+  "urlSafeList": [
+    "https://unpkg.com/",
+    "https://my-organization-cdn.com/",
+  ],
   "username": "admin",
   "password": "1234",
   "manifestFormat": "importmap|sofe",
