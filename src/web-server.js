@@ -14,6 +14,7 @@ const express = require('express')
     , morgan = require('morgan')
     , util = require('util')
     , config = require('./config.js').config
+    , { checkUrlUnsafe } = require('./trusted-urls')
 
 const requestAsPromise = util.promisify(request)
 
@@ -123,6 +124,15 @@ app.patch('/import-map.json', (req, res) => {
   }
 
   const importUrls = Object.values(req.body.imports)
+
+  const unsafeUrls = importUrls.map(checkUrlUnsafe).filter(Boolean)
+
+  if (unsafeUrls) {
+    return res.status(400).send({
+      error: `The following URLs are not trusted - ${unsafeUrls.join(', ')}`,
+    })
+  }
+
   const validImportUrlPromises = importUrls.map(url => requestAsPromise({url, strictSSL: false}).then(resp => {
     if (resp.statusCode !== 200) {
       throw Error(`The following url in the request body is not reachable: ${url}`)
@@ -164,6 +174,12 @@ app.patch('/services', function(req, res) {
     url = req.body.url
   } else {
     return res.status(400).send('url key is missing')
+  }
+
+  if (checkUrlUnsafe(url)) {
+    return res.status(400).send({
+      error: `URL is not trusted (${url})`,
+    })
   }
 
   request({url: url, strictSSL: false}, (error, response, body) => {

@@ -1,0 +1,84 @@
+image: node
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - node_modules/
+
+stages:
+  - setup
+  - build
+  - deploy-dev
+  - deploy-qa
+  - deploy-stage
+  - deploy-prod
+
+install:
+  stage: setup
+  script: yarn install --frozen-lockfile
+
+test:
+  stage: build
+  script: yarn test && yarn lint
+
+build:
+  stage: build
+  script: yarn build
+  artifacts:
+    paths:
+      - build
+
+.deploy:
+  script:
+    - echo "Commit sha is $CI_COMMIT_SHORT_SHA. This will be the directory name under $CI_PROJECT_NAME in S3."
+    - echo "Uploading built javascript files to S3"
+    - aws s3 sync dist/ s3://$DEPLOYER_BUCKET/$CI_PROJECT_NAME/$CI_COMMIT_SHORT_SHA --cache-control max-age=31536000
+    - echo "Downloading import map"
+    - aws s3 cp s3://$DEPLOYER_BUCKET/importmap.json importmap.json
+    - echo "Updating import map"
+    - node /home/node/update-importmap.mjs
+    - echo "Uploading new import map to S3"
+    - aws s3 cp importmap.json s3://$DEPLOYER_BUCKET/importmap.json --cache-control 'public, must-revalidate, max-age=0'
+    - echo "Deployment successful"
+  dependencies:
+    - build
+  only:
+    - master
+
+deploy-dev:
+  extends: .deploy
+  stage: deploy-dev
+  environment:
+    name: stage
+  variables:
+    DEPLOYER_BUCKET: 'static-assets-cdn-dev'
+    PUBLIC_CDN_URL: 'https://ORG_CDN_URL.com/'
+
+deploy-qa:
+  extends: .deploy
+  stage: deploy-qa
+  environment:
+    name: stage
+  variables:
+    DEPLOYER_BUCKET: 'static-assets-cdn-qa'
+    PUBLIC_CDN_URL: 'https://ORG_CDN_URL.com/'
+
+deploy-stage:
+  extends: .deploy
+  stage: deploy-stage
+  environment:
+    name: stage
+  variables:
+    DEPLOYER_BUCKET: 'static-assets-cdn-stage'
+    PUBLIC_CDN_URL: 'https://ORG_CDN_URL.com/'
+  when: manual
+
+deploy-prod:
+  extends: .deploy
+  stage: deploy-prod
+  environment:
+    name: prod
+  variables:
+    DEPLOYER_BUCKET: 'static-assets-cdn-prod'
+    PUBLIC_CDN_URL: 'https://ORG_CDN_URL.com/'
+  when: manual
