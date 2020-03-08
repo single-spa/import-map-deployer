@@ -56,6 +56,10 @@ To run the import-map-deployer in Node, run the following command:
 
 It is available as `import-map-deployer` [on npm](https://npmjs.com/package/import-map-deployer).
 
+The default web server port is `5000`. To run web server with a custom port, se the `PORT` ENV variable.
+
+`$ PORT=8080 npx import-map-deployer config.json`
+
 ## Configuration file
 The import-map-deployer expects a configuration file to be present so it (1) can password protect deployments, and (2) knows where and how
 to download and update the "live" import map.
@@ -144,7 +148,24 @@ exports = {
 ## Built-in IO Methods
 The import-map-deployer knows how to update import maps that are stored in the following ways:
 
+## Building image using docker
+
+To build image using default settings
+
+```sh
+$ docker build .
+# ...
+```
+
+To build image with a custom container port in the `PORT` ENV variable
+
+```sh
+$ docker build --container-port=8080 .
+# ...
+```
+
 ### AWS S3
+
 If your import map json file is hosted by AWS S3, you can use the import-map-deployer to modify the import map file
 by specifying in your config `s3://` in the `locations` config object.
 
@@ -154,6 +175,7 @@ import-map-deployer relies on the [AWS CLI environment variables](https://docs.a
 authentication with S3.
 
 config.json:
+
 ```json
 {
   "manifestFormat": "importmap",
@@ -164,6 +186,7 @@ config.json:
 ```
 
 ### Digital Ocean Spaces
+
 If your import map json file is hosted by Digital Ocean Spaces, you can use the import-map-deployer to modify the import map file
 by specifying in your config `spaces://` in the `locations` config object.
 
@@ -178,6 +201,7 @@ import-map-deployer is using `aws-sdk` to communicate with Digital Ocean.
 Instead of an AWS region, you should provide an `s3Endpoint` config value that points to a Digital Ocean region.
 
 config.json:
+
 ```json
 {
   "manifestFormat": "importmap",
@@ -189,9 +213,11 @@ config.json:
 ```
 
 ### Azure Storage
+
 Note, that you must have environment variables `AZURE_STORAGE_ACCOUNT` and `AZURE_STORAGE_ACCESS_KEY`, or `AZURE_STORAGE_CONNECTION_STRING` defined for authentication.
 
 config.json:
+
 ```json
 {
   "manifestFormat": "importmap",
@@ -205,9 +231,11 @@ config.json:
 ```
 
 ### Google Cloud Storage
+
 Note that you must have the `GOOGLE_APPLICATION_CREDENTIALS` environment variable set for authentication.
 
 config.json:
+
 ```json
 {
   "manifestFormat": "importmap",
@@ -218,6 +246,7 @@ config.json:
 ```
 
 ### File system
+
 If you'd like to store the import map locally on the file system, provide the name of a file in your `locations` instead.
 
 ```json
@@ -254,6 +283,7 @@ curl localhost:5000/environments
 ```
 
 Response:
+
 ```json
 {
   "environments": [
