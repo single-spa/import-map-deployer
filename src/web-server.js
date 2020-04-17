@@ -10,13 +10,10 @@ const express = require("express"),
   auth = require("./auth.js"),
   envHelpers = require("./environment-helpers.js"),
   _ = require("lodash"),
-  request = require("request"),
   morgan = require("morgan"),
-  util = require("util"),
+  verifyValidUrl = require("./verify-valid-url.js").verifyValidUrl,
   config = require("./config.js").config,
   { checkUrlUnsafe } = require("./trusted-urls");
-
-const requestAsPromise = util.promisify(request);
 
 healthCheck.runCheck().catch((ex) => {
   console.error(ex);
@@ -156,20 +153,7 @@ app.patch("/import-map.json", (req, res) => {
   }
 
   const validImportUrlPromises = importUrls.map((url) =>
-    requestAsPromise({ url, strictSSL: false })
-      .then((resp) => {
-        if (resp.statusCode !== 200) {
-          throw Error(
-            `The following url in the request body is not reachable: ${url}`
-          );
-        }
-      })
-      .catch((err) => {
-        console.error(err);
-        throw Error(
-          `The following url in the request body is not reachable: ${url}`
-        );
-      })
+    verifyValidUrl(req, url)
   );
 
   Promise.all(validImportUrlPromises)
@@ -217,8 +201,8 @@ app.patch("/services", function (req, res) {
     });
   }
 
-  request({ url: url, strictSSL: false }, (error, response, body) => {
-    if (!error && response.statusCode == 200) {
+  verifyValidUrl(req, url)
+    .then(() => {
       modify
         .modifyService(env, service, url)
         .then((json) => {
@@ -230,12 +214,10 @@ app.patch("/services", function (req, res) {
             .status(500)
             .send(`Could not write manifest file -- ${ex.toString()}`);
         });
-    } else {
-      res
-        .status(400)
-        .send(`The url does not exist for service ${service}: ${url}`);
-    }
-  });
+    })
+    .catch((err) => {
+      res.status(400).send(err.message);
+    });
 });
 
 app.delete("/services/:serviceName", function (req, res) {
