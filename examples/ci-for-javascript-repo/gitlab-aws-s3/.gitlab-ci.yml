@@ -51,8 +51,8 @@ deploy-stage:
   environment:
     name: stage
   variables:
-    DEPLOYER_BUCKET: '$STAGING_SINGLESPA_BUCKET'
-    DEPLOYER_HOST: '$STAGING_DEPLOYER_HOST'
+    DEPLOYER_BUCKET: "$STAGING_SINGLESPA_BUCKET"
+    DEPLOYER_HOST: "$STAGING_DEPLOYER_HOST"
     CF_PUBLIC_URL: app.staging.somecompany.com
 
 deploy-prod:
@@ -61,7 +61,7 @@ deploy-prod:
   environment:
     name: prod
   variables:
-    DEPLOYER_BUCKET: '$PRODUCTION_SINGLESPA_BUCKET'
-    DEPLOYER_HOST: '$PRODUCTION_DEPLOYER_HOST'
+    DEPLOYER_BUCKET: "$PRODUCTION_SINGLESPA_BUCKET"
+    DEPLOYER_HOST: "$PRODUCTION_DEPLOYER_HOST"
     CF_PUBLIC_URL: app.somecompany.com
   when: manual

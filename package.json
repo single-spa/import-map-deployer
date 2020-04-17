@@ -8,6 +8,7 @@
   },
   "scripts": {
     "test": "rm -f sofe-manifest.json && jasmine",
+    "format": "prettier --write './**/*'",
     "start": "node src/web-server.js"
   },
   "repository": {
@@ -21,6 +22,11 @@
   "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/single-spa/sofe-deplanifester/issues"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
   },
   "homepage": "https://github.com/single-spa/sofe-deplanifester#readme",
   "dependencies": {
@@ -37,8 +43,11 @@
     "rwlock": "^5.0.0"
   },
   "devDependencies": {
+    "husky": "^4.2.5",
     "jasmine": "^2.4.1",
     "node-static": "^0.7.9",
+    "prettier": "^2.0.4",
+    "pretty-quick": "^2.0.1",
     "superagent": "^1.6.1"
   },
   "publishConfig": {

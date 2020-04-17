@@ -1,0 +1,6 @@
+.prettierignore
+yarn.lock
+.gitignore
+LICENSE
+Dockerfile
+spec/mockServices

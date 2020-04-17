@@ -17,6 +17,7 @@ The alternative to the import-map-deployer is to pull down the import map file, 
 When you have a single import map file and multiple services' deployment process modifies that import map, there is a (small) chance for a race condition where two deployments attempt to modify the import map at the same time. This could result in a CI pipeline indicating that it successfully deployed the frontend module, even though the deployment was overwritten with a stale version.
 
 ## Explanation video
+
 [![Tutorial video for import map deployer](http://img.youtube.com/vi/QHunH3MFPZs/0.jpg)](https://www.youtube.com/watch?v=QHunH3MFPZs&list=PLLUD8RtHvsAOhtHnyGx57EYXoaNsxGrTU&index=6&t=0s "Deploying Microfrontends Part 1 - Import Map Deployer")
 
 ## Security
@@ -30,7 +31,7 @@ The following security constraints are highly recommended to secure the import-m
 1. The import-map-deployer's web server is only exposed within your VPC.
 2. Your CI runners should either be within the VPC or tunnel into it when calling the import-map-deployer.
 3. The import-map-deployer has HTTP basic authentication enabled, and only the CI runners know the username and password.
-4. You have configured `urlSafeList` with a list of URL prefixes that are trusted in your import map. Any attempts to modify the state of production so that your import map downloads from other URLs will be rejected. 
+4. You have configured `urlSafeList` with a list of URL prefixes that are trusted in your import map. Any attempts to modify the state of production so that your import map downloads from other URLs will be rejected.
 
 ### Secure alternative
 
@@ -45,12 +46,15 @@ If you do want to address the deployment race condition without using import-map
 [This github repository](https://github.com/joeldenning/live-import-map-deployer) shows an example of setting up your own Docker image that can be configured specifically for your organization.
 
 ## Installation and usage
+
 ### Docker
+
 import-map-deployer is available on DockerHub as [`singlespa/import-map-deployer`(https://hub.docker.com/repository/docker/singlespa/import-map-deployer). If you want to run just the single container,
 you can run `docker-compose up` from the project root. When running via docker-compose, it will mount a volume in the project root's directory,
 expecting a `config.json` file to be present.
 
 ### Node
+
 To run the import-map-deployer in Node, run the following command:
 `npx import-map-deployer config.json`
 
@@ -61,12 +65,14 @@ The default web server port is `5000`. To run web server with a custom port, se 
 `$ PORT=8080 npx import-map-deployer config.json`
 
 ## Configuration file
+
 The import-map-deployer expects a configuration file to be present so it (1) can password protect deployments, and (2) knows where and how
 to download and update the "live" import map.
 
 If no configuration file is present, import-map-deployer defaults to using the filesystem to host the manifest file, which is called `sofe-manifest.json` and created in the current working directory. If username and password are included, http basic auth will be required. If username and password is not provided, no http auth will be needed.
 
 Here are the properties available in the config file:
+
 - `urlSafeList` (optional, but **highly** recommended): An array of strings and/or functions that indicate which URLs are trusted when updating the import map. A string value is treated as a URL prefix - for example `https://unpkg.com/`. A function value is called with a [URL object](https://developer.mozilla.org/en-US/docs/Web/API/URL) and must return a truthy value when the URL is trusted. Any attempt to update the import map to include an untrusted URL will be rejected. If you omit `urlSafeList`, all URLs are considered trusted (not recommended).
 - `manifestFormat` (required): A string that is either `"importmap"` or `"sofe"`, which indicates whether the import-map-deployer is
   interacting with an [import map](https://github.com/WICG/import-maps) or a [sofe manifest](https://github.com/CanopyTax/sofe).
@@ -76,24 +82,25 @@ Here are the properties available in the config file:
   strings that indicate how the import-map-deployer should interact with the import map for that environment. For more information on the possible string values for locations, see the
   [Built-in IO Methods](#built-in-io-methods) section.
 - `username` (optional): The username for HTTP auth when calling the import-map-deployer. If username and password are omitted, anyone can update the import map without authenticating. This
-  username *is not* related to authenticating with S3/Digital Ocean/Other, but rather is the username your CI process will use in its HTTP request to the import-map-deployer.
+  username _is not_ related to authenticating with S3/Digital Ocean/Other, but rather is the username your CI process will use in its HTTP request to the import-map-deployer.
 - `password` (optional): The password for HTTP auth when calling the import-map-deployer. If username and password are omitted, anyone can update the import map without authenticating. This
-  password *is not* related to authenticating with S3/Digital Ocean/Other, but rather is the password your CI process will use in its HTTP request to the import-map-deployer.
+  password _is not_ related to authenticating with S3/Digital Ocean/Other, but rather is the password your CI process will use in its HTTP request to the import-map-deployer.
 - `port` (optional): The port to run the import-map-deployer on. Defaults to 5000.
 - `region` (optional): The [AWS region](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html) to be used when retrieving and updating the import map.
   This can also be specified via the [AWS_DEFAULT_REGION environment variable](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-envvars.html), which is the preferred method.
 - `s3Endpoint` (optional): The url for aws-sdk to call when interacting with S3. Defaults to AWS' default domain, but can be configured for
-Digital Ocean Spaces or other S3-compatible APIs.
+  Digital Ocean Spaces or other S3-compatible APIs.
 - `readManifest(env)` (optional): A javascript function that will be called to read the import map. One argument is provided, a string `env` indicating
   which location to read from. This allows you to implement your own way of reading the import map. The function must return
   a Promise that resolves with the import map as a **string**. Since javascript functions are not part of JSON, this option is only available if you provide a config.js file (instead
   of config.json).
-- `writeManifest(importMapAsString, env)` (optional): A javascript function that will be called to write the import map. Two arguments are provided, 
+- `writeManifest(importMapAsString, env)` (optional): A javascript function that will be called to write the import map. Two arguments are provided,
   the first being the import map as a string to be written, and the second is the string `env` that should be updated. This allows you to implement your
   own way of writing the import map. The function must return a Promise that resolves with the import map as an object. Since javascript functions are
   not part of JSON, this option is only available if you provide a config.js file (instead of config.json).
 
 ### Option 1: json file
+
 The below configuration file will set up the import-map-deployer to do the following:
 
 - Requests to import-map-deployer must use HTTP auth with the provided username and password.
@@ -102,10 +109,7 @@ The below configuration file will set up the import-map-deployer to do the follo
 
 ```json
 {
-  "urlSafeList": [
-    "https://unpkg.com/",
-    "https://my-organization-cdn.com/",
-  ],
+  "urlSafeList": ["https://unpkg.com/", "https://my-organization-cdn.com/"],
   "username": "admin",
   "password": "1234",
   "manifestFormat": "importmap|sofe",
@@ -118,7 +122,9 @@ The below configuration file will set up the import-map-deployer to do the follo
 ```
 
 ### Option 2: javascript module
+
 Example config.js
+
 ```js
 // config.js
 exports = {
@@ -146,6 +152,7 @@ exports = {
 ```
 
 ## Built-in IO Methods
+
 The import-map-deployer knows how to update import maps that are stored in the following ways:
 
 ## Building image using docker
@@ -180,7 +187,7 @@ config.json:
 {
   "manifestFormat": "importmap",
   "locations": {
-    "prod": "s3://mycdn.com/import-map.json",
+    "prod": "s3://mycdn.com/import-map.json"
   }
 }
 ```
@@ -207,7 +214,7 @@ config.json:
   "manifestFormat": "importmap",
   "s3Endpoint": "https://nyc3.digitaloceanspaces.com",
   "locations": {
-    "prod": "spaces://mycdn.com/import-map.json",
+    "prod": "spaces://mycdn.com/import-map.json"
   }
 }
 ```
@@ -225,7 +232,7 @@ config.json:
     "prod": {
       "azureContainer": "static",
       "azureBlob": "importmap.json"
-    },
+    }
   }
 }
 ```
@@ -253,7 +260,7 @@ If you'd like to store the import map locally on the file system, provide the na
 {
   "manifestFormat": "importmap",
   "locations": {
-    "prod": "prod-import-map.json",
+    "prod": "prod-import-map.json"
   }
 }
 ```
@@ -343,8 +350,8 @@ You can PATCH services to add or update a service, the following json body is ex
 
 ```json
 {
-    "service": "my-service",
-    "url": "http://example.com/my-service.js"
+  "service": "my-service",
+  "url": "http://example.com/my-service.js"
 }
 ```
 
