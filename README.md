@@ -332,21 +332,31 @@ and will be merged into the import map controlled by import-map-deployer.
 
 If you have an import map called `importmap.json`, here is how you can merge it into the import map deployer's import map.
 
+Note that the `skip_url_check` query param indicates that the import-map-deployer will update the import map even if it is not able to reach it via a network request.
+
 Example using [HTTPie](https://github.com/jkbrzt/httpie):
 
 ```sh
 http PATCH :5000/import-map.json\?env=prod < importmap.json
+
+# Don't check whether the URLs in the import map are publicly reachable
+http PATCH :5000/import-map.json\?env=prod\&skip_url_check < importmap.json
 ```
 
 Example using cURL:
 
 ```sh
 curl -X PATCH localhost:5000/import-map.json\?env=prod --data "@import-map.json" -H "Accept: application/json" -H "Content-Type: application/json"
+
+# Don't check whether the URLs in the import map are publicly reachable
+curl -X PATCH localhost:5000/import-map.json\?env=prod\&skip_url_check --data "@import-map.json" -H "Accept: application/json" -H "Content-Type: application/json"
 ```
 
 #### PATCH /services?env=stage
 
 You can PATCH services to add or update a service, the following json body is expected:
+
+Note that the `skip_url_check` query param indicates that the import-map-deployer will update the import map even if it is not able to reach it via a network request.
 
 ```json
 {
@@ -359,12 +369,18 @@ Example using HTTPie:
 
 ```sh
 http PATCH :5000/services\?env=stage service=my-service url=http://example.com/my-service.js
+
+# Don't check whether the URL in the request is publicly reachable
+http PATCH :5000/services\?env=stage service=my-service url=http://example.com/my-service.js
 ```
 
 Example using cURL:
 
 ```sh
 curl -d '{ "service":"my-service","url":"http://example.com/my-service.js" }' -X PATCH localhost:5000/services\?env=beta -H "Accept: application/json" -H "Content-Type: application/json"
+
+# Don't check whether the URL in the request is publicly reachable
+curl -d '{ "service":"my-service","url":"http://example.com/my-service.js" }' -X PATCH localhost:5000/services\?env=beta\&skip_url_check -H "Accept: application/json" -H "Content-Type: application/json"
 ```
 
 #### DELETE /services/{SERVICE_NAME}?env=alpha

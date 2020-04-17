@@ -152,7 +152,9 @@ app.patch("/import-map.json", (req, res) => {
     });
   }
 
-  const validImportUrlPromises = importUrls.map(verifyValidUrl);
+  const validImportUrlPromises = importUrls.map((url) =>
+    verifyValidUrl(req, url)
+  );
 
   Promise.all(validImportUrlPromises)
     .then(() => {
@@ -199,7 +201,7 @@ app.patch("/services", function (req, res) {
     });
   }
 
-  verifyValidUrl(url)
+  verifyValidUrl(req, url)
     .then(() => {
       modify
         .modifyService(env, service, url)
