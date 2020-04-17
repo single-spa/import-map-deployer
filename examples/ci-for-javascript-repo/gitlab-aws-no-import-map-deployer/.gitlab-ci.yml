@@ -51,8 +51,8 @@ deploy-dev:
   environment:
     name: stage
   variables:
-    DEPLOYER_BUCKET: 'static-assets-cdn-dev'
-    PUBLIC_CDN_URL: 'https://ORG_CDN_URL.com/'
+    DEPLOYER_BUCKET: "static-assets-cdn-dev"
+    PUBLIC_CDN_URL: "https://ORG_CDN_URL.com/"
 
 deploy-qa:
   extends: .deploy
@@ -60,8 +60,8 @@ deploy-qa:
   environment:
     name: stage
   variables:
-    DEPLOYER_BUCKET: 'static-assets-cdn-qa'
-    PUBLIC_CDN_URL: 'https://ORG_CDN_URL.com/'
+    DEPLOYER_BUCKET: "static-assets-cdn-qa"
+    PUBLIC_CDN_URL: "https://ORG_CDN_URL.com/"
 
 deploy-stage:
   extends: .deploy
@@ -69,8 +69,8 @@ deploy-stage:
   environment:
     name: stage
   variables:
-    DEPLOYER_BUCKET: 'static-assets-cdn-stage'
-    PUBLIC_CDN_URL: 'https://ORG_CDN_URL.com/'
+    DEPLOYER_BUCKET: "static-assets-cdn-stage"
+    PUBLIC_CDN_URL: "https://ORG_CDN_URL.com/"
   when: manual
 
 deploy-prod:
@@ -79,6 +79,6 @@ deploy-prod:
   environment:
     name: prod
   variables:
-    DEPLOYER_BUCKET: 'static-assets-cdn-prod'
-    PUBLIC_CDN_URL: 'https://ORG_CDN_URL.com/'
+    DEPLOYER_BUCKET: "static-assets-cdn-prod"
+    PUBLIC_CDN_URL: "https://ORG_CDN_URL.com/"
   when: manual

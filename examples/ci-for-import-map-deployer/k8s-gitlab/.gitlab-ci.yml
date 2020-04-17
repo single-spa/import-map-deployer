@@ -3,12 +3,12 @@ image: docker
 # stages basically defines groups that jobs can belong to and the order in which they will run.
 # we have multiple jobs that are part of the test stage. They will all run before any jobs belonging to push-to-dockerhub stage
 stages:
-    - build
-    #- test
-    - push-to-dockerhub
-    - deploy-dev
-    # - deploy-stage
-    # - deploy-prod
+  - build
+  #- test
+  - push-to-dockerhub
+  - deploy-dev
+  # - deploy-stage
+  # - deploy-prod
 
 variables:
   REPO_NAME: mycompanyname/import-map-deployer
@@ -66,7 +66,6 @@ push-to-dockerhub:
 deploy-dev:
   <<: *deploy
   stage: deploy-dev
-
 # deploy-stage:
 #   <<: *deploy
 #   stage: deploy-stage

@@ -55,7 +55,7 @@ deploy-dev:
   environment:
     name: dev
   variables:
-    DEPLOYER_BUCKET: '$DEV_SINGLESPA_BUCKET'
+    DEPLOYER_BUCKET: "$DEV_SINGLESPA_BUCKET"
     CF_PUBLIC_URL: storage.googleapis.com/mycompany-frontend-dev
 
 deploy-stage:
@@ -64,7 +64,7 @@ deploy-stage:
   environment:
     name: stage
   variables:
-    DEPLOYER_BUCKET: '$STAGING_SINGLESPA_BUCKET'
+    DEPLOYER_BUCKET: "$STAGING_SINGLESPA_BUCKET"
     CF_PUBLIC_URL: storage.googleapis.com/mycompany-frontend-stage
 
 deploy-prod:
@@ -73,5 +73,5 @@ deploy-prod:
   environment:
     name: prod
   variables:
-    DEPLOYER_BUCKET: '$PRODUCTION_SINGLESPA_BUCKET'
+    DEPLOYER_BUCKET: "$PRODUCTION_SINGLESPA_BUCKET"
     CF_PUBLIC_URL: storage.googleapis.com/mycompany-frontend-prod

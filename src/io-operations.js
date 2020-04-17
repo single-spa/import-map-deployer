@@ -1,63 +1,77 @@
-'use strict'
-const config = require('./config.js').config
-const getEmptyManifest = require('./modify').getEmptyManifest
+"use strict";
+const config = require("./config.js").config;
+const getEmptyManifest = require("./modify").getEmptyManifest;
 
-let readManifest, writeManifest, username, password
-if ( config ) {
-  if (typeof config.readManifest === 'function' && typeof config.writeManifest === 'function') {
-    readManifest = function(env) {
-      const promise = config.readManifest(env)
+let readManifest, writeManifest, username, password;
+if (config) {
+  if (
+    typeof config.readManifest === "function" &&
+    typeof config.writeManifest === "function"
+  ) {
+    readManifest = function (env) {
+      const promise = config.readManifest(env);
       if (!(promise instanceof Promise))
-        throw new Error(`Configuration file provided invalid readManifest function -- expected a Promise to be returned`)
-      return promise
-    }
+        throw new Error(
+          `Configuration file provided invalid readManifest function -- expected a Promise to be returned`
+        );
+      return promise;
+    };
 
-    writeManifest = function(string, env) {
-      const promise = config.writeManifest(string, env)
+    writeManifest = function (string, env) {
+      const promise = config.writeManifest(string, env);
       if (!(promise instanceof Promise))
-        throw new Error(`Configuration file provided invalid writeManifest function -- expected a Promise to be returned`)
-      return promise
-    }
+        throw new Error(
+          `Configuration file provided invalid writeManifest function -- expected a Promise to be returned`
+        );
+      return promise;
+    };
   } else if (config.readManifest || config.writeManifest) {
-    throw new Error(`Invalid config file -- readManifest and writeManifest should both be functions`)
+    throw new Error(
+      `Invalid config file -- readManifest and writeManifest should both be functions`
+    );
   } else {
-    useDefaultIOMethod()
+    useDefaultIOMethod();
   }
 } else {
-  useDefaultIOMethod()
+  useDefaultIOMethod();
 }
 
-if ( config ) {
-  if ( (typeof config.username === 'string' && typeof config.password === 'string') 
-        || (config.username === undefined && config.password === undefined) ) {
-    username = config.username
-    password = config.password
+if (config) {
+  if (
+    (typeof config.username === "string" &&
+      typeof config.password === "string") ||
+    (config.username === undefined && config.password === undefined)
+  ) {
+    username = config.username;
+    password = config.password;
   } else {
-    throw new Error(`Invalid config file -- username and password should either be strings or missing completely`)
+    throw new Error(
+      `Invalid config file -- username and password should either be strings or missing completely`
+    );
   }
 }
 
 function useDefaultIOMethod() {
-  const defaultIOMethod = require('./io-methods/default.js')
-  readManifest = defaultIOMethod.readManifest
-  writeManifest = defaultIOMethod.writeManifest
+  const defaultIOMethod = require("./io-methods/default.js");
+  readManifest = defaultIOMethod.readManifest;
+  writeManifest = defaultIOMethod.writeManifest;
 }
 
 exports.readManifest = (env) => {
   return new Promise((resolve, reject) => {
     readManifest(env)
-    .then((manifest) => {
-      if (manifest === '') {
-        manifest = JSON.stringify(getEmptyManifest())
-      }
-      resolve(manifest)
-    })
-    .catch((ex) => {
-      reject(ex)
-    })
-  })
-}
+      .then((manifest) => {
+        if (manifest === "") {
+          manifest = JSON.stringify(getEmptyManifest());
+        }
+        resolve(manifest);
+      })
+      .catch((ex) => {
+        reject(ex);
+      });
+  });
+};
 
-exports.writeManifest = writeManifest
-exports.username = username
-exports.password = password
+exports.writeManifest = writeManifest;
+exports.username = username;
+exports.password = password;

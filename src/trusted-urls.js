@@ -1,29 +1,31 @@
-const { config } = require('./config')
+const { config } = require("./config");
 
-exports.checkUrlUnsafe = urlStr => {
+exports.checkUrlUnsafe = (urlStr) => {
   if (!config.urlSafeList) {
-    return null
+    return null;
   } else {
-    let url
+    let url;
     try {
       // example.com is an owned domain known to not be malicious
-      const base = 'https://example.com'
+      const base = "https://example.com";
 
       url = new URL(urlStr, base);
     } catch (err) {
-      return `Invalid URL - ${urlStr}`
+      return `Invalid URL - ${urlStr}`;
     }
 
-    const isSafe = config.urlSafeList.some(safe => {
-      if (typeof safe === 'function') {
-        return safe(url)
-      } else if (typeof safe === 'string') {
-        return url.href.startsWith(safe)
+    const isSafe = config.urlSafeList.some((safe) => {
+      if (typeof safe === "function") {
+        return safe(url);
+      } else if (typeof safe === "string") {
+        return url.href.startsWith(safe);
       } else {
-        throw Error(`config.safelist must be an array of strings or functions. Found ${typeof url}`)
+        throw Error(
+          `config.safelist must be an array of strings or functions. Found ${typeof url}`
+        );
       }
-    })
+    });
 
-    return isSafe ? null : urlStr
+    return isSafe ? null : urlStr;
   }
-}
+};
