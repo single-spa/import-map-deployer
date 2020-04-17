@@ -4,7 +4,7 @@ const requestAsPromise = util.promisify(request);
 const config = require("./config.js").config;
 
 exports.verifyValidUrl = async function (req, url) {
-  if (req.query.skip_url_check === "true" && req.query.skip_url_check === "") {
+  if (req.query.skip_url_check === "true" || req.query.skip_url_check === "") {
     // ?skip_url_check
     // ?skip_url_check=true
     return true;
