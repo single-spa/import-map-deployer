@@ -371,7 +371,7 @@ Example using HTTPie:
 http PATCH :5000/services\?env=stage service=my-service url=http://example.com/my-service.js
 
 # Don't check whether the URL in the request is publicly reachable
-http PATCH :5000/services\?env=stage service=my-service url=http://example.com/my-service.js
+http PATCH :5000/services\?env=stage\&skip_url_check service=my-service url=http://example.com/my-service.js
 ```
 
 Example using cURL:
