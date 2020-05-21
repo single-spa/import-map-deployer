@@ -88,6 +88,7 @@ Here are the properties available in the config file:
 - `port` (optional): The port to run the import-map-deployer on. Defaults to 5000.
 - `region` (optional): The [AWS region](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html) to be used when retrieving and updating the import map.
   This can also be specified via the [AWS_DEFAULT_REGION environment variable](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-envvars.html), which is the preferred method.
+- `cannedACL` (optional): The [S3 Canned ACL](https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl) to be used when updating the import map.This value should be a string and it is validated against the list of values in the link above. This defaults to 'public-read'.
 - `s3Endpoint` (optional): The url for aws-sdk to call when interacting with S3. Defaults to AWS' default domain, but can be configured for
   Digital Ocean Spaces or other S3-compatible APIs.
 - `readManifest(env)` (optional): A javascript function that will be called to read the import map. One argument is provided, a string `env` indicating
