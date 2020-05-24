@@ -21,15 +21,9 @@ function parseFilePath(filePath) {
   };
 }
 
-const validCannedACLs = [
-  // See: https://docs.aws.amazon.com/AmazonS3/latest/dev/acl-overview.html#canned-acl
-  "private", "public-read", "public-read-write", "aws-exec-read", "authenticated-read",
-  "bucket-owner-read", "bucket-owner-full-control", "log-delivery-write"
-];
-
-let cannedACL = "public-read";
-if (config && config.cannedACL && validCannedACLs.indexOf(config.cannedACL) !== -1) {
-  cannedACL = config.cannedACL;
+let s3PutObjectConfig = {};
+if (config && config.s3 && config.s3.putObject) {
+  s3PutObjectConfig = { ...config.s3.putObject };
 }
 
 const s3 = new aws.S3({
@@ -65,7 +59,8 @@ exports.writeManifest = function (filePath, data) {
         Body: data,
         ContentType: "application/json",
         CacheControl: "public, must-revalidate, max-age=0",
-        ACL: cannedACL,
+        ACL: "public-read",
+        ...s3PutObjectConfig
       },
       function (err) {
         if (err) reject(err);
@@ -88,7 +83,8 @@ exports.writeManifest = function (filePath, data) {
           Body: jsHelpers.createJsString(data),
           ContentType: "application/javascript",
           CacheControl: "public, must-revalidate, max-age=0",
-          ACL: cannedACL,
+          ACL: "public-read",
+          ...s3PutObjectConfig
         },
         function (err) {
           if (err) reject(err);
