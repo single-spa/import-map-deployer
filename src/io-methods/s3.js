@@ -21,6 +21,11 @@ function parseFilePath(filePath) {
   };
 }
 
+let s3PutObjectConfig = {};
+if (config && config.s3 && config.s3.putObject) {
+  s3PutObjectConfig = { ...config.s3.putObject };
+}
+
 const s3 = new aws.S3({
   endpoint: config.s3Endpoint,
 });
@@ -55,6 +60,7 @@ exports.writeManifest = function (filePath, data) {
         ContentType: "application/json",
         CacheControl: "public, must-revalidate, max-age=0",
         ACL: "public-read",
+        ...s3PutObjectConfig
       },
       function (err) {
         if (err) reject(err);
@@ -78,6 +84,7 @@ exports.writeManifest = function (filePath, data) {
           ContentType: "application/javascript",
           CacheControl: "public, must-revalidate, max-age=0",
           ACL: "public-read",
+          ...s3PutObjectConfig
         },
         function (err) {
           if (err) reject(err);

@@ -88,6 +88,7 @@ Here are the properties available in the config file:
 - `port` (optional): The port to run the import-map-deployer on. Defaults to 5000.
 - `region` (optional): The [AWS region](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html) to be used when retrieving and updating the import map.
   This can also be specified via the [AWS_DEFAULT_REGION environment variable](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-envvars.html), which is the preferred method.
+- `s3.putObject` (optional): The s3.putObject is an object that is merged with the default putObject parameters. This can contain and override any of of the valid request options, such as ACL, encoding, SSE, etc. The sdk options can be found [here](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/S3.html#putObject-property).
 - `s3Endpoint` (optional): The url for aws-sdk to call when interacting with S3. Defaults to AWS' default domain, but can be configured for
   Digital Ocean Spaces or other S3-compatible APIs.
 - `readManifest(env)` (optional): A javascript function that will be called to read the import map. One argument is provided, a string `env` indicating
