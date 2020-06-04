@@ -1,15 +1,34 @@
-const { BlobServiceClient } = require("@azure/storage-blob");
+const {
+  BlobServiceClient,
+  StorageSharedKeyCredential,
+} = require("@azure/storage-blob");
+
 let blobService;
 
-const AZURE_STORAGE_CONNECTION_STRING =
-  process.env.AZURE_STORAGE_CONNECTION_STRING;
+async function createBlobService() {
+  const connectionString = process.env.AZURE_STORAGE_CONNECTION_STRING;
+  const account = process.env.AZURE_STORAGE_ACCOUNT;
+  const accessKey = process.env.AZURE_STORAGE_ACCESS_KEY;
+  if (connectionString) {
+    return await BlobServiceClient.fromConnectionString(connectionString);
+  } else if (account && accessKey) {
+    const sharedKeyCredential = new StorageSharedKeyCredential(
+      account,
+      accessKey
+    );
+    return new BlobServiceClient(
+      `https://${account}.blob.core.windows.net`,
+      sharedKeyCredential
+    );
+  } else {
+    throw new Error(
+      "Azure credentials are not correct, please fill the correct information to the process.env"
+    );
+  }
+}
 
 async function getBlobService() {
-  blobService =
-    blobService ||
-    (await BlobServiceClient.fromConnectionString(
-      AZURE_STORAGE_CONNECTION_STRING
-    ));
+  blobService = blobService || (await createBlobService());
   return blobService;
 }
 
