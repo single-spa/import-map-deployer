@@ -46,7 +46,7 @@ exports.writeManifest = async function (target, content) {
   return await blockBlobClient.upload(content, content.length, {
     blobHTTPHeaders: {
       blobCacheControl: "public, must-revalidate, max-age=0",
-      blobContentType: "application/json",
+      blobContentType: "application/importmap+json",
     },
   });
 };
