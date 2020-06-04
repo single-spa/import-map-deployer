@@ -31,7 +31,7 @@ exports.writeManifest = function (filePath, data) {
       .bucket(bucketName)
       .file(fileName)
       .save(data, {
-        contentType: "application/json",
+        contentType: "application/importmap+json",
         metadata: {
           cacheControl: "public, must-revalidate, max-age=0",
         },

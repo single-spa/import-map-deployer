@@ -57,10 +57,10 @@ exports.writeManifest = function (filePath, data) {
         Bucket: file.bucket,
         Key: file.key,
         Body: data,
-        ContentType: "application/json",
+        ContentType: "application/importmap+json",
         CacheControl: "public, must-revalidate, max-age=0",
         ACL: "public-read",
-        ...s3PutObjectConfig
+        ...s3PutObjectConfig,
       },
       function (err) {
         if (err) reject(err);
@@ -81,10 +81,10 @@ exports.writeManifest = function (filePath, data) {
           Bucket: file.bucket,
           Key: jsKey,
           Body: jsHelpers.createJsString(data),
-          ContentType: "application/javascript",
+          ContentType: "application/importmap+json",
           CacheControl: "public, must-revalidate, max-age=0",
           ACL: "public-read",
-          ...s3PutObjectConfig
+          ...s3PutObjectConfig,
         },
         function (err) {
           if (err) reject(err);
