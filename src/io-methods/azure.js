@@ -22,7 +22,7 @@ async function createBlobService() {
     );
   } else {
     throw new Error(
-      "Azure credentials are not correct, please fill the correct information to the process.env"
+      "Azure credentials are not correct, please provide the Azure environment variables described in https://github.com/single-spa/import-map-deployer#azure-storage"
     );
   }
 }
