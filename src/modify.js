@@ -6,25 +6,72 @@ const config = require("./config").config;
 
 const isImportMap = config && config.manifestFormat === "importmap";
 
-function getMapFromManifest(manifest) {
-  return isImportMap ? manifest.imports : manifest.sofe.manifest;
+function getScopeFromManifest(manifest, scope = "imports") {
+  if (!isImportMap) {
+    if (scope !== "imports") {
+      throw new Error("Sofe implementations can only support imports");
+    }
+    return manifest.sofe.manifest;
+  } else {
+    return manifest[scope] || {};
+  }
 }
 
 function getEmptyManifest() {
-  return isImportMap ? { imports: {} } : { sofe: { manifest: {} } };
+  return isImportMap ? { imports: {}, scopes: {} } : { sofe: { manifest: {} } };
 }
+const deepCopy = (json) => JSON.parse(JSON.stringify(json));
 
-exports.getEmptyManifest = getEmptyManifest;
+exports.modifyMultipleServices = function (env, newImports) {
+  return modifyMultiple(env, newImports, "imports");
+};
 
 exports.modifyService = function (env, serviceName, url, remove) {
+  return modifyKeyValue(env, serviceName, url, remove, "imports");
+};
+
+exports.modifyMultipleScopes = function (env, newImports) {
+  return modifyMultiple(env, newImports, "scopes");
+};
+
+exports.modifyScope = function (env, serviceName, url, remove) {
+  return modifyKeyValue(env, serviceName, url, remove, "scopes");
+};
+
+function modifyMultiple(env, values, manifestScope) {
+  console.log("modify multi", env, values, manifestScope);
+  return modifyLock(env, (json) => {
+    const imports = getScopeFromManifest(json, manifestScope);
+    console.log(env, values, manifestScope, imports);
+    imports[manifestScope] = values;
+    // Object.assign(imports, values);
+    return imports;
+  });
+}
+
+function modifyKeyValue(env, key, value, remove, manifestScope) {
+  return modifyLock(env, (json) => {
+    const imports = getScopeFromManifest(json, manifestScope);
+    if (remove) {
+      delete imports[key];
+    } else {
+      imports[key] = value;
+    }
+    return imports;
+  });
+}
+
+function modifyLock(env, modifierFunc) {
   return new Promise((resolve, reject) => {
     // obtain lock (we need a global lock so deploys dont have a race condition)
-    lock.writeLock(function (release) {
+    lock.writeLock((releaseLock) => {
       // read file as json
-      const manifestPromise = ioOperations
+      const resultPromise = ioOperations
         .readManifest(env)
         .then((data) => {
-          var json;
+          let json;
+
+          // get json from data
           if (data === "") {
             json = getEmptyManifest();
           } else {
@@ -38,40 +85,9 @@ exports.modifyService = function (env, serviceName, url, remove) {
           }
 
           // modify json
-          if (remove) {
-            delete getMapFromManifest(json)[serviceName];
-          } else {
-            getMapFromManifest(json)[serviceName] = url;
-          }
+          json = modifierFunc(deepCopy(json));
 
           // write json to file
-          var string = JSON.stringify(json, null, 2);
-          return ioOperations.writeManifest(string, env).then(() => {
-            release();
-            return json;
-          });
-        })
-        .catch((ex) => {
-          release();
-          throw ex;
-        });
-
-      resolve(manifestPromise);
-    });
-  });
-};
-
-exports.modifyMultipleServices = function (env, newImports) {
-  return new Promise((resolve, reject) => {
-    lock.writeLock((releaseLock) => {
-      const resultPromise = ioOperations
-        .readManifest(env)
-        .then((data) => {
-          const json = data ? JSON.parse(data) : getEmptyManifest();
-
-          const imports = getMapFromManifest(json);
-          Object.assign(imports, newImports);
-
           const newImportMapString = JSON.stringify(json, null, 2);
           return ioOperations
             .writeManifest(newImportMapString, env)
@@ -88,4 +104,6 @@ exports.modifyMultipleServices = function (env, newImports) {
       resolve(resultPromise);
     });
   });
-};
+}
+
+exports.getEmptyManifest = getEmptyManifest;
