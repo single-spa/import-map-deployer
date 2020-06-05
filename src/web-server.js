@@ -116,10 +116,6 @@ app.patch("/import-map.json", (req, res) => {
     return;
   }
 
-  if (req.body.scopes) {
-    req.body.scopes;
-  }
-
   if (!req.body.imports || Object.keys(req.body.imports).length === 0) {
     res
       .status(400)
@@ -140,6 +136,20 @@ app.patch("/import-map.json", (req, res) => {
     }
   }
 
+  if (req.body.scopes && Object.keys(req.body.scopes).length !== 0) {
+    for (let scopeName in req.body.scopes) {
+      if (typeof req.body.scopes[scopeName] !== "string") {
+        res
+          .status(400)
+          .send(
+            `Invalid import map in request body -- scope with name '${scopeName}' does not have a string url`
+          );
+        return;
+      }
+    }
+  }
+
+  // Confirm the imports are working
   const importUrls = Object.values(req.body.imports);
 
   const unsafeUrls = importUrls.map(checkUrlUnsafe).filter(Boolean);
@@ -153,6 +163,8 @@ app.patch("/import-map.json", (req, res) => {
   const validImportUrlPromises = importUrls.map((url) =>
     verifyValidUrl(req, url)
   );
+
+  // Confirm scopes are working
 
   Promise.all(validImportUrlPromises)
     .then(() => {
@@ -235,60 +247,6 @@ app.delete("/services/:serviceName", function (req, res) {
       res
         .status(500)
         .send(`Could not delete service ${req.params.serviceName}`);
-    });
-});
-
-app.patch("/scopes", function (req, res) {
-  console.log(req.body);
-  req.body = JSON.parse(req.body);
-  let service, url;
-  let env = getEnv(req);
-  if (req.body != undefined && req.body.hasOwnProperty("scope")) {
-    service = req.body.scopes;
-  } else {
-    return res.status(400).send("scope key is missing");
-  }
-  if (req.body != undefined && req.body.hasOwnProperty("url")) {
-    url = req.body.url;
-  } else {
-    return res.status(400).send("url key is missing");
-  }
-
-  if (checkUrlUnsafe(url)) {
-    return res.status(400).send({
-      error: `URL is not trusted (${url})`,
-    });
-  }
-
-  verifyValidUrl(req, url)
-    .then(() => {
-      modify
-        .modifyScope(env, service, url)
-        .then((json) => {
-          res.send(json);
-        })
-        .catch((ex) => {
-          console.error(ex);
-          res
-            .status(500)
-            .send(`Could not write manifest file -- ${ex.toString()}`);
-        });
-    })
-    .catch((err) => {
-      res.status(400).send(err.message);
-    });
-});
-
-app.delete("/scopes/:scopeName", function (req, res) {
-  let env = getEnv(req);
-  modify
-    .modifyScope(env, req.params.scopeName, null, true)
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((ex) => {
-      console.error(ex);
-      res.status(500).send(`Could not delete scope ${req.params.scopeName}`);
     });
 });
 
