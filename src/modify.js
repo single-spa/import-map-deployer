@@ -39,12 +39,9 @@ exports.modifyScope = function (env, serviceName, url, remove) {
 };
 
 function modifyMultiple(env, values, manifestScope) {
-  console.log("modify multi", env, values, manifestScope);
   return modifyLock(env, (json) => {
     const imports = getScopeFromManifest(json, manifestScope);
-    console.log(env, values, manifestScope, imports);
     imports[manifestScope] = values;
-    // Object.assign(imports, values);
     return imports;
   });
 }
