@@ -224,6 +224,10 @@ config.json:
 
 Note, that you must have environment variables `AZURE_STORAGE_ACCOUNT` and `AZURE_STORAGE_ACCESS_KEY`, or `AZURE_STORAGE_CONNECTION_STRING` defined for authentication.
 
+If you wish to provide custom authentication keys for specific environments you can provide it also via the keys `azureConnectionString`, `azureAccount` or `azureAccessKey`.
+
+**Its not recommended to put authentication keys in code. Always provide them via environment variables.**
+
 config.json:
 
 ```json
@@ -232,7 +236,10 @@ config.json:
   "locations": {
     "prod": {
       "azureContainer": "static",
-      "azureBlob": "importmap.json"
+      "azureBlob": "importmap.json",
+      "azureConnectionString": process.env.AZURE_STORAGE_ACCOUNT_PROD, // optional
+      "azureAccount": process.env.AZURE_STORAGE_ACCOUNT_PROD, // optional
+      "azureAccessKey": process.env.AZURE_STORAGE_ACCOUNT_PROD // optional
     }
   }
 }
