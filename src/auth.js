@@ -3,6 +3,7 @@
 const io = require("./io-operations");
 const auth = require("basic-auth");
 
+const publicRoutes = new Set(["/", "/health"]);
 let admins = {};
 
 if (io.username) {
@@ -17,7 +18,7 @@ module.exports = function (req, res, next) {
   var user = auth(req);
   if (
     (!user || !admins[user.name] || admins[user.name].password !== user.pass) &&
-    (req.url != "/" || req.url != "/health")
+    !publicRoutes.has(req.url)
   ) {
     res.set("WWW-Authenticate", 'Basic realm="sofe-deplanifester"');
     return res.status(401).send();
