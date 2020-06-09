@@ -145,7 +145,7 @@ app.patch("/import-map.json", (req, res) => {
         res
           .status(400)
           .send(
-            `Invalid import map in request body -- scope with name '${scopeName}' is not a valid object`
+            `Invalid import map in request body -- scope with name '${scopeName}' is not a valid object, or object has no keys`
           );
         return;
       }
