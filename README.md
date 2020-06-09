@@ -128,7 +128,7 @@ Example config.js
 
 ```js
 // config.js
-exports = {
+module.exports = {
   // The username that must be provided via HTTP auth when calling the import-map-deployer
   username: "admin",
   // The password that must be provided via HTTP auth when calling the import-map-deployer
@@ -228,21 +228,21 @@ If you wish to provide custom authentication keys for specific environments you 
 
 **Its not recommended to put authentication keys in code. Always provide them via environment variables.**
 
-config.json:
+config.js:
 
-```json
-{
-  "manifestFormat": "importmap",
-  "locations": {
-    "prod": {
-      "azureContainer": "static",
-      "azureBlob": "importmap.json",
-      "azureConnectionString": process.env.AZURE_STORAGE_ACCOUNT_PROD, // optional
-      "azureAccount": process.env.AZURE_STORAGE_ACCOUNT_PROD, // optional
-      "azureAccessKey": process.env.AZURE_STORAGE_ACCOUNT_PROD // optional
-    }
-  }
-}
+```js
+module.exports = {
+  manifestFormat: "importmap",
+  locations: {
+    prod: {
+      azureContainer: "static",
+      azureBlob: "importmap.json",
+      azureConnectionString: process.env.AZURE_STORAGE_ACCOUNT_PROD, // optional
+      azureAccount: process.env.AZURE_STORAGE_ACCOUNT_PROD, // optional
+      azureAccessKey: process.env.AZURE_STORAGE_ACCOUNT_PROD, // optional
+    },
+  },
+};
 ```
 
 ### Google Cloud Storage
