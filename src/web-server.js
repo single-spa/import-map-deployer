@@ -138,11 +138,14 @@ app.patch("/import-map.json", (req, res) => {
 
   if (req.body.scopes && Object.keys(req.body.scopes).length !== 0) {
     for (let scopeName in req.body.scopes) {
-      if (typeof req.body.scopes[scopeName] !== "string") {
+      if (
+        typeof req.body.scopes[scopeName] !== "object" &&
+        Object.keys(req.body.scopes[scopeName]).length > 0
+      ) {
         res
           .status(400)
           .send(
-            `Invalid import map in request body -- scope with name '${scopeName}' does not have a string url`
+            `Invalid import map in request body -- scope with name '${scopeName}' is not a valid object`
           );
         return;
       }

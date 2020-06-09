@@ -6,14 +6,18 @@ const config = require("./config").config;
 
 const isImportMap = config && config.manifestFormat === "importmap";
 
-function getScopeFromManifest(manifest, scope = "imports") {
+// This one helps us contain the Sofe checks in one spot
+// * Sofe does not accept scopes
+function getEntriesForKey(manifest, key = "imports") {
   if (!isImportMap) {
-    if (scope !== "imports") {
-      throw new Error("Sofe implementations can only support imports");
+    if (key !== "imports") {
+      throw new Error(
+        `Sofe implementations can only support imports, key: [${key}] is not supported`
+      );
     }
     return manifest.sofe.manifest;
   } else {
-    return manifest[scope] || {};
+    return manifest[key] || {};
   }
 }
 
@@ -21,42 +25,6 @@ function getEmptyManifest() {
   return isImportMap ? { imports: {}, scopes: {} } : { sofe: { manifest: {} } };
 }
 const deepCopy = (json) => JSON.parse(JSON.stringify(json));
-
-exports.modifyMultipleServices = function (env, newImports) {
-  return modifyMultiple(env, newImports, "imports");
-};
-
-exports.modifyService = function (env, serviceName, url, remove) {
-  return modifyKeyValue(env, serviceName, url, remove, "imports");
-};
-
-exports.modifyMultipleScopes = function (env, newImports) {
-  return modifyMultiple(env, newImports, "scopes");
-};
-
-exports.modifyScope = function (env, serviceName, url, remove) {
-  return modifyKeyValue(env, serviceName, url, remove, "scopes");
-};
-
-function modifyMultiple(env, values, manifestScope) {
-  return modifyLock(env, (json) => {
-    const imports = getScopeFromManifest(json, manifestScope);
-    imports[manifestScope] = values;
-    return imports;
-  });
-}
-
-function modifyKeyValue(env, key, value, remove, manifestScope) {
-  return modifyLock(env, (json) => {
-    const imports = getScopeFromManifest(json, manifestScope);
-    if (remove) {
-      delete imports[key];
-    } else {
-      imports[key] = value;
-    }
-    return imports;
-  });
-}
 
 function modifyLock(env, modifierFunc) {
   return new Promise((resolve, reject) => {
@@ -102,5 +70,52 @@ function modifyLock(env, modifierFunc) {
     });
   });
 }
+
+/*
+ * Services
+ */
+exports.modifyMultipleServices = function (env, newImports) {
+  return modifyLock(env, (json) => {
+    const entries = getEntriesForKey(json, "imports");
+    entries.imports = newImports;
+    return entries;
+  });
+};
+
+exports.modifyService = function (env, serviceName, url, remove) {
+  return modifyLock(env, (json) => {
+    const entries = getEntriesForKey(json, "imports");
+    if (remove) {
+      delete entries[serviceName];
+    } else {
+      entries[serviceName] = url;
+    }
+    return entries;
+  });
+};
+
+/*
+ * Scopes
+ */
+
+exports.modifyMultipleScopes = function (env, newScopes) {
+  return modifyLock(env, (json) => {
+    const entries = getEntriesForKey(json, "scopes");
+    entries.scopes = newScopes;
+    return entries;
+  });
+};
+
+exports.modifyScope = function (env, scopeSpecifier, scopeMappingObj, remove) {
+  return modifyLock(env, (json) => {
+    const entries = getEntriesForKey(json, "scopes");
+    if (remove) {
+      delete entries[scopeSpecifier];
+    } else {
+      entries[scopeSpecifier] = scopeMappingObj;
+    }
+    return entries;
+  });
+};
 
 exports.getEmptyManifest = getEmptyManifest;
