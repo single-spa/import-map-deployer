@@ -3,8 +3,6 @@ const {
   StorageSharedKeyCredential,
 } = require("@azure/storage-blob");
 
-let blobService;
-
 async function createBlobService(target) {
   const connectionString =
     target.azureConnectionString || process.env.AZURE_STORAGE_CONNECTION_STRING;
@@ -29,11 +27,6 @@ async function createBlobService(target) {
   }
 }
 
-async function getBlobService(target) {
-  blobService = blobService || (await createBlobService(target));
-  return blobService;
-}
-
 async function streamToString(readableStream) {
   return new Promise((resolve, reject) => {
     const chunks = [];
@@ -49,7 +42,7 @@ async function streamToString(readableStream) {
 
 // Reference: https://github.com/Azure/azure-sdk-for-js/tree/master/sdk/storage/storage-blob#download-a-blob-and-convert-it-to-a-string-nodejs
 exports.readManifest = async function (target) {
-  const blobService = await getBlobService(target);
+  const blobService = await createBlobService(target);
   const containerClient = blobService.getContainerClient(target.azureContainer);
   const blobClient = containerClient.getBlobClient(target.azureBlob);
 
@@ -61,7 +54,7 @@ exports.readManifest = async function (target) {
 };
 
 exports.writeManifest = async function (target, content) {
-  const blobService = await getBlobService();
+  const blobService = await createBlobService(target);
   const containerClient = blobService.getContainerClient(target.azureContainer);
   const blockBlobClient = containerClient.getBlockBlobClient(target.azureBlob);
   return await blockBlobClient.upload(content, content.length, {
