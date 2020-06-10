@@ -16,6 +16,8 @@ module.exports = function (req, res, next) {
     return next();
   }
   var user = auth(req);
+  const unauthenticatedEndpoints = ["/", "/"];
+
   if (
     (!user || !admins[user.name] || admins[user.name].password !== user.pass) &&
     !publicRoutes.has(req.url)

@@ -7,7 +7,7 @@
     "import-map-deployer": "./bin/import-map-deployer"
   },
   "scripts": {
-    "test": "rm -f sofe-manifest.json && jasmine",
+    "test": "cross-env NODE_ENV=test jest",
     "format": "prettier --write './**/*'",
     "start": "node src/web-server.js"
   },
@@ -44,12 +44,13 @@
     "rwlock": "^5.0.0"
   },
   "devDependencies": {
+    "cross-env": "^7.0.2",
     "husky": "^4.2.5",
-    "jasmine": "^2.4.1",
-    "node-static": "^0.7.9",
+    "jest": "^26.0.1",
+    "jest-cli": "^26.0.1",
     "prettier": "^2.0.4",
     "pretty-quick": "^2.0.1",
-    "superagent": "^1.6.1"
+    "supertest": "^4.0.2"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
