@@ -1,5 +1,7 @@
 # import-map-deployer
 
+[![Build Status](https://travis-ci.com/single-spa/import-map-deployer.svg?branch=master)](https://travis-ci.com/single-spa/import-map-deployer)
+
 The import-map-deployer is a backend service that updates [import map json files](https://github.com/WICG/import-maps#installation). When using
 import-map-deployer, a frontend deployment is completed in two steps:
 
