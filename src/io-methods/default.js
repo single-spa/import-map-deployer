@@ -5,6 +5,7 @@ const s3 = require("./s3");
 const azure = require("./azure");
 const google = require("./google-cloud-storage");
 const config = require("../config").config;
+const memory = require("./memory");
 
 const defaultFilePath =
   config && config.manifestFormat === "importmap"
