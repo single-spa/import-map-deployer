@@ -8,7 +8,7 @@ if (argv._.length > 1)
     `sofe-deplanifester expects only a single argument, which is the configuration file`
   );
 
-let config;
+let config = {};
 if (argv._.length === 1) {
   config = require(path.join(process.cwd(), argv._[0]));
 }

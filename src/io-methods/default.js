@@ -5,6 +5,7 @@ const s3 = require("./s3");
 const azure = require("./azure");
 const google = require("./google-cloud-storage");
 const config = require("../config").config;
+const memory = require("./memory");
 
 const defaultFilePath =
   config && config.manifestFormat === "importmap"
@@ -31,6 +32,8 @@ exports.readManifest = function (env) {
   } else if (useS3(filePath)) {
     //use s3
     return s3.readManifest(filePath);
+  } else if (useMemory(filePath)) {
+    return memory.readManifest(filePath);
   } else {
     //use local file
     return fs.readManifest(filePath);
@@ -48,6 +51,8 @@ exports.writeManifest = function (data, env) {
   } else if (useS3(filePath)) {
     //use s3
     return s3.writeManifest(filePath, data);
+  } else if (useMemory(filePath)) {
+    return memory.writeManifest(filePath, data);
   } else {
     //use local file
     return fs.writeManifest(filePath, data);
@@ -64,4 +69,8 @@ function useS3(filePath) {
 
 function usesGoogle(filePath) {
   return filePath.startsWith("google://");
+}
+
+function useMemory(filePath) {
+  return filePath.startsWith("memory://");
 }
