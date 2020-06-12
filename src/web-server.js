@@ -12,7 +12,10 @@ const express = require("express"),
   envHelpers = require("./environment-helpers.js"),
   _ = require("lodash"),
   morgan = require("morgan"),
-  verifyValidUrl = require("./verify-valid-url.js").verifyValidUrl,
+  {
+    verifyValidUrl,
+    verifyValidUrlsDefinedByScopes,
+  } = require("./verify-valid-url.js"),
   config = require("./config.js").config,
   { checkUrlUnsafe } = require("./trusted-urls");
 
@@ -136,20 +139,28 @@ app.patch("/import-map.json", (req, res) => {
     }
   }
 
-  if (req.body.scopes && Object.keys(req.body.scopes).length !== 0) {
-    for (let scopeName in req.body.scopes) {
-      if (
-        typeof req.body.scopes[scopeName] !== "object" &&
-        Object.keys(req.body.scopes[scopeName]).length > 0
-      ) {
-        res
-          .status(400)
-          .send(
-            `Invalid import map in request body -- scope with name '${scopeName}' is not a valid object, or object has no keys`
-          );
-        return;
-      }
-    }
+  if (typeof req.body.scopes && config.manifestFormat !== "importmap") {
+    return res
+      .status(400)
+      .send(
+        `Invalid import map in request body -- scopes are only supported with manifest format "importmap"`
+      );
+  }
+
+  if (typeof req.body.scopes[scopeName] !== "object") {
+    return res
+      .status(400)
+      .send(
+        `Invalid import map in request body -- scope with name '${scopeName}' is not an object`
+      );
+  }
+
+  if (Object.keys(req.body.scopes[scopeName]).length === 0) {
+    return res
+      .status(400)
+      .send(
+        `Invalid import map in request body -- scope with name '${scopeName}' is an object with no properties`
+      );
   }
 
   // Confirm the imports are working
@@ -167,9 +178,27 @@ app.patch("/import-map.json", (req, res) => {
     verifyValidUrl(req, url)
   );
 
+  const scopes = req.body.scopes;
+
+  const validScopePromises = Object.keys(scopes).map((scope) => {
+    const scopeOverrides = Object.entries(scopes[key]);
+    scopeOverrides.map(([specifier, address]) => {
+      if (!req.body.imports[specifier]) {
+        return res
+          .status(400)
+          .send(
+            `Invalid import map in request body -- scope with specifier '${specifier}' is not defined in the imports object`
+          );
+      }
+
+      // ToDo: this validation needs more work
+      verifyValidUrl(req, address);
+    });
+  });
+
   // Confirm scopes are working
 
-  Promise.all(validImportUrlPromises)
+  Promise.all([validImportUrlPromises, validScopePromises])
     .then(() => {
       Promise.all([
         modify.modifyMultipleScopes(env, req.body.scopes),

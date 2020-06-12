@@ -6,25 +6,22 @@ const config = require("./config").config;
 
 const isImportMap = config && config.manifestFormat === "importmap";
 
-// This one helps us contain the Sofe checks in one spot
-// * Sofe does not accept scopes
-function getEntriesForKey(manifest, key = "imports") {
+function getMapFromManifest(manifest) {
+  return isImportMap ? manifest.imports : manifest.sofe.manifest;
+}
+
+function getScopesFromManifest(manifest) {
   if (!isImportMap) {
-    if (key !== "imports") {
-      throw new Error(
-        `Sofe implementations can only support imports, key: [${key}] is not supported`
-      );
-    }
-    return manifest.sofe.manifest;
-  } else {
-    return manifest[key] || {};
+    throw new Error(
+      `Invalid function call, Scopes is not supported for Sofe implementations.`
+    );
   }
+  return manifest.scopes;
 }
 
 function getEmptyManifest() {
   return isImportMap ? { imports: {}, scopes: {} } : { sofe: { manifest: {} } };
 }
-const deepCopy = (json) => JSON.parse(JSON.stringify(json));
 
 function modifyLock(env, modifierFunc) {
   return new Promise((resolve, reject) => {
@@ -50,7 +47,8 @@ function modifyLock(env, modifierFunc) {
           }
 
           // modify json
-          json = modifierFunc(deepCopy(json));
+          const deepJsonCopy = JSON.parse(JSON.stringify(json));
+          json = modifierFunc(deepJsonCopy);
 
           // write json to file
           const newImportMapString = JSON.stringify(json, null, 2);
@@ -76,15 +74,15 @@ function modifyLock(env, modifierFunc) {
  */
 exports.modifyMultipleServices = function (env, newImports) {
   return modifyLock(env, (json) => {
-    const entries = getEntriesForKey(json, "imports");
-    entries.imports = newImports;
+    const entries = getMapFromManifest(json);
+    Object.assign(imports, newImports);
     return entries;
   });
 };
 
 exports.modifyService = function (env, serviceName, url, remove) {
   return modifyLock(env, (json) => {
-    const entries = getEntriesForKey(json, "imports");
+    const entries = getMapFromManifest(json);
     if (remove) {
       delete entries[serviceName];
     } else {
@@ -100,20 +98,8 @@ exports.modifyService = function (env, serviceName, url, remove) {
 
 exports.modifyMultipleScopes = function (env, newScopes) {
   return modifyLock(env, (json) => {
-    const entries = getEntriesForKey(json, "scopes");
-    entries.scopes = newScopes;
-    return entries;
-  });
-};
-
-exports.modifyScope = function (env, scopeSpecifier, scopeMappingObj, remove) {
-  return modifyLock(env, (json) => {
-    const entries = getEntriesForKey(json, "scopes");
-    if (remove) {
-      delete entries[scopeSpecifier];
-    } else {
-      entries[scopeSpecifier] = scopeMappingObj;
-    }
+    const entries = getScopesFromManifest(json);
+    Object.assign(entries, newScopes);
     return entries;
   });
 };
