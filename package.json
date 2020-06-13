@@ -26,7 +26,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "pretty-quick --staged && lint"
+      "pre-commit": "pretty-quick --staged && yarn run lint"
     }
   },
   "homepage": "https://github.com/single-spa/sofe-deplanifester#readme",
