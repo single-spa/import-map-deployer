@@ -1,5 +1,7 @@
 # import-map-deployer
 
+[![Build Status](https://travis-ci.com/single-spa/import-map-deployer.svg?branch=master)](https://travis-ci.com/single-spa/import-map-deployer)
+
 The import-map-deployer is a backend service that updates [import map json files](https://github.com/WICG/import-maps#installation). When using
 import-map-deployer, a frontend deployment is completed in two steps:
 
@@ -128,7 +130,7 @@ Example config.js
 
 ```js
 // config.js
-exports = {
+module.exports = {
   // The username that must be provided via HTTP auth when calling the import-map-deployer
   username: "admin",
   // The password that must be provided via HTTP auth when calling the import-map-deployer
@@ -224,18 +226,25 @@ config.json:
 
 Note, that you must have environment variables `AZURE_STORAGE_ACCOUNT` and `AZURE_STORAGE_ACCESS_KEY`, or `AZURE_STORAGE_CONNECTION_STRING` defined for authentication.
 
-config.json:
+If you wish to provide custom authentication keys for specific environments you can provide it also via the keys `azureConnectionString`, `azureAccount` or `azureAccessKey`.
 
-```json
-{
-  "manifestFormat": "importmap",
-  "locations": {
-    "prod": {
-      "azureContainer": "static",
-      "azureBlob": "importmap.json"
-    }
-  }
-}
+**Its not recommended to put authentication keys in code. Always provide them via environment variables.**
+
+config.js:
+
+```js
+module.exports = {
+  manifestFormat: "importmap",
+  locations: {
+    prod: {
+      azureContainer: "static",
+      azureBlob: "importmap.json",
+      azureConnectionString: process.env.AZURE_STORAGE_ACCOUNT_PROD, // optional
+      azureAccount: process.env.AZURE_STORAGE_ACCOUNT_PROD, // optional
+      azureAccessKey: process.env.AZURE_STORAGE_ACCOUNT_PROD, // optional
+    },
+  },
+};
 ```
 
 ### Google Cloud Storage

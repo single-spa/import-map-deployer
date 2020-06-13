@@ -7,7 +7,8 @@
     "import-map-deployer": "./bin/import-map-deployer"
   },
   "scripts": {
-    "test": "rm -f sofe-manifest.json && jasmine",
+    "test": "jest",
+    "lint": "eslint src",
     "format": "prettier --write './**/*'",
     "start": "node src/web-server.js"
   },
@@ -20,12 +21,15 @@
   ],
   "author": "nhumrich",
   "license": "Apache-2.0",
+  "engines": {
+    "node": ">=10.0.0"
+  },
   "bugs": {
     "url": "https://github.com/single-spa/sofe-deplanifester/issues"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "pretty-quick --staged"
+      "pre-commit": "pretty-quick --staged && yarn lint && yarn test"
     }
   },
   "homepage": "https://github.com/single-spa/sofe-deplanifester#readme",
@@ -44,12 +48,16 @@
     "rwlock": "^5.0.0"
   },
   "devDependencies": {
+    "eslint": "^7.2.0",
+    "eslint-config-node-important-stuff": "^1.0.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-prettier": "^3.1.3",
     "husky": "^4.2.5",
-    "jasmine": "^2.4.1",
-    "node-static": "^0.7.9",
+    "jest": "^26.0.1",
+    "jest-cli": "^26.0.1",
     "prettier": "^2.0.4",
     "pretty-quick": "^2.0.1",
-    "superagent": "^1.6.1"
+    "supertest": "^4.0.2"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org"

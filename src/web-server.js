@@ -17,13 +17,16 @@ const express = require("express"),
     verifyValidUrlsDefinedByScopes,
   } = require("./verify-valid-url.js"),
   config = require("./config.js").config,
+  setConfig = require("./config.js").setConfig,
   { checkUrlUnsafe } = require("./trusted-urls");
 
-healthCheck.runCheck().catch((ex) => {
-  console.error(ex);
-  console.error("Killing web server because initial health check failed");
-  process.exit(1);
-});
+if (process.env.NODE_ENV !== "test") {
+  healthCheck.runCheck().catch((ex) => {
+    console.error(ex);
+    console.error("Killing web server because initial health check failed");
+    process.exit(1);
+  });
+}
 
 app.set("etag", false);
 app.use(bodyParser.text({ type: "*/*" }));
@@ -224,7 +227,9 @@ app.get("/", healthEndpoint);
 app.get("/health", healthEndpoint);
 
 function healthEndpoint(req, res) {
-  res.send("everything ok");
+  res.send({
+    message: "import-map-deployer is running",
+  });
 }
 
 app.patch("/services", function (req, res) {
@@ -282,8 +287,14 @@ app.delete("/services/:serviceName", function (req, res) {
     });
 });
 
-var server = app.listen(config.port || 5000, function () {
-  console.log("Listening at http://localhost:%s", server.address().port);
-});
+let server;
+if (process.env.NODE_ENV !== "test") {
+  server = app.listen(config.port || 5000, function () {
+    console.log("Listening at http://localhost:%s", server.address().port);
+  });
 
-exports.close = server.close;
+  exports.close = server.close;
+}
+
+exports.app = app;
+exports.setConfig = setConfig;
