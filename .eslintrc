@@ -1,24 +1,5 @@
 {
   "parser": "babel-eslint",
-
-  "ecmaFeatures": {
-    "binaryLiterals": false, // enable binary literals
-    "blockBindings": false, // enable let and const (aka block bindings)
-    "defaultParams": false, // enable default function parameters
-    "forOf": false, // enable for-of loops
-    "generators": true, // enable generators
-    "objectLiteralComputedProperties": false, // enable computed object literal property names
-    "objectLiteralDuplicateProperties": false, // enable duplicate object literal properties in strict mode
-    "objectLiteralShorthandMethods": false, // enable object literal shorthand methods
-    "objectLiteralShorthandProperties": false, // enable object literal shorthand properties
-    "octalLiterals": false, // enable octal literals
-    "regexUFlag": false, // enable the regular expression u flag
-    "regexYFlag": false, // enable the regular expression y flag
-    "templateStrings": false, // enable template strings
-    "unicodeCodePointEscapes": false, // enable code point escapes
-    "jsx": true // enable JSX
-  },
-
   "env": {
     "browser": true, // browser global variables.
     "jasmine": false // adds all of the Jasmine testing global variables for version 1.3 and 2.0.
@@ -81,7 +62,6 @@
     "no-caller": 2, // disallow use of arguments.caller or arguments.callee
     "no-div-regex": 2, // disallow division operators explicitly at beginning of regular expression (off by default)
     "no-else-return": 0, // disallow else after a return in an if (off by default)
-    "no-empty-label": 2, // disallow use of labels for anything other then loops and switches
     "no-eq-null": 0, // disallow comparisons to null without a type-checking operator (off by default)
     "no-eval": 2, // disallow use of eval()
     "no-extend-native": 2, // disallow adding to native types

@@ -9,6 +9,7 @@
   "scripts": {
     "test": "rm -f sofe-manifest.json && jasmine",
     "format": "prettier --write './**/*'",
+    "lint": "eslint src",
     "start": "node src/web-server.js"
   },
   "repository": {
@@ -25,7 +26,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "pretty-quick --staged"
+      "pre-commit": "pretty-quick --staged && lint"
     }
   },
   "homepage": "https://github.com/single-spa/sofe-deplanifester#readme",
@@ -44,6 +45,8 @@
     "rwlock": "^5.0.0"
   },
   "devDependencies": {
+    "eslint": "^7.2.0",
+    "babel-eslint": "^10.1.0",
     "husky": "^4.2.5",
     "jasmine": "^2.4.1",
     "node-static": "^0.7.9",
