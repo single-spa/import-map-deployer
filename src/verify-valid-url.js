@@ -2,8 +2,7 @@ const util = require("util");
 const request = require("request");
 const requestAsPromise = util.promisify(request);
 const config = require("./config.js").config;
-
-exports.verifyValidUrl = async function (req, url) {
+async function verifyValidUrl(req, url) {
   if (req.query.skip_url_check === "true" || req.query.skip_url_check === "") {
     // ?skip_url_check
     // ?skip_url_check=true
@@ -23,4 +22,21 @@ exports.verifyValidUrl = async function (req, url) {
       );
     }
   }
+}
+
+exports.verifyValidUrl = verifyValidUrl;
+
+exports.findUrlsToValidateInScopes = function (scopes) {
+  const toValidateUrls = [];
+  Object.keys(scopes).map((scope) => {
+    const scopeOverrides = Object.entries(scopes[scope]);
+    scopeOverrides.map(([specifier, address]) => {
+      // we cannot validate relative urls
+      if (scope.includes("http")) {
+        toValidateUrls.push(new URL(address, scope).toString());
+      }
+    });
+  });
+
+  return toValidateUrls;
 };

@@ -14,7 +14,7 @@ const express = require("express"),
   morgan = require("morgan"),
   {
     verifyValidUrl,
-    verifyValidUrlsDefinedByScopes,
+    findUrlsToValidateInScopes,
   } = require("./verify-valid-url.js"),
   config = require("./config.js").config,
   setConfig = require("./config.js").setConfig,
@@ -111,7 +111,6 @@ function handleGetManifest(req, res) {
 
 app.patch("/import-map.json", (req, res) => {
   const env = getEnv(req);
-
   try {
     req.body = JSON.parse(req.body);
   } catch (err) {
@@ -121,7 +120,6 @@ app.patch("/import-map.json", (req, res) => {
       .send("Patching the import map requires a json request body");
     return;
   }
-
   if (!req.body.imports || Object.keys(req.body.imports).length === 0) {
     res
       .status(400)
@@ -141,31 +139,47 @@ app.patch("/import-map.json", (req, res) => {
       return;
     }
   }
+  if (req.body.scopes) {
+    if (config.manifestFormat !== "importmap") {
+      return res
+        .status(400)
+        .send(
+          `Invalid import map in request body -- scopes are only supported with manifest format "importmap"`
+        );
+    }
 
-  if (typeof req.body.scopes && config.manifestFormat !== "importmap") {
-    return res
-      .status(400)
-      .send(
-        `Invalid import map in request body -- scopes are only supported with manifest format "importmap"`
-      );
+    if (typeof req.body.scopes !== "object") {
+      return res
+        .status(400)
+        .send(`Invalid import map in request body -- scopes is not an object`);
+    }
+
+    if (Object.keys(req.body.scopes).length === 0) {
+      return res
+        .status(400)
+        .send(
+          `Invalid import map in request body -- scopes is an object with no properties`
+        );
+    }
+
+    for (let scopeName in req.body.scopes) {
+      if (typeof req.body.scopes[scopeName] !== "object") {
+        return res
+          .status(400)
+          .send(
+            `Invalid import map in request body -- scope with name '${scopeName}' is not an object`
+          );
+      }
+
+      if (Object.keys(req.body.scopes[scopeName]).length === 0) {
+        return res
+          .status(400)
+          .send(
+            `Invalid import map in request body -- scope with name '${scopeName}' is an object with no properties`
+          );
+      }
+    }
   }
-
-  if (typeof req.body.scopes[scopeName] !== "object") {
-    return res
-      .status(400)
-      .send(
-        `Invalid import map in request body -- scope with name '${scopeName}' is not an object`
-      );
-  }
-
-  if (Object.keys(req.body.scopes[scopeName]).length === 0) {
-    return res
-      .status(400)
-      .send(
-        `Invalid import map in request body -- scope with name '${scopeName}' is an object with no properties`
-      );
-  }
-
   // Confirm the imports are working
   const importUrls = Object.values(req.body.imports);
 
@@ -181,31 +195,21 @@ app.patch("/import-map.json", (req, res) => {
     verifyValidUrl(req, url)
   );
 
-  const scopes = req.body.scopes;
+  let validScopeUrlPromises = Promise.resolve();
+  if (req.body.scopes) {
+    const scopeUrlsToValidate = findUrlsToValidateInScopes(req.body.scopes);
+    if (scopeUrlsToValidate.length > 0) {
+      validScopeUrlPromises = scopeUrlsToValidate.map((url) =>
+        verifyValidUrl(req, url)
+      );
+    }
+  }
 
-  const validScopePromises = Object.keys(scopes).map((scope) => {
-    const scopeOverrides = Object.entries(scopes[key]);
-    scopeOverrides.map(([specifier, address]) => {
-      if (!req.body.imports[specifier]) {
-        return res
-          .status(400)
-          .send(
-            `Invalid import map in request body -- scope with specifier '${specifier}' is not defined in the imports object`
-          );
-      }
-
-      // ToDo: this validation needs more work
-      verifyValidUrl(req, address);
-    });
-  });
-
-  // Confirm scopes are working
-
-  Promise.all([validImportUrlPromises, validScopePromises])
+  return Promise.all([validImportUrlPromises, validScopeUrlPromises])
     .then(() => {
       Promise.all([
-        modify.modifyMultipleScopes(env, req.body.scopes),
         modify.modifyMultipleServices(env, req.body.imports),
+        modify.modifyMultipleScopes(env, req.body.scopes),
       ])
         .then((newImportMap) => {
           res.status(200).send({
@@ -258,7 +262,7 @@ app.patch("/services", function (req, res) {
       modify
         .modifyService(env, service, url)
         .then((json) => {
-          res.send(json);
+          res.send(json.imports);
         })
         .catch((ex) => {
           console.error(ex);
@@ -277,7 +281,7 @@ app.delete("/services/:serviceName", function (req, res) {
   modify
     .modifyService(env, req.params.serviceName, null, true)
     .then((data) => {
-      res.send(data);
+      res.send(data.imports);
     })
     .catch((ex) => {
       console.error(ex);

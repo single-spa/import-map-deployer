@@ -40,7 +40,7 @@ function modifyLock(env, modifierFunc) {
             try {
               json = JSON.parse(data);
             } catch (ex) {
-              release();
+              releaseLock();
               reject("Manifest is not valid json -- " + ex);
               return;
             }
@@ -74,9 +74,18 @@ function modifyLock(env, modifierFunc) {
  */
 exports.modifyMultipleServices = function (env, newImports) {
   return modifyLock(env, (json) => {
-    const entries = getMapFromManifest(json);
-    Object.assign(imports, newImports);
-    return entries;
+    const imports = getMapFromManifest(json);
+    if (imports) {
+      Object.assign(imports, newImports);
+      return json;
+    } else {
+      const init = getEmptyManifest();
+      const imports = getMapFromManifest(init);
+
+      Object.assign(imports, newImports);
+
+      return init;
+    }
   });
 };
 
@@ -88,7 +97,7 @@ exports.modifyService = function (env, serviceName, url, remove) {
     } else {
       entries[serviceName] = url;
     }
-    return entries;
+    return json;
   });
 };
 
@@ -97,11 +106,22 @@ exports.modifyService = function (env, serviceName, url, remove) {
  */
 
 exports.modifyMultipleScopes = function (env, newScopes) {
-  return modifyLock(env, (json) => {
-    const entries = getScopesFromManifest(json);
-    Object.assign(entries, newScopes);
-    return entries;
-  });
+  if (newScopes) {
+    return modifyLock(env, (json) => {
+      const scopes = getScopesFromManifest(json);
+      if (scopes) {
+        Object.assign(scopes, newScopes);
+        return json;
+      } else {
+        const init = getEmptyManifest();
+        const scopes = getScopesFromManifest(init);
+
+        Object.assign(scopes, newScopes);
+
+        return init;
+      }
+    });
+  }
 };
 
 exports.getEmptyManifest = getEmptyManifest;
