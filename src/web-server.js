@@ -16,7 +16,7 @@ const express = require("express"),
     verifyValidUrl,
     findUrlsToValidateInScopes,
   } = require("./verify-valid-url.js"),
-  config = require("./config.js").config,
+  getConfig = require("./config.js").getConfig,
   setConfig = require("./config.js").setConfig,
   { checkUrlUnsafe } = require("./trusted-urls");
 
@@ -140,7 +140,7 @@ app.patch("/import-map.json", (req, res) => {
     }
   }
   if (req.body.scopes) {
-    if (config.manifestFormat !== "importmap") {
+    if (getConfig().manifestFormat !== "importmap") {
       return res
         .status(400)
         .send(
@@ -293,7 +293,7 @@ app.delete("/services/:serviceName", function (req, res) {
 
 let server;
 if (process.env.NODE_ENV !== "test") {
-  server = app.listen(config.port || 5000, function () {
+  server = app.listen(getConfig().port || 5000, function () {
     console.log("Listening at http://localhost:%s", server.address().port);
   });
 

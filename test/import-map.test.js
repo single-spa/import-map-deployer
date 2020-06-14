@@ -1,6 +1,6 @@
 const request = require("supertest");
 const { app, setConfig } = require("../src/web-server");
-// const { resetManifest } = require("../src/io-methods/memory");
+
 beforeAll(() => {
   setConfig({
     manifestFormat: "importmap",
@@ -10,11 +10,6 @@ beforeAll(() => {
       prod: "memory://prod",
     },
   });
-  // resetManifest();
-});
-
-afterAll(() => {
-  // resetManifest();
 });
 
 describe(`/import-map.json`, () => {

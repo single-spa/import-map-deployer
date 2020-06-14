@@ -2,16 +2,16 @@
 // File editing
 const lock = new (require("rwlock"))();
 const ioOperations = require("./io-operations.js");
-const config = require("./config").config;
+const getConfig = require("./config").getConfig;
 
-const isImportMap = config && config.manifestFormat === "importmap";
+const isImportMap = () => getConfig().manifestFormat === "importmap";
 
 function getMapFromManifest(manifest) {
-  return isImportMap ? manifest.imports : manifest.sofe.manifest;
+  return isImportMap() ? manifest.imports : manifest.sofe.manifest;
 }
 
 function getScopesFromManifest(manifest) {
-  if (!isImportMap) {
+  if (!isImportMap()) {
     throw new Error(
       `Invalid function call, Scopes is not supported for Sofe implementations.`
     );
@@ -20,7 +20,9 @@ function getScopesFromManifest(manifest) {
 }
 
 function getEmptyManifest() {
-  return isImportMap ? { imports: {}, scopes: {} } : { sofe: { manifest: {} } };
+  return isImportMap()
+    ? { imports: {}, scopes: {} }
+    : { sofe: { manifest: {} } };
 }
 
 function modifyLock(env, modifierFunc) {
