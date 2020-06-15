@@ -93,7 +93,7 @@ exports.modifyMultipleServices = function (env, newImports) {
 
 exports.modifyService = function (env, serviceName, url, remove) {
   return modifyLock(env, (json) => {
-    const entries = getMapFromManifest(json);
+    const map = getMapFromManifest(json);
     if (remove) {
       delete entries[serviceName];
     } else {

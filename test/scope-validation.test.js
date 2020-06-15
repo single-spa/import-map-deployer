@@ -2,7 +2,7 @@ const { findUrlsToValidateInScopes } = require("../src/verify-valid-url");
 
 describe(`/import-map.json - Scopes`, () => {
   // example https://github.com/WICG/import-maps#scoping-examples
-  it(`does found all urls that have to be validated.`, async () => {
+  it(`finds all urls that have to be validated.`, async () => {
     const mockImportMap = {
       imports: {
         a: "https://cdn.com/a-1.mjs",
