@@ -95,9 +95,9 @@ exports.modifyService = function (env, serviceName, url, remove) {
   return modifyLock(env, (json) => {
     const map = getMapFromManifest(json);
     if (remove) {
-      delete entries[serviceName];
+      delete map[serviceName];
     } else {
-      entries[serviceName] = url;
+      map[serviceName] = url;
     }
     return json;
   });

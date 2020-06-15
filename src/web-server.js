@@ -120,23 +120,31 @@ app.patch("/import-map.json", (req, res) => {
       .send("Patching the import map requires a json request body");
     return;
   }
-  if (!req.body.imports || Object.keys(req.body.imports).length === 0) {
-    res
-      .status(400)
-      .send(
-        "Invalid import map in request body -- 'imports' object required with modules in it."
-      );
-    return;
-  }
+  if (req.body.imports) {
+    if (typeof req.body.imports !== "object") {
+      return res
+        .status(400)
+        .send(`Invalid import map in request body -- imports is not an object`);
+    }
 
-  for (let moduleName in req.body.imports) {
-    if (typeof req.body.imports[moduleName] !== "string") {
+    if (Object.keys(req.body.imports).length === 0) {
       res
         .status(400)
         .send(
-          `Invalid import map in request body -- module with name '${moduleName}' does not have a string url`
+          "Invalid import map in request body -- 'imports' object required with modules in it."
         );
       return;
+    }
+
+    for (let moduleName in req.body.imports) {
+      if (typeof req.body.imports[moduleName] !== "string") {
+        res
+          .status(400)
+          .send(
+            `Invalid import map in request body -- module with name '${moduleName}' does not have a string url`
+          );
+        return;
+      }
     }
   }
   if (req.body.scopes) {
@@ -180,20 +188,21 @@ app.patch("/import-map.json", (req, res) => {
       }
     }
   }
-  // Confirm the imports are working
-  const importUrls = Object.values(req.body.imports);
 
-  const unsafeUrls = importUrls.map(checkUrlUnsafe).filter(Boolean);
+  let validImportUrlPromises = Promise.resolve();
+  if (req.body.imports) {
+    // Confirm the imports are working
+    const importUrls = Object.values(req.body.imports);
+    const unsafeUrls = importUrls.map(checkUrlUnsafe).filter(Boolean);
 
-  if (unsafeUrls.length > 0) {
-    return res.status(400).send({
-      error: `The following URLs are not trusted - ${unsafeUrls.join(", ")}`,
-    });
+    if (unsafeUrls.length > 0) {
+      return res.status(400).send({
+        error: `The following URLs are not trusted - ${unsafeUrls.join(", ")}`,
+      });
+    }
+
+    validImportUrlPromises = importUrls.map((url) => verifyValidUrl(req, url));
   }
-
-  const validImportUrlPromises = importUrls.map((url) =>
-    verifyValidUrl(req, url)
-  );
 
   let validScopeUrlPromises = Promise.resolve();
   if (req.body.scopes) {

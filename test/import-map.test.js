@@ -18,7 +18,7 @@ describe(`/import-map.json`, () => {
       .expect("Content-Type", /json/);
 
     // we did not setup yet
-    expect(response.body.message).toBe(undefined);
+    expect(response.body).toMatchObject({ imports: {}, scopes: {} });
   });
 
   it(`does give back the same items after first patch`, async () => {
@@ -66,8 +66,6 @@ describe(`/import-map.json`, () => {
     // we did not setup yet
     expect(healthResponse.body).toMatchObject({
       a: "/a-1-updated.mjs",
-      b: "/b-1.mjs",
-      c: "/c-1.mjs",
     });
   });
 
@@ -80,4 +78,5 @@ describe(`/import-map.json`, () => {
 
     // we did not setup yet
     expect(healthResponse.body.b).toBe(undefined);
+  });
 });

@@ -11,13 +11,47 @@ beforeAll(() => {
 });
 
 describe(`/import-map.json - Scopes`, () => {
-  it(`does not return anything when it's not setup yet.`, async () => {
+  it(`does return empty import-map when it's not setup yet.`, async () => {
     const response = await request(app)
       .get("/import-map.json")
       .expect(200)
       .expect("Content-Type", /json/);
 
-    expect(response.body.message).toBe(undefined);
+    expect(response.body).toMatchObject({ imports: {}, scopes: {} });
+  });
+
+  it(`does accept an scopes only patch`, async () => {
+    const response = await request(app)
+      .patch("/import-map.json")
+      .query({
+        skip_url_check: true,
+      })
+      .set("accept", "json")
+      .send({
+        scopes: {
+          "https://cdn.com/scope2/": {
+            a: "https://cdn.com/a-2.mjs",
+          },
+          "https://cdn.com/scope2/scope3/": {
+            b: "https://cdn.com/b-3.mjs",
+          },
+        },
+      });
+    // .expect(200)
+    // .expect("Content-Type", /json/);
+
+    // we did not setup yet
+    expect(response.body).toMatchObject({
+      imports: {},
+      scopes: {
+        "https://cdn.com/scope2/": {
+          a: "https://cdn.com/a-2.mjs",
+        },
+        "https://cdn.com/scope2/scope3/": {
+          b: "https://cdn.com/b-3.mjs",
+        },
+      },
+    });
   });
 
   it(`does give back the same items after first patch`, async () => {
