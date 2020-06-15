@@ -98,9 +98,5 @@ describe(`/import-map.json`, () => {
       .expect("Content-Type", /json/);
 
     // we did not setup yet
-    expect(healthResponse.body).toMatchObject({
-      a: "/a-1-updated.mjs",
-      c: "/c-1.mjs",
-    });
-  });
+    expect(healthResponse.body.b).toBe(undefined);
 });
