@@ -45,7 +45,7 @@ describe(`/import-map.json - Scopes`, () => {
 
     const toBeVerifiedUrls = findUrlsToValidateInScopes(mockImportMap.scopes);
 
-    expect(toBeVerifiedUrls).toEqual([]);
+    expect(toBeVerifiedUrls).toEqual(["https://cdn.com/a-2.mjs"]);
   });
 
   it(`does found all urls that have to be validated.`, async () => {

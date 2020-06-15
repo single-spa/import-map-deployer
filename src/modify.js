@@ -123,6 +123,8 @@ exports.modifyMultipleScopes = function (env, newScopes) {
         return init;
       }
     });
+  } else {
+    return Promise.resolve();
   }
 };
 

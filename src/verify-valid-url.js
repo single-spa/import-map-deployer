@@ -26,17 +26,25 @@ async function verifyValidUrl(req, url) {
 
 exports.verifyValidUrl = verifyValidUrl;
 
+function canVerify(url) {
+  return url.startsWith("http://") || url.startsWith("https://");
+}
+
 exports.findUrlsToValidateInScopes = function (scopes) {
   const toValidateUrls = [];
-  Object.keys(scopes).map((scope) => {
-    const scopeOverrides = Object.entries(scopes[scope]);
-    scopeOverrides.map(([specifier, address]) => {
-      // we cannot validate relative urls
-      if (scope.includes("http")) {
-        toValidateUrls.push(new URL(address, scope).toString());
+
+  for (let scopeKey in scopes) {
+    const scope = scopes[scopeKey];
+    for (let specifier in scope) {
+      const address = scope[specifier];
+
+      if (canVerify(scopeKey)) {
+        toValidateUrls.push(new URL(address, scopeKey).href);
+      } else if (canVerify(address)) {
+        toValidateUrls.push(address);
       }
-    });
-  });
+    }
+  }
 
   return toValidateUrls;
 };

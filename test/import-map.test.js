@@ -4,8 +4,6 @@ const { app, setConfig } = require("../src/web-server");
 beforeAll(() => {
   setConfig({
     manifestFormat: "importmap",
-    username: "username",
-    password: "password",
     locations: {
       prod: "memory://prod",
     },
@@ -14,13 +12,13 @@ beforeAll(() => {
 
 describe(`/import-map.json`, () => {
   it(`does not return anything when it's not setup yet.`, async () => {
-    const healthResponse = await request(app)
+    const response = await request(app)
       .get("/import-map.json")
       .expect(200)
       .expect("Content-Type", /json/);
 
     // we did not setup yet
-    expect(healthResponse.body.message).toBe(undefined);
+    expect(response.body.message).toBe(undefined);
   });
 
   it(`does give back the same items after first patch`, async () => {
@@ -42,23 +40,6 @@ describe(`/import-map.json`, () => {
 
     // we did not setup yet
     expect(response.body).toMatchObject({
-      imports: {
-        a: "/a-1.mjs",
-        b: "/b-1.mjs",
-        c: "/c-1.mjs",
-      },
-      scopes: {},
-    });
-  });
-
-  it(`The data is still in there`, async () => {
-    const healthResponse = await request(app)
-      .get("/import-map.json")
-      .expect(200)
-      .expect("Content-Type", /json/);
-
-    // we did not setup yet
-    expect(healthResponse.body).toMatchObject({
       imports: {
         a: "/a-1.mjs",
         b: "/b-1.mjs",
