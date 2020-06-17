@@ -127,15 +127,6 @@ app.patch("/import-map.json", (req, res) => {
         .send(`Invalid import map in request body -- imports is not an object`);
     }
 
-    if (Object.keys(req.body.imports).length === 0) {
-      res
-        .status(400)
-        .send(
-          "Invalid import map in request body -- 'imports' object required with modules in it."
-        );
-      return;
-    }
-
     for (let moduleName in req.body.imports) {
       if (typeof req.body.imports[moduleName] !== "string") {
         res
@@ -160,14 +151,6 @@ app.patch("/import-map.json", (req, res) => {
       return res
         .status(400)
         .send(`Invalid import map in request body -- scopes is not an object`);
-    }
-
-    if (Object.keys(req.body.scopes).length === 0) {
-      return res
-        .status(400)
-        .send(
-          `Invalid import map in request body -- scopes is an object with no properties`
-        );
     }
 
     for (let scopeName in req.body.scopes) {
@@ -207,6 +190,14 @@ app.patch("/import-map.json", (req, res) => {
   let validScopeUrlPromises = Promise.resolve();
   if (req.body.scopes) {
     const scopeUrlsToValidate = findUrlsToValidateInScopes(req.body.scopes);
+    const unsafeUrls = scopeUrlsToValidate.map(checkUrlUnsafe).filter(Boolean);
+
+    if (unsafeUrls.length > 0) {
+      return res.status(400).send({
+        error: `The following URLs are not trusted - ${unsafeUrls.join(", ")}`,
+      });
+    }
+
     if (scopeUrlsToValidate.length > 0) {
       validScopeUrlPromises = scopeUrlsToValidate.map((url) =>
         verifyValidUrl(req, url)
@@ -271,7 +262,7 @@ app.patch("/services", function (req, res) {
       modify
         .modifyService(env, service, url)
         .then((json) => {
-          res.send(json.imports);
+          res.send(json);
         })
         .catch((ex) => {
           console.error(ex);
@@ -290,7 +281,7 @@ app.delete("/services/:serviceName", function (req, res) {
   modify
     .modifyService(env, req.params.serviceName, null, true)
     .then((data) => {
-      res.send(data.imports);
+      res.send(data);
     })
     .catch((ex) => {
       console.error(ex);

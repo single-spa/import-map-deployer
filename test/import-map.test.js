@@ -17,7 +17,7 @@ describe(`/import-map.json`, () => {
       .expect(200)
       .expect("Content-Type", /json/);
 
-    // we did not setup yet
+    // we did not setup yet, so expect an empty import-map.
     expect(response.body).toMatchObject({ imports: {}, scopes: {} });
   });
 
@@ -38,7 +38,6 @@ describe(`/import-map.json`, () => {
       .expect(200)
       .expect("Content-Type", /json/);
 
-    // we did not setup yet
     expect(response.body).toMatchObject({
       imports: {
         a: "/a-1.mjs",
@@ -63,8 +62,7 @@ describe(`/import-map.json`, () => {
       .expect(200)
       .expect("Content-Type", /json/);
 
-    // we did not setup yet
-    expect(healthResponse.body).toMatchObject({
+    expect(healthResponse.body.imports).toMatchObject({
       a: "/a-1-updated.mjs",
     });
   });
@@ -76,7 +74,6 @@ describe(`/import-map.json`, () => {
       .expect(200)
       .expect("Content-Type", /json/);
 
-    // we did not setup yet
-    expect(healthResponse.body.b).toBe(undefined);
+    expect(healthResponse.body.imports.b).toBe(undefined);
   });
 });

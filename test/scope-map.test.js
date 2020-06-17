@@ -36,11 +36,10 @@ describe(`/import-map.json - Scopes`, () => {
             b: "https://cdn.com/b-3.mjs",
           },
         },
-      });
-    // .expect(200)
-    // .expect("Content-Type", /json/);
+      })
+      .expect(200)
+      .expect("Content-Type", /json/);
 
-    // we did not setup yet
     expect(response.body).toMatchObject({
       imports: {},
       scopes: {
@@ -79,7 +78,6 @@ describe(`/import-map.json - Scopes`, () => {
       .expect(200)
       .expect("Content-Type", /json/);
 
-    // we did not setup yet
     expect(response.body).toMatchObject({
       imports: {
         a: "https://cdn.com/a-1.mjs",
