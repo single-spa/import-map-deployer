@@ -77,17 +77,8 @@ function modifyLock(env, modifierFunc) {
 exports.modifyMultipleServices = function (env, newImports) {
   return modifyLock(env, (json) => {
     const imports = getMapFromManifest(json);
-    if (imports) {
-      Object.assign(imports, newImports);
-      return json;
-    } else {
-      const init = getEmptyManifest();
-      const imports = getMapFromManifest(init);
-
-      Object.assign(imports, newImports);
-
-      return init;
-    }
+    Object.assign(imports, newImports);
+    return json;
   });
 };
 
@@ -111,17 +102,8 @@ exports.modifyMultipleScopes = function (env, newScopes) {
   if (newScopes) {
     return modifyLock(env, (json) => {
       const scopes = getScopesFromManifest(json);
-      if (scopes) {
-        Object.assign(scopes, newScopes);
-        return json;
-      } else {
-        const init = getEmptyManifest();
-        const scopes = getScopesFromManifest(init);
-
-        Object.assign(scopes, newScopes);
-
-        return init;
-      }
+      Object.assign(scopes, newScopes);
+      return json;
     });
   } else {
     return Promise.resolve();

@@ -1,5 +1,8 @@
 const request = require("supertest");
 const { app, setConfig } = require("../src/web-server");
+const {
+  resetManifest: resetMemoryManifest,
+} = require("../src/io-methods/memory");
 
 beforeAll(() => {
   setConfig({
@@ -8,6 +11,11 @@ beforeAll(() => {
       prod: "memory://prod",
     },
   });
+});
+
+beforeEach(() => {
+  // assure we have a clean import map every test
+  resetMemoryManifest();
 });
 
 describe(`/import-map.json - Scopes`, () => {
