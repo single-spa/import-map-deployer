@@ -74,12 +74,17 @@ function modifyLock(env, modifierFunc) {
 /*
  * Services
  */
+
 exports.modifyMultipleServices = function (env, newImports) {
-  return modifyLock(env, (json) => {
-    const imports = getMapFromManifest(json);
-    Object.assign(imports, newImports);
-    return json;
-  });
+  if (newImports) {
+    return modifyLock(env, (json) => {
+      const imports = getMapFromManifest(json);
+      Object.assign(imports, newImports);
+      return json;
+    });
+  } else {
+    return Promise.resolve();
+  }
 };
 
 exports.modifyService = function (env, serviceName, url, remove) {
