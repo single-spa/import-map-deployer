@@ -28,7 +28,7 @@ describe(`/import-map.json - Scopes`, () => {
     expect(response.body).toMatchObject({ imports: {}, scopes: {} });
   });
 
-  it(`does accept an scopes only patch`, async () => {
+  it(`does accept a scopes-only patch`, async () => {
     const response = await request(app)
       .patch("/import-map.json")
       .query({
