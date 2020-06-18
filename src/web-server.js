@@ -207,15 +207,13 @@ app.patch("/import-map.json", (req, res) => {
 
   return Promise.all([validImportUrlPromises, validScopeUrlPromises])
     .then(() => {
-      Promise.all([
-        modify.modifyMultipleServices(env, req.body.imports),
-        modify.modifyMultipleScopes(env, req.body.scopes),
-      ])
+      modify
+        .modifyImportMap(env, {
+          services: req.body.imports,
+          scopes: req.body.scopes,
+        })
         .then((newImportMap) => {
-          res.status(200).send({
-            ...newImportMap[0],
-            ...newImportMap[1],
-          });
+          res.status(200).send(newImportMap);
         })
         .catch((err) => {
           console.error(err);

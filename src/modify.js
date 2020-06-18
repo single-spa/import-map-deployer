@@ -71,15 +71,20 @@ function modifyLock(env, modifierFunc) {
   });
 }
 
-/*
- * Services
- */
+exports.modifyImportMap = function (env, newValues) {
+  const { services: newImports, scopes: newScopes } = newValues;
 
-exports.modifyMultipleServices = function (env, newImports) {
-  if (newImports) {
+  // either imports or scopes have to be defined
+  if (newImports || newScopes) {
     return modifyLock(env, (json) => {
-      const imports = getMapFromManifest(json);
-      Object.assign(imports, newImports);
+      if (newImports) {
+        const imports = getMapFromManifest(json);
+        Object.assign(imports, newImports);
+      }
+      if (newScopes) {
+        const scopes = getScopesFromManifest(json);
+        Object.assign(scopes, newScopes);
+      }
       return json;
     });
   } else {
@@ -97,22 +102,6 @@ exports.modifyService = function (env, serviceName, url, remove) {
     }
     return json;
   });
-};
-
-/*
- * Scopes
- */
-
-exports.modifyMultipleScopes = function (env, newScopes) {
-  if (newScopes) {
-    return modifyLock(env, (json) => {
-      const scopes = getScopesFromManifest(json);
-      Object.assign(scopes, newScopes);
-      return json;
-    });
-  } else {
-    return Promise.resolve();
-  }
 };
 
 exports.getEmptyManifest = getEmptyManifest;
