@@ -12,8 +12,11 @@ const express = require("express"),
   envHelpers = require("./environment-helpers.js"),
   _ = require("lodash"),
   morgan = require("morgan"),
-  verifyValidUrl = require("./verify-valid-url.js").verifyValidUrl,
-  config = require("./config.js").config,
+  {
+    verifyValidUrl,
+    findUrlsToValidateInScopes,
+  } = require("./verify-valid-url.js"),
+  getConfig = require("./config.js").getConfig,
   setConfig = require("./config.js").setConfig,
   { checkUrlUnsafe } = require("./trusted-urls");
 
@@ -108,7 +111,6 @@ function handleGetManifest(req, res) {
 
 app.patch("/import-map.json", (req, res) => {
   const env = getEnv(req);
-
   try {
     req.body = JSON.parse(req.body);
   } catch (err) {
@@ -118,52 +120,98 @@ app.patch("/import-map.json", (req, res) => {
       .send("Patching the import map requires a json request body");
     return;
   }
+  if (req.body.imports) {
+    if (typeof req.body.imports !== "object") {
+      return res
+        .status(400)
+        .send(`Invalid import map in request body -- imports is not an object`);
+    }
 
+    for (let moduleName in req.body.imports) {
+      if (typeof req.body.imports[moduleName] !== "string") {
+        res
+          .status(400)
+          .send(
+            `Invalid import map in request body -- module with name '${moduleName}' does not have a string url`
+          );
+        return;
+      }
+    }
+  }
   if (req.body.scopes) {
-    res
-      .status(400)
-      .send("import-map-deployer does not support import map scopes");
-    return;
-  }
-
-  if (!req.body.imports || Object.keys(req.body.imports).length === 0) {
-    res
-      .status(400)
-      .send(
-        "Invalid import map in request body -- 'imports' object required with modules in it."
-      );
-    return;
-  }
-
-  for (let moduleName in req.body.imports) {
-    if (typeof req.body.imports[moduleName] !== "string") {
-      res
+    if (getConfig().manifestFormat !== "importmap") {
+      return res
         .status(400)
         .send(
-          `Invalid import map in request body -- module with name '${moduleName}' does not have a string url`
+          `Invalid import map in request body -- scopes are only supported with manifest format "importmap"`
         );
-      return;
+    }
+
+    if (typeof req.body.scopes !== "object") {
+      return res
+        .status(400)
+        .send(`Invalid import map in request body -- scopes is not an object`);
+    }
+
+    for (let scopeName in req.body.scopes) {
+      if (typeof req.body.scopes[scopeName] !== "object") {
+        return res
+          .status(400)
+          .send(
+            `Invalid import map in request body -- scope with name '${scopeName}' is not an object`
+          );
+      }
+
+      if (Object.keys(req.body.scopes[scopeName]).length === 0) {
+        return res
+          .status(400)
+          .send(
+            `Invalid import map in request body -- scope with name '${scopeName}' is an object with no properties`
+          );
+      }
     }
   }
 
-  const importUrls = Object.values(req.body.imports);
+  let validImportUrlPromises = Promise.resolve();
+  if (req.body.imports) {
+    // Confirm the imports are working
+    const importUrls = Object.values(req.body.imports);
+    const unsafeUrls = importUrls.map(checkUrlUnsafe).filter(Boolean);
 
-  const unsafeUrls = importUrls.map(checkUrlUnsafe).filter(Boolean);
+    if (unsafeUrls.length > 0) {
+      return res.status(400).send({
+        error: `The following URLs are not trusted - ${unsafeUrls.join(", ")}`,
+      });
+    }
 
-  if (unsafeUrls.length > 0) {
-    return res.status(400).send({
-      error: `The following URLs are not trusted - ${unsafeUrls.join(", ")}`,
-    });
+    validImportUrlPromises = importUrls.map((url) => verifyValidUrl(req, url));
   }
 
-  const validImportUrlPromises = importUrls.map((url) =>
-    verifyValidUrl(req, url)
-  );
+  let validScopeUrlPromises = Promise.resolve();
+  if (req.body.scopes) {
+    const scopeUrlsToValidate = findUrlsToValidateInScopes(req.body.scopes);
+    const unsafeUrls = scopeUrlsToValidate.map(checkUrlUnsafe).filter(Boolean);
 
-  Promise.all(validImportUrlPromises)
+    if (unsafeUrls.length > 0) {
+      return res.status(400).send({
+        error: `The following URLs are not trusted - ${unsafeUrls.join(", ")}`,
+      });
+    }
+
+    if (scopeUrlsToValidate.length > 0) {
+      validScopeUrlPromises = scopeUrlsToValidate.map((url) =>
+        verifyValidUrl(req, url)
+      );
+    }
+  }
+
+  return Promise.all([validImportUrlPromises, validScopeUrlPromises])
     .then(() => {
       modify
-        .modifyMultipleServices(env, req.body.imports)
+        .modifyImportMap(env, {
+          services: req.body.imports,
+          scopes: req.body.scopes,
+        })
         .then((newImportMap) => {
           res.status(200).send(newImportMap);
         })
@@ -243,7 +291,7 @@ app.delete("/services/:serviceName", function (req, res) {
 
 let server;
 if (process.env.NODE_ENV !== "test") {
-  server = app.listen(config.port || 5000, function () {
+  server = app.listen(getConfig().port || 5000, function () {
     console.log("Listening at http://localhost:%s", server.address().port);
   });
 

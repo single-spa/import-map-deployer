@@ -2,76 +2,57 @@
 // File editing
 const lock = new (require("rwlock"))();
 const ioOperations = require("./io-operations.js");
-const config = require("./config").config;
+const getConfig = require("./config").getConfig;
 
-const isImportMap = config && config.manifestFormat === "importmap";
+const isImportMap = () => getConfig().manifestFormat === "importmap";
 
 function getMapFromManifest(manifest) {
-  return isImportMap ? manifest.imports : manifest.sofe.manifest;
+  return isImportMap() ? manifest.imports : manifest.sofe.manifest;
+}
+
+function getScopesFromManifest(manifest) {
+  if (!isImportMap()) {
+    throw new Error(
+      `Invalid function call, Scopes is not supported for Sofe implementations.`
+    );
+  }
+  return manifest.scopes;
 }
 
 function getEmptyManifest() {
-  return isImportMap ? { imports: {} } : { sofe: { manifest: {} } };
+  return isImportMap()
+    ? { imports: {}, scopes: {} }
+    : { sofe: { manifest: {} } };
 }
 
-exports.getEmptyManifest = getEmptyManifest;
-
-exports.modifyService = function (env, serviceName, url, remove) {
+function modifyLock(env, modifierFunc) {
   return new Promise((resolve, reject) => {
     // obtain lock (we need a global lock so deploys dont have a race condition)
-    lock.writeLock(function (release) {
+    lock.writeLock((releaseLock) => {
       // read file as json
-      const manifestPromise = ioOperations
+      const resultPromise = ioOperations
         .readManifest(env)
         .then((data) => {
-          var json;
+          let json;
+
+          // get json from data
           if (data === "") {
             json = getEmptyManifest();
           } else {
             try {
               json = JSON.parse(data);
             } catch (ex) {
-              release();
+              releaseLock();
               reject("Manifest is not valid json -- " + ex);
               return;
             }
           }
 
           // modify json
-          if (remove) {
-            delete getMapFromManifest(json)[serviceName];
-          } else {
-            getMapFromManifest(json)[serviceName] = url;
-          }
+          const deepJsonCopy = JSON.parse(JSON.stringify(json));
+          json = modifierFunc(deepJsonCopy);
 
           // write json to file
-          var string = JSON.stringify(json, null, 2);
-          return ioOperations.writeManifest(string, env).then(() => {
-            release();
-            return json;
-          });
-        })
-        .catch((ex) => {
-          release();
-          throw ex;
-        });
-
-      resolve(manifestPromise);
-    });
-  });
-};
-
-exports.modifyMultipleServices = function (env, newImports) {
-  return new Promise((resolve, reject) => {
-    lock.writeLock((releaseLock) => {
-      const resultPromise = ioOperations
-        .readManifest(env)
-        .then((data) => {
-          const json = data ? JSON.parse(data) : getEmptyManifest();
-
-          const imports = getMapFromManifest(json);
-          Object.assign(imports, newImports);
-
           const newImportMapString = JSON.stringify(json, null, 2);
           return ioOperations
             .writeManifest(newImportMapString, env)
@@ -88,4 +69,39 @@ exports.modifyMultipleServices = function (env, newImports) {
       resolve(resultPromise);
     });
   });
+}
+
+exports.modifyImportMap = function (env, newValues) {
+  const { services: newImports, scopes: newScopes } = newValues;
+
+  // either imports or scopes have to be defined
+  if (newImports || newScopes) {
+    return modifyLock(env, (json) => {
+      if (newImports) {
+        const imports = getMapFromManifest(json);
+        Object.assign(imports, newImports);
+      }
+      if (newScopes) {
+        const scopes = getScopesFromManifest(json);
+        Object.assign(scopes, newScopes);
+      }
+      return json;
+    });
+  } else {
+    return Promise.resolve();
+  }
 };
+
+exports.modifyService = function (env, serviceName, url, remove) {
+  return modifyLock(env, (json) => {
+    const map = getMapFromManifest(json);
+    if (remove) {
+      delete map[serviceName];
+    } else {
+      map[serviceName] = url;
+    }
+    return json;
+  });
+};
+
+exports.getEmptyManifest = getEmptyManifest;

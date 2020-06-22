@@ -1,9 +1,8 @@
 const util = require("util");
 const request = require("request");
 const requestAsPromise = util.promisify(request);
-const config = require("./config.js").config;
 
-exports.verifyValidUrl = async function (req, url) {
+async function verifyValidUrl(req, url) {
   if (req.query.skip_url_check === "true" || req.query.skip_url_check === "") {
     // ?skip_url_check
     // ?skip_url_check=true
@@ -23,4 +22,29 @@ exports.verifyValidUrl = async function (req, url) {
       );
     }
   }
+}
+
+exports.verifyValidUrl = verifyValidUrl;
+
+function canVerify(url) {
+  return url.startsWith("http://") || url.startsWith("https://");
+}
+
+exports.findUrlsToValidateInScopes = function (scopes) {
+  const toValidateUrls = [];
+
+  for (let scopeKey in scopes) {
+    const scope = scopes[scopeKey];
+    for (let specifier in scope) {
+      const address = scope[specifier];
+
+      if (canVerify(scopeKey)) {
+        toValidateUrls.push(new URL(address, scopeKey).href);
+      } else if (canVerify(address)) {
+        toValidateUrls.push(address);
+      }
+    }
+  }
+
+  return toValidateUrls;
 };

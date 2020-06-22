@@ -8,6 +8,8 @@
   },
   "scripts": {
     "test": "jest",
+    "test:watch": "jest --watch",
+    "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
     "lint": "eslint src",
     "format": "prettier --write './**/*'",
     "start": "node src/web-server.js"
