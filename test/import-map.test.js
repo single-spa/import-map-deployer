@@ -56,6 +56,32 @@ describe(`/import-map.json`, () => {
     });
   });
 
+  it(`does support services with trailing slashes`, async () => {
+    const healthResponse = await request(app)
+      .patch("/import-map.json")
+      .query({
+        skip_url_check: true,
+      })
+      .set("accept", "json")
+      .send({
+        imports: {
+          moment: "/node_modules/moment/src/moment.js",
+          "moment/": "/node_modules/moment/src/",
+          lodash: "/node_modules/lodash-es/lodash.js",
+          "lodash/": "/node_modules/lodash-es/",
+        },
+      })
+      .expect(200)
+      .expect("Content-Type", /json/);
+
+    expect(healthResponse.body.imports).toMatchObject({
+      moment: "/node_modules/moment/src/moment.js",
+      "moment/": "/node_modules/moment/src/",
+      lodash: "/node_modules/lodash-es/lodash.js",
+      "lodash/": "/node_modules/lodash-es/",
+    });
+  });
+
   it(`does patch the service`, async () => {
     const healthResponse = await request(app)
       .patch("/services")

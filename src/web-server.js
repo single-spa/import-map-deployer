@@ -15,6 +15,7 @@ const express = require("express"),
   {
     verifyValidUrl,
     findUrlsToValidateInScopes,
+    findUrlsToValidateInServices,
   } = require("./verify-valid-url.js"),
   getConfig = require("./config.js").getConfig,
   setConfig = require("./config.js").setConfig,
@@ -172,11 +173,11 @@ app.patch("/import-map.json", (req, res) => {
     }
   }
 
+  // Import map validation
   let validImportUrlPromises = Promise.resolve();
   if (req.body.imports) {
-    // Confirm the imports are working
-    const importUrls = Object.values(req.body.imports);
-    const unsafeUrls = importUrls.map(checkUrlUnsafe).filter(Boolean);
+    const importUrlsToValidate = findUrlsToValidateInScopes(req.body.imports);
+    const unsafeUrls = importUrlsToValidate.map(checkUrlUnsafe).filter(Boolean);
 
     if (unsafeUrls.length > 0) {
       return res.status(400).send({
@@ -184,9 +185,14 @@ app.patch("/import-map.json", (req, res) => {
       });
     }
 
-    validImportUrlPromises = importUrls.map((url) => verifyValidUrl(req, url));
+    if (importUrlsToValidate.length > 0) {
+      validImportUrlPromises = importUrlsToValidate.map((url) =>
+        verifyValidUrl(req, url)
+      );
+    }
   }
 
+  // Scope validation
   let validScopeUrlPromises = Promise.resolve();
   if (req.body.scopes) {
     const scopeUrlsToValidate = findUrlsToValidateInScopes(req.body.scopes);
