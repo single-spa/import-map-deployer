@@ -230,6 +230,19 @@ app.patch("/services", function (req, res) {
     return res.status(400).send("url key is missing");
   }
 
+  let packageDirLevel =
+    req.query.packageDirLevel && req.query.packageDirLevel !== ""
+      ? Math.floor(req.query.packageDirLevel)
+      : 1;
+
+  if (req.query.packageDirLevel && isNaN(packageDirLevel)) {
+    return res
+      .status(400)
+      .send(
+        `Query parameter packageDirLevel (${packageDirLevel}) should be of type number`
+      );
+  }
+
   if (checkUrlUnsafe(url)) {
     return res.status(400).send({
       error: `URL is not trusted (${url})`,
@@ -239,7 +252,7 @@ app.patch("/services", function (req, res) {
   verifyValidUrl(req, url)
     .then(() => {
       modify
-        .modifyService(env, service, url)
+        .modifyService(env, service, url, false, packageDirLevel)
         .then((json) => {
           res.send(json);
         })

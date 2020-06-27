@@ -43,6 +43,7 @@ function modifyLock(env, modifierFunc) {
               json = JSON.parse(data);
             } catch (ex) {
               releaseLock();
+              console.log("ISSUESSS");
               reject("Manifest is not valid json -- " + ex);
               return;
             }
@@ -92,14 +93,37 @@ exports.modifyImportMap = function (env, newValues) {
   }
 };
 
-exports.modifyService = function (env, serviceName, url, remove) {
+exports.modifyService = function (
+  env,
+  serviceName,
+  url,
+  remove,
+  packageDirLevel = 1
+) {
   return modifyLock(env, (json) => {
     const map = getMapFromManifest(json);
     if (remove) {
       delete map[serviceName];
     } else {
       map[serviceName] = url;
+
+      if (
+        getConfig().packagesViaTrailingSlashes &&
+        (url.match(new RegExp("/", "g")) || []).length > 1
+      ) {
+        const pathToPackageDir =
+          packageDirLevel == 1 ? "./" : "../".repeat(packageDirLevel - 1);
+        const address =
+          url.indexOf("http://") !== -1 || url.indexOf("https://") !== -1
+            ? new URL(pathToPackageDir, url).href
+            : new URL(
+                pathToPackageDir,
+                `https://example.com${url.startsWith("/") ? url : "" + url}`
+              ).pathname;
+        map[serviceName + "/"] = address;
+      }
     }
+
     return json;
   });
 };
