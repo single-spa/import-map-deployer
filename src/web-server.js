@@ -17,6 +17,10 @@ const express = require("express"),
     findUrlsToValidateInScopes,
     findUrlsToValidateInServices,
   } = require("./verify-valid-url.js"),
+  {
+    verifyInputFormatForServices,
+    verifyInputFormatForScopes,
+  } = require("./verify-valid-input-format"),
   getConfig = require("./config.js").getConfig,
   setConfig = require("./config.js").setConfig,
   { checkUrlUnsafe } = require("./trusted-urls");
@@ -122,21 +126,10 @@ app.patch("/import-map.json", (req, res) => {
     return;
   }
   if (req.body.imports) {
-    if (typeof req.body.imports !== "object") {
-      return res
-        .status(400)
-        .send(`Invalid import map in request body -- imports is not an object`);
-    }
-
-    for (let moduleName in req.body.imports) {
-      if (typeof req.body.imports[moduleName] !== "string") {
-        res
-          .status(400)
-          .send(
-            `Invalid import map in request body -- module with name '${moduleName}' does not have a string url`
-          );
-        return;
-      }
+    const inputFormatIssues = verifyInputFormatForServices(req.body.imports);
+    if (inputFormatIssues.length > 0) {
+      res.status(400).send(inputFormatIssues.join("\r\n"));
+      return;
     }
   }
   if (req.body.scopes) {
@@ -148,35 +141,17 @@ app.patch("/import-map.json", (req, res) => {
         );
     }
 
-    if (typeof req.body.scopes !== "object") {
-      return res
-        .status(400)
-        .send(`Invalid import map in request body -- scopes is not an object`);
-    }
-
-    for (let scopeName in req.body.scopes) {
-      if (typeof req.body.scopes[scopeName] !== "object") {
-        return res
-          .status(400)
-          .send(
-            `Invalid import map in request body -- scope with name '${scopeName}' is not an object`
-          );
-      }
-
-      if (Object.keys(req.body.scopes[scopeName]).length === 0) {
-        return res
-          .status(400)
-          .send(
-            `Invalid import map in request body -- scope with name '${scopeName}' is an object with no properties`
-          );
-      }
+    const inputFormatIssues = verifyInputFormatForScopes(req.body.scopes);
+    if (inputFormatIssues.length > 0) {
+      res.status(400).send(inputFormatIssues.join("\r\n"));
+      return;
     }
   }
 
   // Import map validation
   let validImportUrlPromises = Promise.resolve();
   if (req.body.imports) {
-    const importUrlsToValidate = findUrlsToValidateInScopes(req.body.imports);
+    const importUrlsToValidate = findUrlsToValidateInServices(req.body.imports);
     const unsafeUrls = importUrlsToValidate.map(checkUrlUnsafe).filter(Boolean);
 
     if (unsafeUrls.length > 0) {

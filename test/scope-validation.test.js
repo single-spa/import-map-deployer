@@ -1,6 +1,32 @@
 const { findUrlsToValidateInScopes } = require("../src/verify-valid-url");
-
+const {
+  verifyInputFormatForScopes,
+} = require("../src/verify-valid-input-format");
 describe(`/import-map.json - Scopes`, () => {
+  it("finds all input format issues", async () => {
+    const invalidTypeImportMap = {
+      scopes: "type not a object",
+    };
+    let issues = verifyInputFormatForScopes(invalidTypeImportMap.scopes);
+    expect(issues.length).toBe(1);
+
+    const invalidSubtypeImportMap = {
+      scopes: {
+        scope: "type not a object",
+      },
+    };
+    issues = verifyInputFormatForScopes(invalidSubtypeImportMap.scopes);
+    expect(issues.length).toBe(1);
+
+    const emptyScopeImportMap = {
+      scopes: {
+        emptyScope: {},
+      },
+    };
+    issues = verifyInputFormatForScopes(emptyScopeImportMap.scopes);
+    expect(issues.length).toBe(1);
+  });
+
   // example https://github.com/WICG/import-maps#scoping-examples
   it(`finds all urls that have to be validated.`, async () => {
     const mockImportMap = {
@@ -18,6 +44,9 @@ describe(`/import-map.json - Scopes`, () => {
         },
       },
     };
+
+    const issues = verifyInputFormatForScopes(mockImportMap.scopes);
+    expect(issues).toStrictEqual([]);
 
     const toBeVerifiedUrls = findUrlsToValidateInScopes(mockImportMap.scopes);
 
@@ -43,6 +72,9 @@ describe(`/import-map.json - Scopes`, () => {
       },
     };
 
+    const issues = verifyInputFormatForScopes(mockImportMap.scopes);
+    expect(issues).toStrictEqual([]);
+
     const toBeVerifiedUrls = findUrlsToValidateInScopes(mockImportMap.scopes);
 
     expect(toBeVerifiedUrls).toEqual(["https://cdn.com/a-2.mjs"]);
@@ -59,6 +91,8 @@ describe(`/import-map.json - Scopes`, () => {
         },
       },
     };
+    const issues = verifyInputFormatForScopes(mockImportMap.scopes);
+    expect(issues).toStrictEqual([]);
 
     const toBeVerifiedUrls = findUrlsToValidateInScopes(mockImportMap.scopes);
 
