@@ -43,7 +43,6 @@ function modifyLock(env, modifierFunc) {
               json = JSON.parse(data);
             } catch (ex) {
               releaseLock();
-              console.log("ISSUESSS");
               reject("Manifest is not valid json -- " + ex);
               return;
             }
