@@ -107,7 +107,8 @@ exports.modifyService = function (
       map[serviceName] = url;
 
       if (
-        (getConfig().packagesViaTrailingSlashes || !getConfig().hasOwnProperty('packagesViaTrailingSlashes')) &&
+        (getConfig().packagesViaTrailingSlashes ||
+          !getConfig().hasOwnProperty("packagesViaTrailingSlashes")) &&
         (url.match(new RegExp("/", "g")) || []).length > 1
       ) {
         const pathToPackageDir =
