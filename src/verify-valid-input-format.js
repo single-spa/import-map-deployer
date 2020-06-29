@@ -35,7 +35,7 @@ exports.verifyInputFormatForServices = function (services) {
     } else {
       if (moduleName.endsWith("/") && !services[moduleName].endsWith("/")) {
         errorsToReport.push(
-          `Invalid import map in request body -- module with name '${moduleName}' does not end with a trailing slash`
+          `Invalid import map in request body -- the URL for module with name '${moduleName}' does not end with a trailing slash`
         );
       }
     }
