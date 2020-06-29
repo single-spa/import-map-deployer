@@ -76,7 +76,7 @@ If no configuration file is present, import-map-deployer defaults to using the f
 Here are the properties available in the config file:
 
 - `urlSafeList` (optional, but **highly** recommended): An array of strings and/or functions that indicate which URLs are trusted when updating the import map. A string value is treated as a URL prefix - for example `https://unpkg.com/`. A function value is called with a [URL object](https://developer.mozilla.org/en-US/docs/Web/API/URL) and must return a truthy value when the URL is trusted. Any attempt to update the import map to include an untrusted URL will be rejected. If you omit `urlSafeList`, all URLs are considered trusted (not recommended).
-- `packagesViaTrailingSlashes` (optional): A boolean that indicates whether to turn off the automatic generation of trailing slash package records on PATCH service requests. For more information and examples visit [standard guideline](https://github.com/WICG/import-maps/#packages-via-trailing-slashes).
+- `packagesViaTrailingSlashes` (optional, defaults to true): A boolean that indicates whether to turn off the automatic generation of trailing slash package records on PATCH service requests. For more information and examples visit [standard guideline](https://github.com/WICG/import-maps/#packages-via-trailing-slashes).
 - `manifestFormat` (required): A string that is either `"importmap"` or `"sofe"`, which indicates whether the import-map-deployer is
   interacting with an [import map](https://github.com/WICG/import-maps) or a [sofe manifest](https://github.com/CanopyTax/sofe).
 - `locations` (required): An object specifying one or more "locations" (or "environments") for which you want the import-map-deployer to control the import map. The special `default`
