@@ -369,7 +369,7 @@ You can PATCH services to add or update a service, the following json body is ex
 
 Note that the `skip_url_check` query param indicates that the import-map-deployer will update the import map even if it is not able to reach it via a network request.
 
-Note that the `packageDirLevel` query param indicates the number of directories thats been used to reroute the added trailing slash package. _Default is 1, and if you wish to disable the feature of adding trailing package versions check the `packagesViaTrailingSlashes` variable in config file_
+Note that the `packageDirLevel` query param indicates the number of directories to remove when determining the root directory for the package. The default is 1. Note that this option only takes effect if `packagesViaTrailingSlashes` is set to true.
 
 Body:
 
