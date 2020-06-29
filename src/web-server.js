@@ -128,7 +128,7 @@ app.patch("/import-map.json", (req, res) => {
   if (req.body.imports) {
     const inputFormatIssues = verifyInputFormatForServices(req.body.imports);
     if (inputFormatIssues.length > 0) {
-      res.status(400).send(inputFormatIssues.join("\r\n"));
+      res.status(400).send(inputFormatIssues.join("\n"));
       return;
     }
   }

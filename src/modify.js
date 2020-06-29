@@ -111,7 +111,7 @@ exports.modifyService = function (
         (url.match(new RegExp("/", "g")) || []).length > 1
       ) {
         const pathToPackageDir =
-          packageDirLevel == 1 ? "./" : "../".repeat(packageDirLevel - 1);
+          packageDirLevel === 1 ? "./" : "../".repeat(packageDirLevel - 1);
         const address =
           url.indexOf("http://") !== -1 || url.indexOf("https://") !== -1
             ? new URL(pathToPackageDir, url).href
