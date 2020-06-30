@@ -143,7 +143,7 @@ app.patch("/import-map.json", (req, res) => {
 
     const inputFormatIssues = verifyInputFormatForScopes(req.body.scopes);
     if (inputFormatIssues.length > 0) {
-      res.status(400).send(inputFormatIssues.join("\r\n"));
+      res.status(400).send(inputFormatIssues.join("\n"));
       return;
     }
   }
