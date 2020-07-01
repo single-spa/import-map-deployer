@@ -48,3 +48,19 @@ exports.findUrlsToValidateInScopes = function (scopes) {
 
   return toValidateUrls;
 };
+
+exports.findUrlsToValidateInServices = function (services) {
+  const toValidateUrls = [];
+
+  for (let specifier in services) {
+    const address = services[specifier];
+
+    if (canVerify(specifier)) {
+      toValidateUrls.push(new URL(address, specifier).href);
+    } else if (canVerify(address)) {
+      toValidateUrls.push(address);
+    }
+  }
+
+  return toValidateUrls;
+};

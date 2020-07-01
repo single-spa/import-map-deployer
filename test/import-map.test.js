@@ -7,6 +7,7 @@ const {
 beforeAll(() => {
   setConfig({
     manifestFormat: "importmap",
+    packagesViaTrailingSlashes: true,
     locations: {
       prod: "memory://prod",
     },
@@ -56,8 +57,34 @@ describe(`/import-map.json`, () => {
     });
   });
 
+  it(`does support services with trailing slashes`, async () => {
+    const response = await request(app)
+      .patch("/import-map.json")
+      .query({
+        skip_url_check: true,
+      })
+      .set("accept", "json")
+      .send({
+        imports: {
+          moment: "/node_modules/moment/src/moment.js",
+          "moment/": "/node_modules/moment/src/",
+          lodash: "/node_modules/lodash-es/lodash.js",
+          "lodash/": "/node_modules/lodash-es/",
+        },
+      })
+      .expect(200)
+      .expect("Content-Type", /json/);
+
+    expect(response.body.imports).toMatchObject({
+      moment: "/node_modules/moment/src/moment.js",
+      "moment/": "/node_modules/moment/src/",
+      lodash: "/node_modules/lodash-es/lodash.js",
+      "lodash/": "/node_modules/lodash-es/",
+    });
+  });
+
   it(`does patch the service`, async () => {
-    const healthResponse = await request(app)
+    const response = await request(app)
       .patch("/services")
       .query({
         skip_url_check: true,
@@ -70,18 +97,78 @@ describe(`/import-map.json`, () => {
       .expect(200)
       .expect("Content-Type", /json/);
 
-    expect(healthResponse.body.imports).toMatchObject({
+    expect(response.body.imports).toMatchObject({
       a: "/a-1-updated.mjs",
     });
   });
 
+  it(`does add trailing slash package`, async () => {
+    const response = await request(app)
+      .patch("/services")
+      .query({
+        skip_url_check: true,
+      })
+      .set("accept", "json")
+      .send({
+        service: "my-service",
+        url: "/my-service/fs6d7897dsf9/js/main/my-service.js",
+      })
+      .expect(200)
+      .expect("Content-Type", /json/);
+
+    expect(response.body.imports).toMatchObject({
+      "my-service": "/my-service/fs6d7897dsf9/js/main/my-service.js",
+      "my-service/": "/my-service/fs6d7897dsf9/js/main/",
+    });
+
+    const responseWithPackageDirLevel = await request(app)
+      .patch("/services")
+      .query({
+        skip_url_check: true,
+        packageDirLevel: 2,
+      })
+      .set("accept", "json")
+      .send({
+        service: "my-service",
+        url: "http://example.com/my-service/fs6d7897dsf9/js/main/my-service.js",
+      })
+      .expect(200)
+      .expect("Content-Type", /json/);
+
+    expect(responseWithPackageDirLevel.body.imports).toMatchObject({
+      "my-service":
+        "http://example.com/my-service/fs6d7897dsf9/js/main/my-service.js",
+      "my-service/": "http://example.com/my-service/fs6d7897dsf9/js/",
+    });
+
+    const responseWithPackageDirLevelUrl = await request(app)
+      .patch("/services")
+      .query({
+        skip_url_check: true,
+        packageDirLevel: 2,
+      })
+      .set("accept", "json")
+      .send({
+        service: "my-service",
+        url: "http://example.com/my-service/fs6d7897dsf9/js/main/my-service.js",
+      })
+      .expect(200)
+      .expect("Content-Type", /json/);
+
+    expect(responseWithPackageDirLevelUrl.body.imports).toMatchObject({
+      "my-service":
+        "http://example.com/my-service/fs6d7897dsf9/js/main/my-service.js",
+      "my-service/": "http://example.com/my-service/fs6d7897dsf9/js/",
+    });
+  });
+
   it(`does delete a service`, async () => {
-    const healthResponse = await request(app)
+    const response = await request(app)
       .delete("/services/b")
       .set("accept", "json")
       .expect(200)
       .expect("Content-Type", /json/);
 
-    expect(healthResponse.body.imports.b).toBe(undefined);
+    expect(response.body.imports.b).toBe(undefined);
   });
 });

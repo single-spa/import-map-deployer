@@ -15,7 +15,12 @@ const express = require("express"),
   {
     verifyValidUrl,
     findUrlsToValidateInScopes,
+    findUrlsToValidateInServices,
   } = require("./verify-valid-url.js"),
+  {
+    verifyInputFormatForServices,
+    verifyInputFormatForScopes,
+  } = require("./verify-valid-input-format"),
   getConfig = require("./config.js").getConfig,
   setConfig = require("./config.js").setConfig,
   { checkUrlUnsafe } = require("./trusted-urls");
@@ -121,21 +126,10 @@ app.patch("/import-map.json", (req, res) => {
     return;
   }
   if (req.body.imports) {
-    if (typeof req.body.imports !== "object") {
-      return res
-        .status(400)
-        .send(`Invalid import map in request body -- imports is not an object`);
-    }
-
-    for (let moduleName in req.body.imports) {
-      if (typeof req.body.imports[moduleName] !== "string") {
-        res
-          .status(400)
-          .send(
-            `Invalid import map in request body -- module with name '${moduleName}' does not have a string url`
-          );
-        return;
-      }
+    const inputFormatIssues = verifyInputFormatForServices(req.body.imports);
+    if (inputFormatIssues.length > 0) {
+      res.status(400).send(inputFormatIssues.join("\n"));
+      return;
     }
   }
   if (req.body.scopes) {
@@ -147,36 +141,18 @@ app.patch("/import-map.json", (req, res) => {
         );
     }
 
-    if (typeof req.body.scopes !== "object") {
-      return res
-        .status(400)
-        .send(`Invalid import map in request body -- scopes is not an object`);
-    }
-
-    for (let scopeName in req.body.scopes) {
-      if (typeof req.body.scopes[scopeName] !== "object") {
-        return res
-          .status(400)
-          .send(
-            `Invalid import map in request body -- scope with name '${scopeName}' is not an object`
-          );
-      }
-
-      if (Object.keys(req.body.scopes[scopeName]).length === 0) {
-        return res
-          .status(400)
-          .send(
-            `Invalid import map in request body -- scope with name '${scopeName}' is an object with no properties`
-          );
-      }
+    const inputFormatIssues = verifyInputFormatForScopes(req.body.scopes);
+    if (inputFormatIssues.length > 0) {
+      res.status(400).send(inputFormatIssues.join("\n"));
+      return;
     }
   }
 
+  // Import map validation
   let validImportUrlPromises = Promise.resolve();
   if (req.body.imports) {
-    // Confirm the imports are working
-    const importUrls = Object.values(req.body.imports);
-    const unsafeUrls = importUrls.map(checkUrlUnsafe).filter(Boolean);
+    const importUrlsToValidate = findUrlsToValidateInServices(req.body.imports);
+    const unsafeUrls = importUrlsToValidate.map(checkUrlUnsafe).filter(Boolean);
 
     if (unsafeUrls.length > 0) {
       return res.status(400).send({
@@ -184,9 +160,14 @@ app.patch("/import-map.json", (req, res) => {
       });
     }
 
-    validImportUrlPromises = importUrls.map((url) => verifyValidUrl(req, url));
+    if (importUrlsToValidate.length > 0) {
+      validImportUrlPromises = importUrlsToValidate.map((url) =>
+        verifyValidUrl(req, url)
+      );
+    }
   }
 
+  // Scope validation
   let validScopeUrlPromises = Promise.resolve();
   if (req.body.scopes) {
     const scopeUrlsToValidate = findUrlsToValidateInScopes(req.body.scopes);
@@ -249,6 +230,19 @@ app.patch("/services", function (req, res) {
     return res.status(400).send("url key is missing");
   }
 
+  let packageDirLevel =
+    req.query.packageDirLevel && req.query.packageDirLevel !== ""
+      ? Math.floor(req.query.packageDirLevel)
+      : 1;
+
+  if (req.query.packageDirLevel && isNaN(packageDirLevel)) {
+    return res
+      .status(400)
+      .send(
+        `Query parameter packageDirLevel (${packageDirLevel}) should be of type number`
+      );
+  }
+
   if (checkUrlUnsafe(url)) {
     return res.status(400).send({
       error: `URL is not trusted (${url})`,
@@ -258,7 +252,7 @@ app.patch("/services", function (req, res) {
   verifyValidUrl(req, url)
     .then(() => {
       modify
-        .modifyService(env, service, url)
+        .modifyService(env, service, url, false, packageDirLevel)
         .then((json) => {
           res.send(json);
         })
