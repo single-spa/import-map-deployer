@@ -46,3 +46,4 @@ src/public/*
 !src/public/index.html
 
 .env
+.DS_Store
