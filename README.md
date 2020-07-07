@@ -55,6 +55,18 @@ import-map-deployer is available on DockerHub as [`singlespa/import-map-deployer
 you can run `docker-compose up` from the project root. When running via docker-compose, it will mount a volume in the project root's directory,
 expecting a `config.json` file to be present.
 
+[Example Dockerfile](https://github.com/joeldenning/live-import-map-deployer/blob/master/Dockerfile)
+
+```Dockerfile
+FROM singlespa/import-map-deployer:<tag>
+
+ENV HTTP_USERNAME= HTTP_PASSWORD=
+
+COPY conf.js /www/
+
+CMD ["yarn", "start", "conf.js"]
+```
+
 ### Node
 
 To run the import-map-deployer in Node, run the following command:
