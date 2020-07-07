@@ -6,7 +6,7 @@ echo $mostRecentTag;
 echo "most recent git commit message:"
 echo $mostRecentCommitMsg;
 
-if [[ "$mostRecentTag" = "$mostRecentCommitMsg" ]] then
+if [[ "$mostRecentTag" = "$mostRecentCommitMsg" ]]; then
   echo "Building docker image"
   docker build .
   echo "Pushing docker image to docker hub"
