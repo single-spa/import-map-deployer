@@ -51,14 +51,14 @@ If you do want to address the deployment race condition without using import-map
 
 ### Docker
 
-import-map-deployer is available on DockerHub as [`singlespa/import-map-deployer`(https://hub.docker.com/repository/docker/singlespa/import-map-deployer). If you want to run just the single container,
+import-map-deployer is available on DockerHub as [`singlespa/import-map-deployer`](https://hub.docker.com/repository/docker/singlespa/import-map-deployer). If you want to run just the single container,
 you can run `docker-compose up` from the project root. When running via docker-compose, it will mount a volume in the project root's directory,
 expecting a `config.json` file to be present.
 
 [Example Dockerfile](https://github.com/joeldenning/live-import-map-deployer/blob/master/Dockerfile)
 
 ```Dockerfile
-FROM singlespa/import-map-deployer:<tag>
+FROM singlespa/import-map-deployer:<version-tag>
 
 ENV HTTP_USERNAME= HTTP_PASSWORD=
 
