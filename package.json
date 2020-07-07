@@ -10,7 +10,6 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
-    "postpublish": "docker build . -t singlespa/import-map-deployer:\"$(git describe --abbrev=0)\" && docker push singlespa/import-map-deployer:\"$(git describe --abbrev=0)\"",
     "lint": "eslint src",
     "format": "prettier --write './**/*'",
     "start": "node src/web-server.js"
