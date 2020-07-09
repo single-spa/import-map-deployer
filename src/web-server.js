@@ -235,6 +235,20 @@ app.delete("/services/:serviceName", function (req, res) {
     });
 });
 
+app.delete("/services", function (req, res) {
+  let env = getEnv(req);
+  const { serviceName } = req.body;
+  modify
+    .modifyService(env, serviceName, null, true)
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((ex) => {
+      console.error(ex);
+      res.status(500).send(`Could not delete service ${serviceName}`);
+    });
+});
+
 var server = app.listen(config.port || 5000, function () {
   console.log("Listening at http://localhost:%s", server.address().port);
 });
