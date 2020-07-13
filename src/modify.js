@@ -103,6 +103,7 @@ exports.modifyService = function (
     const map = getMapFromManifest(json);
     if (remove) {
       delete map[serviceName];
+      delete map[serviceName + "/"];
     } else {
       map[serviceName] = url;
 

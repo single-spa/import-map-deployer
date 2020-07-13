@@ -5,6 +5,7 @@ import-map.json
 
 # default config file
 config.json
+conf.js
 
 
 # Logs
