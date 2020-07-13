@@ -51,6 +51,19 @@ exports.deleteService = (serviceName) => {
   });
 };
 
+exports.deleteServiceBodyPayload = (serviceName) => {
+  return new Promise((resolve, reject) => {
+    request("DELETE", `http://localhost:5000/services`)
+      .send({
+        service: serviceName,
+      })
+      .end((err, res) => {
+        if (err || !res.ok) reject(err);
+        else resolve(res.body);
+      });
+  });
+};
+
 exports.getEnvironments = () => {
   return new Promise((resolve, reject) => {
     request("GET", `http://localhost:5000/environments`).end((err, res) => {

@@ -138,4 +138,47 @@ describe("filesystem end to end tests", () => {
         done();
       });
   });
+
+  it("can delete a service from the manifest using serviceName from request body, returning the new manifest", (done) => {
+    const service4 = "fs-service-4";
+    const url4 = "http://localhost:7654/4.js";
+    const service5 = "fs-service-5";
+    const url5 = "http://localhost:7654/5.js";
+
+    api
+      .patchService(service4, url4)
+      .then(() => {
+        api
+          .patchService(service5, url5)
+          .then(() => {
+            api
+              .deleteServiceBodyPayload(service4)
+              .then((delRes) => {
+                expect(delRes.sofe.manifest[service4]).toBe(undefined);
+                api
+                  .getManifest()
+                  .then((getRes) => {
+                    expect(delRes.sofe.manifest[service4]).toBe(undefined);
+                  })
+                  .catch((ex) => {
+                    fail(ex);
+                    done();
+                  });
+                done();
+              })
+              .catch((ex) => {
+                fail(ex);
+                done();
+              });
+          })
+          .catch((ex) => {
+            fail(ex);
+            done();
+          });
+      })
+      .catch((ex) => {
+        fail(ex);
+        done();
+      });
+  });
 });
