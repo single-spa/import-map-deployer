@@ -402,3 +402,15 @@ Example using cURL:
 ```sh
 curl -X DELETE localhost:5000/services/my-service
 ```
+
+##### Special Chars
+
+If you have any service with special chars like _@_, _/_, etc... you need to use html hex codes. See detailed list [HTML SpecialChars]
+
+[html specialchars]: https://www.obkb.com/dcljr/charstxt.html
+
+Imagine you have this service name in your _import-map.json_ `@company/my-service`. You have to replace those characters to their hex html codes
+
+```sh
+curl -X DELETE localhost:5000/services/%40company%2Fmy-service
+```
