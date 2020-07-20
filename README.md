@@ -405,11 +405,13 @@ curl -X DELETE localhost:5000/services/my-service
 
 ##### Special Chars
 
-If you have any service with special chars like _@_, _/_, etc... you need to use html hex codes. See detailed list [HTML SpecialChars]
+This project uses URI encoding: [encode URI]. If you have any service with special chars like _@_, _/_, etc... you need to use It's corresponding UTF-8 encoding character.
 
-[html specialchars]: https://www.obkb.com/dcljr/charstxt.html
+[encode uri]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent
 
-Imagine you have this service name in your _import-map.json_ `@company/my-service`. You have to replace those characters to their hex html codes
+Imagine you have this service name in your _import-map.json_ `@company/my-service`. You have to replace those characters to utf-8 encoded byte: See detailed list [utf8 encode]
+
+[utf8 encode]: http://www.fileformat.info/info/charset/UTF-8/list.htm
 
 ```sh
 curl -X DELETE localhost:5000/services/%40company%2Fmy-service
