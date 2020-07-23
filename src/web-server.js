@@ -3,6 +3,7 @@
 require("dotenv").config();
 
 const express = require("express"),
+  awsServerlessExpressMiddleware = require("aws-serverless-express/middleware"),
   bodyParser = require("body-parser"),
   app = express(),
   ioOperations = require("./io-operations.js"),
@@ -47,6 +48,9 @@ app.use(
 );
 app.use(auth);
 app.use(express.static(__dirname + "/public"));
+
+if (process.env.IS_AWS_LAMBDA === true)
+  app.use(awsServerlessExpressMiddleware.eventContext());
 
 function getEnv(req) {
   if (req.query.env === undefined) {
@@ -284,7 +288,7 @@ app.delete("/services/:serviceName", function (req, res) {
 });
 
 let server;
-if (process.env.NODE_ENV !== "test") {
+if (process.env.NODE_ENV !== "test" && process.env.IS_AWS_LAMBDA !== true) {
   server = app.listen(getConfig().port || 5000, function () {
     console.log("Listening at http://localhost:%s", server.address().port);
   });
