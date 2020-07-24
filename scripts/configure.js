@@ -43,7 +43,7 @@ if (!bucketName) {
 }
 
 modifyFiles(
-  ["./simple-proxy-api.yaml", "./package.json", "./cloudformation.yaml"],
+  ["./simple-proxy-api.yaml", "./package.json", "./template.yaml"],
   [
     {
       regexp: /YOUR_ACCOUNT_ID/g,
