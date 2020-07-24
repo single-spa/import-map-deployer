@@ -1,7 +1,7 @@
 {
   "httpMethod": "GET",
   "//body": "{\"name\": \"Sam\"}",
-  "path": "/users",
+  "path": "/environments",
   "resource": "/{proxy+}",
   "queryStringParameters": {},
   "pathParameters": {
@@ -18,7 +18,7 @@
     "CloudFront-Is-Tablet-Viewer": "false",
     "CloudFront-Viewer-Country": "US",
     "Content-Type": "application/json",
-    "Host": "xxxxxxxxxx.execute-api.us-east-1.amazonaws.com",
+    "Host": "xxxxxxxxxx.execute-api.eu-west-1.amazonaws.com",
     "Upgrade-Insecure-Requests": "1",
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36",
     "Via": "1.1 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.cloudfront.net (CloudFront)",

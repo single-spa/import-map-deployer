@@ -2,7 +2,9 @@
 const awsServerlessExpress = require(process.env.NODE_ENV === "test"
   ? "aws-serverless-express/src/index"
   : "aws-serverless-express");
-const { app } = require("./web-server");
+const { app } = require("./src/web-server");
+
+const getConfig = require("./src/config.js").getConfig;
 
 // NOTE: If you get ERR_CONTENT_DECODING_FAILED in your browser, this is likely
 // due to a compressed response (e.g. gzip) which has not been handled correctly
@@ -30,7 +32,7 @@ const binaryMimeTypes = [
 const server = awsServerlessExpress.createServer(
   app,
   function () {
-    console.log("Listening at http://localhost:%s", server.address().port);
+    console.log("Listening at http://localhost:%s", getConfig().port || 5000);
   },
   binaryMimeTypes
 );

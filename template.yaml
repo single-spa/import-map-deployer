@@ -8,7 +8,7 @@ Resources:
       DefinitionUri: ./simple-proxy-api.yaml
       StageName: prod
       Variables:
-        ServerlessExpressLambdaFunctionName: !Ref YOUR_SERVERLESS_EXPRESS_LAMBDA_FUNCTION_NAME
+        ServerlessExpressLambdaFunctionName: !Ref ImportMapDeployer
 
   LambdaExecutionRole:
     Type: AWS::IAM::Role
@@ -37,7 +37,7 @@ Resources:
     Type: AWS::Lambda::Permission
     Properties:
       Action: lambda:InvokeFunction
-      FunctionName: !GetAtt YOUR_SERVERLESS_EXPRESS_LAMBDA_FUNCTION_NAME.Arn
+      FunctionName: !GetAtt ImportMapDeployer.Arn
       Principal: apigateway.amazonaws.com
       SourceArn: !Join
         - ""
@@ -49,10 +49,11 @@ Resources:
           - !Ref ApiGatewayApi
           - "/*/*"
 
-  YOUR_SERVERLESS_EXPRESS_LAMBDA_FUNCTION_NAME:
+  ImportMapDeployer:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ./src/public
+      FunctionName: import-map-deployer
+      CodeUri: ./
       Handler: lambda.handler
       MemorySize: 1024
       Role: !GetAtt LambdaExecutionRole.Arn
@@ -82,7 +83,7 @@ Outputs:
         - ".console.aws.amazon.com/lambda/home?region="
         - !Ref AWS::Region
         - "#/functions/"
-        - !Ref YOUR_SERVERLESS_EXPRESS_LAMBDA_FUNCTION_NAME
+        - !Ref ImportMapDeployer
 
   ApiGatewayApiConsoleUrl:
     Description: Console URL for the API Gateway API's Stage.
