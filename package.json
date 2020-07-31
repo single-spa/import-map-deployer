@@ -16,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/single-spa/sofe-deplanifester.git"
+    "url": "git+https://github.com/single-spa/import-map-deployer.git"
   },
   "keywords": [
     "sofe"
@@ -27,14 +27,14 @@
     "node": ">=10.0.0"
   },
   "bugs": {
-    "url": "https://github.com/single-spa/sofe-deplanifester/issues"
+    "url": "https://github.com/single-spa/import-map-deployer/issues"
   },
   "husky": {
     "hooks": {
       "pre-commit": "pretty-quick --staged && yarn lint && yarn test"
     }
   },
-  "homepage": "https://github.com/single-spa/sofe-deplanifester#readme",
+  "homepage": "https://github.com/single-spa/import-map-deployer#readme",
   "dependencies": {
     "@azure/storage-blob": "^12.1.2",
     "@google-cloud/storage": "^3.0.3",
