@@ -57,12 +57,6 @@ function useDefaultIOMethod() {
   writeManifest = defaultIOMethod.writeManifest;
 }
 
-function getCredentialsFromEnv() {
-  const envUsername = process.env.IMD_USERNAME;
-  const envPassword = process.env.IMD_PASSWORD;
-  return { username: envUsername, password: envPassword };
-}
-
 exports.readManifest = (env) => {
   return new Promise((resolve, reject) => {
     readManifest(env)
@@ -79,13 +73,9 @@ exports.readManifest = (env) => {
 };
 
 // Override username and password if both env vars are set
-const {
-  username: envUsername,
-  password: envPassword,
-} = getCredentialsFromEnv();
-if (envUsername && envPassword) {
-  username = envUsername;
-  password = envPassword;
+if (process.env.IMD_USERNAME && process.env.IMD_PASSWORD) {
+  username = process.env.IMD_USERNAME;
+  password = process.env.IMD_PASSWORD;
 }
 
 exports.writeManifest = writeManifest;
