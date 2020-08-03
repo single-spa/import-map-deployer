@@ -72,6 +72,12 @@ exports.readManifest = (env) => {
   });
 };
 
+// Override username and password if both env vars are set
+if (process.env.IMD_USERNAME && process.env.IMD_PASSWORD) {
+  username = process.env.IMD_USERNAME;
+  password = process.env.IMD_PASSWORD;
+}
+
 exports.writeManifest = writeManifest;
 exports.username = username;
 exports.password = password;

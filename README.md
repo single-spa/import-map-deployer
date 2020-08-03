@@ -167,6 +167,17 @@ module.exports = {
 }
 ```
 
+### Setting Authentication Credentials
+
+Basic auth credentials can be set either in the `config.json` file (see above) or using the following environment variables:
+
+- `IMD_USERNAME`
+- `IMD_PASSWORD`
+
+> :information_source: **Both** environment variables must be set for them to take effect.
+
+> :warning: The above environment variables will **override** the username and password from the config file.
+
 ## Built-in IO Methods
 
 The import-map-deployer knows how to update import maps that are stored in the following ways:
