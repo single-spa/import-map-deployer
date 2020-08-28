@@ -162,7 +162,7 @@ module.exports = {
     return new Promise((resolve, reject) => {
       //write the file....
       resolve(); //you don't have to call resolve with any value
-    }
+    });
   }
 }
 ```
