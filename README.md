@@ -39,7 +39,7 @@ The following security constraints are highly recommended to secure the import-m
 
 If you are not comfortable with running the import-map-deployer at all, you do not have to. Instead, give read/write access to your CI runners for modifying your import map file. Perform all import map modifications the import map inside of your CI process.
 
-If you do this, decide whether you care about the deployment race condition scenario described in the [Why does this exist?](#why-does-this-exist) section. If you are willing to live with that unlikely race condition, see [this example](/examples/ci-for-javascript-repo/gitlab-aws-no-import-map-deployer) for some example CI commands.
+If you do this, decide whether you care about the deployment race condition scenario described in the [Why does this exist?](#why-does-this-exist) section. If you are willing to live with that unlikely race condition, see these examples ([1](/examples/ci-for-javascript-repo/gitlab-aws-no-import-map-deployer), [2](/examples/bash-aws-no-import-map-deployer)) for some example CI commands.
 
 If you do want to address the deployment race condition without using import-map-deployer, we'd love to hear what you come up with. Consider leaving a PR to these docs that explain what you did!
 
