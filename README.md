@@ -151,20 +151,20 @@ module.exports = {
   // The type of json file that should be updated. Import-maps are two ways of defining URLs for javascript module.
   manifestFormat: "importmap|sofe",
   // Optional, if you are using a built-in "IO Method"
-  readManifest: function(env) {
+  readManifest: function (env) {
     return new Promise((resolve, reject) => {
-      const manifest = ''; //read a string from somewhere
+      const manifest = ""; //read a string from somewhere
       resolve(manifest); //must resolve a string
     });
   },
   // Optional, if you are using a built-in "IO Method"
-  writeManifest: function() {
+  writeManifest: function () {
     return new Promise((resolve, reject) => {
       //write the file....
       resolve(); //you don't have to call resolve with any value
     });
-  }
-}
+  },
+};
 ```
 
 ### Setting Authentication Credentials

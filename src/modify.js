@@ -11,9 +11,11 @@ const isImportMap = () => {
   } else if (format === "sofe") {
     return false;
   } else {
-    throw new Error(`Invalid manifestFormat '${format}'. Must be 'importmap' or 'sofe'.`);
-  };
-}
+    throw new Error(
+      `Invalid manifestFormat '${format}'. Must be 'importmap' or 'sofe'.`
+    );
+  }
+};
 
 function getMapFromManifest(manifest) {
   return isImportMap() ? manifest.imports : manifest.sofe.manifest;
