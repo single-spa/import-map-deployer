@@ -4,7 +4,16 @@ const lock = new (require("rwlock"))();
 const ioOperations = require("./io-operations.js");
 const getConfig = require("./config").getConfig;
 
-const isImportMap = () => getConfig().manifestFormat === "importmap";
+const isImportMap = () => {
+  const format = getConfig().manifestFormat;
+  if (format === "importmap") {
+    return true;
+  } else if (format === "sofe") {
+    return false;
+  } else {
+    throw new Error(`Invalid manifestFormat '${format}'. Must be 'importmap' or 'sofe'.`);
+  };
+}
 
 function getMapFromManifest(manifest) {
   return isImportMap() ? manifest.imports : manifest.sofe.manifest;
