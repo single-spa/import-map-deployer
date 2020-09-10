@@ -1,10 +1,11 @@
-FROM mhart/alpine-node:10 as build
+FROM node:10-alpine as build
 WORKDIR /www
 COPY package.json yarn.lock ./
 RUN yarn install
 COPY . /www/
 
-FROM mhart/alpine-node:10 as release
+FROM node:10-alpine as release
+USER node
 ARG container_port=5000
 ENV PORT=$container_port
 EXPOSE $PORT
