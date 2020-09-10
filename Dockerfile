@@ -12,4 +12,4 @@ ENV NODE_ENV=production
 EXPOSE $PORT
 WORKDIR /www
 COPY --from=build --chown=root:root /www /www
-CMD yarn start
+CMD ["node", "src/web-server.js"]
