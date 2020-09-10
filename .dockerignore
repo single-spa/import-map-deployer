@@ -1,0 +1,8 @@
+.git/
+.github/
+node_modules/
+examples/
+.dockerignore
+.gitignore
+.travis.yml
+Dockerfile
