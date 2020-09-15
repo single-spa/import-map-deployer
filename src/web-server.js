@@ -285,9 +285,12 @@ app.delete("/services/:serviceName", function (req, res) {
 
 let server;
 if (process.env.NODE_ENV !== "test") {
-  server = app.listen(getConfig().port || 5000, function () {
-    console.log("Listening at http://localhost:%s", server.address().port);
-  });
+  server = app.listen(
+    process.env.PORT || getConfig().port || 5000,
+    function () {
+      console.log("Listening at http://localhost:%s", server.address().port);
+    }
+  );
 
   exports.close = server.close;
 }
