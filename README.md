@@ -47,6 +47,10 @@ If you do want to address the deployment race condition without using import-map
 
 [This github repository](https://github.com/joeldenning/live-import-map-deployer) shows an example of setting up your own Docker image that can be configured specifically for your organization.
 
+## Related Projects
+
+- [Netlify Plugin for import-map-deployer](https://github.com/single-spa-books/netlify-plugin-importmap-single-spa)
+
 ## Installation and usage
 
 ### Docker
