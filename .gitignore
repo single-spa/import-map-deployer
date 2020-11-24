@@ -47,3 +47,5 @@ src/public/*
 
 .env
 .DS_Store
+
+/.idea

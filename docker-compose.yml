@@ -3,9 +3,15 @@ services:
   import-map-deployer:
     build:
       context: ./
+      args:
+        AZURE_STORAGE_CONNECTION_STRING_DEV: x
+        AZURE_STORAGE_ACCOUNT_DEV: x
+        AZURE_STORAGE_ACCESS_KEY_DEV: x
+        API_USERNAME: x
+        API_PASSWORD: x
     ports:
       - 5000:5000
-    ## Make sure you have the config.json file created in this directory
+    ## Make sure you have the config.js file created in this directory
     ## If using conf.js make sure to create it and add it as a volume
     volumes:
-      - ./config.json:/www/config.json
+      - ./config.js:/www/config.js
