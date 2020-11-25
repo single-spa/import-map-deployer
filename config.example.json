@@ -1,0 +1,14 @@
+{
+  "manifestFormat": "importmap",
+  "locations": {
+    "dev": {
+      "azureContainer": "importmap",
+      "azureBlob": "importmap.json",
+      "azureConnectionString": "",
+      "azureAccount": "",
+      "azureAccessKey": ""
+    }
+  },
+  "username": "admin",
+  "password": "admin"
+}
