@@ -3,6 +3,7 @@ services:
   import-map-deployer:
     build:
       context: ./
+    image: import-map-deployer
     ports:
       - 5000:5000
     ## Make sure you have the config.js file created in this directory

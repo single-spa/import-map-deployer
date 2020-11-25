@@ -10,5 +10,7 @@
     }
   },
   "username": "admin",
-  "password": "admin"
+  "password": "admin",
+  "urlSafeList": ["https://stadffc635nxtwebdevweu.blob.core.windows.net/", "https://cdn.jsdelivr.net/"],
+  "packagesViaTrailingSlashes": false
 }
