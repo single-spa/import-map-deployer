@@ -250,6 +250,25 @@ config.json:
 }
 ```
 
+### Minio
+
+Minio also has an s3 compatible API, so you can use a process similar to digital ocean spaces. You would use the import-map-deployer to modify the import map file
+by specifying in your config `spaces://` in the `locations` config object.
+
+Instead of an AWS region, you should provide an `s3Endpoint` config value that points to your root domain.
+
+config.json:
+
+```json
+{
+  "manifestFormat": "importmaps",
+  "s3Endpoint": "https://<selfhosted.domain>",
+  "locations":{
+    "default": "spaces://minio.<selfhosted.domain>/import-map.json"
+  }
+}
+```
+
 ### Azure Storage
 
 Note, that you must have environment variables `AZURE_STORAGE_ACCOUNT` and `AZURE_STORAGE_ACCESS_KEY`, or `AZURE_STORAGE_CONNECTION_STRING` defined for authentication.
