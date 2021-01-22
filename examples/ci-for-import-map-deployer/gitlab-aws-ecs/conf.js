@@ -12,4 +12,5 @@ module.exports = {
     stage: process.env.STAGING_S3_OBJECT_URL,
     prod: process.env.PRODUCTION_S3_OBJECT_URL,
   },
+  cacheControl: "no-store",
 };

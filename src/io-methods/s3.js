@@ -7,6 +7,7 @@ const aws = require("aws-sdk"),
 if (config && config.region) {
   aws.config.update({ region: config.region });
 }
+const { cacheControl } = require("./cache-control");
 
 function parseFilePath(filePath) {
   const prefix = isDigitalOcean(filePath) ? "spaces://" : "s3://";
@@ -58,7 +59,7 @@ exports.writeManifest = function (filePath, data) {
         Key: file.key,
         Body: data,
         ContentType: "application/importmap+json",
-        CacheControl: "public, must-revalidate, max-age=0",
+        CacheControl: cacheControl,
         ACL: "public-read",
         ...s3PutObjectConfig,
       },
@@ -82,7 +83,7 @@ exports.writeManifest = function (filePath, data) {
           Key: jsKey,
           Body: jsHelpers.createJsString(data),
           ContentType: "application/importmap+json",
-          CacheControl: "public, must-revalidate, max-age=0",
+          CacheControl: cacheControl,
           ACL: "public-read",
           ...s3PutObjectConfig,
         },

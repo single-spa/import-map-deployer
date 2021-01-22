@@ -3,6 +3,8 @@ const {
   StorageSharedKeyCredential,
 } = require("@azure/storage-blob");
 
+const { cacheControl } = require("./cache-control");
+
 async function createBlobService(target) {
   const connectionString =
     target.azureConnectionString || process.env.AZURE_STORAGE_CONNECTION_STRING;
@@ -59,7 +61,7 @@ exports.writeManifest = async function (target, content) {
   const blockBlobClient = containerClient.getBlockBlobClient(target.azureBlob);
   return await blockBlobClient.upload(content, content.length, {
     blobHTTPHeaders: {
-      blobCacheControl: "public, must-revalidate, max-age=0",
+      blobCacheControl: cacheControl,
       blobContentType: "application/importmap+json",
     },
   });
