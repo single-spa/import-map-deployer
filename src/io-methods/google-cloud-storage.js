@@ -4,6 +4,8 @@ const storage = new Storage();
 
 const regex = /^google:\/\/(.+)\/(.+)$/;
 
+const { cacheControl } = require("./cache-control");
+
 function parseFilePath(filePath) {
   const [_, bucketName, fileName] = regex.exec(filePath);
   if (!bucketName || !fileName) {
@@ -27,14 +29,11 @@ exports.writeManifest = function (filePath, data) {
   return Promise.resolve().then(() => {
     const { bucketName, fileName } = parseFilePath(filePath);
 
-    return storage
-      .bucket(bucketName)
-      .file(fileName)
-      .save(data, {
-        contentType: "application/importmap+json",
-        metadata: {
-          cacheControl: "public, must-revalidate, max-age=0",
-        },
-      });
+    return storage.bucket(bucketName).file(fileName).save(data, {
+      contentType: "application/importmap+json",
+      metadata: {
+        cacheControl,
+      },
+    });
   });
 };

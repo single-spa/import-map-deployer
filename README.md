@@ -118,6 +118,7 @@ Here are the properties available in the config file:
   the first being the import map as a string to be written, and the second is the string `env` that should be updated. This allows you to implement your
   own way of writing the import map. The function must return a Promise that resolves with the import map as an object. Since javascript functions are
   not part of JSON, this option is only available if you provide a config.js file (instead of config.json).
+- `cacheControl` (optional): Cache-control header that will be set on the import map file when the import-map-deployer is called. Defaults to `public, must-revalidate, max-age=0`.
 
 ### Option 1: json file
 
@@ -263,7 +264,7 @@ config.json:
 {
   "manifestFormat": "importmaps",
   "s3Endpoint": "https://<selfhosted.domain>",
-  "locations":{
+  "locations": {
     "default": "spaces://minio.<selfhosted.domain>/import-map.json"
   }
 }

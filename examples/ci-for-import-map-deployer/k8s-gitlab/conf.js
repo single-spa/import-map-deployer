@@ -7,4 +7,5 @@ module.exports = {
     stage: process.env.STAGE_IMPORT_MAP_URL,
     prod: process.env.PROD_IMPORT_MAP_URL,
   },
+  cacheControl: "no-store",
 };
