@@ -5,6 +5,8 @@ RUN yarn install  --production --frozen-lockfile
 COPY . /www/
 
 FROM node:14-alpine as release
+RUN apk --no-cache add tini
+ENTRYPOINT ["tini", "--"]
 USER node
 ARG container_port=5000
 ENV PORT=$container_port
