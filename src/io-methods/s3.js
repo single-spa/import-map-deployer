@@ -7,7 +7,7 @@ const aws = require("aws-sdk"),
 if (config && config.region) {
   aws.config.update({ region: config.region });
 }
-const { cacheControl } = require("./cache-control");
+const { cacheControl } = require("../cache-control");
 
 function parseFilePath(filePath) {
   const prefix = isDigitalOcean(filePath) ? "spaces://" : "s3://";

@@ -3,7 +3,7 @@ const {
   StorageSharedKeyCredential,
 } = require("@azure/storage-blob");
 
-const { cacheControl } = require("./cache-control");
+const { cacheControl } = require("../cache-control");
 
 async function createBlobService(target) {
   const connectionString =

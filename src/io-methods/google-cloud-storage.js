@@ -4,7 +4,7 @@ const storage = new Storage();
 
 const regex = /^google:\/\/(.+)\/(.+)$/;
 
-const { cacheControl } = require("./cache-control");
+const { cacheControl } = require("../cache-control");
 
 function parseFilePath(filePath) {
   const [_, bucketName, fileName] = regex.exec(filePath);
