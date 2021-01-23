@@ -5,4 +5,4 @@ exports.getCacheControl = (hostSpecificCacheControl) => {
     return config.cacheControl;
   }
   return hostSpecificCacheControl || "public, must-revalidate, max-age=0";
-}
+};
