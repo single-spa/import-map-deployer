@@ -4,7 +4,7 @@ const storage = new Storage();
 
 const regex = /^google:\/\/(.+)\/(.+)$/;
 
-const { cacheControl } = require("../cache-control");
+const { getCacheControl } = require("../cache-control");
 
 function parseFilePath(filePath) {
   const [_, bucketName, fileName] = regex.exec(filePath);
@@ -32,7 +32,7 @@ exports.writeManifest = function (filePath, data) {
     return storage.bucket(bucketName).file(fileName).save(data, {
       contentType: "application/importmap+json",
       metadata: {
-        cacheControl,
+        cacheControl: getCacheControl(),
       },
     });
   });

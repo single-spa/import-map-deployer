@@ -3,7 +3,7 @@ const {
   StorageSharedKeyCredential,
 } = require("@azure/storage-blob");
 
-const { cacheControl } = require("../cache-control");
+const { getCacheControl } = require("../cache-control");
 
 async function createBlobService(target) {
   const connectionString =
@@ -61,7 +61,7 @@ exports.writeManifest = async function (target, content) {
   const blockBlobClient = containerClient.getBlockBlobClient(target.azureBlob);
   return await blockBlobClient.upload(content, content.length, {
     blobHTTPHeaders: {
-      blobCacheControl: cacheControl,
+      blobCacheControl: getCacheControl(),
       blobContentType: "application/importmap+json",
     },
   });

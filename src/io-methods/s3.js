@@ -7,7 +7,7 @@ const aws = require("aws-sdk"),
 if (config && config.region) {
   aws.config.update({ region: config.region });
 }
-const { cacheControl } = require("../cache-control");
+const { getCacheControl } = require("../cache-control");
 
 function parseFilePath(filePath) {
   const prefix = isDigitalOcean(filePath) ? "spaces://" : "s3://";
@@ -22,10 +22,15 @@ function parseFilePath(filePath) {
   };
 }
 
-let s3PutObjectConfig = {};
+let s3PutObjectCacheControl;
+let s3PutObjectConfigSansCacheControl = {};
 if (config && config.s3 && config.s3.putObject) {
-  s3PutObjectConfig = { ...config.s3.putObject };
+  const { CacheControl, ...rest } = config.s3.putObject;
+  s3PutObjectCacheControl = CacheControl;
+  s3PutObjectConfigSansCacheControl = { ...rest };
 }
+
+const cacheControl = getCacheControl(s3PutObjectCacheControl);
 
 const s3 = new aws.S3({
   endpoint: config.s3Endpoint,
@@ -58,10 +63,10 @@ exports.writeManifest = function (filePath, data) {
         Bucket: file.bucket,
         Key: file.key,
         Body: data,
+        CacheControl: cacheControl,
         ContentType: "application/importmap+json",
         ACL: "public-read",
-        ...s3PutObjectConfig,
-        CacheControl: cacheControl,
+        ...s3PutObjectConfigSansCacheControl,
       },
       function (err) {
         if (err) reject(err);
@@ -82,10 +87,10 @@ exports.writeManifest = function (filePath, data) {
           Bucket: file.bucket,
           Key: jsKey,
           Body: jsHelpers.createJsString(data),
+          CacheControl: cacheControl,
           ContentType: "application/importmap+json",
           ACL: "public-read",
-          ...s3PutObjectConfig,
-          CacheControl: cacheControl,
+          ...s3PutObjectConfigSansCacheControl,
         },
         function (err) {
           if (err) reject(err);
