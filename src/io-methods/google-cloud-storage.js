@@ -29,11 +29,14 @@ exports.writeManifest = function (filePath, data) {
   return Promise.resolve().then(() => {
     const { bucketName, fileName } = parseFilePath(filePath);
 
-    return storage.bucket(bucketName).file(fileName).save(data, {
-      contentType: "application/importmap+json",
-      metadata: {
-        cacheControl: getCacheControl(),
-      },
-    });
+    return storage
+      .bucket(bucketName)
+      .file(fileName)
+      .save(data, {
+        contentType: "application/importmap+json",
+        metadata: {
+          cacheControl: getCacheControl(),
+        },
+      });
   });
 };
