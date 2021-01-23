@@ -59,9 +59,9 @@ exports.writeManifest = function (filePath, data) {
         Key: file.key,
         Body: data,
         ContentType: "application/importmap+json",
-        CacheControl: cacheControl,
         ACL: "public-read",
         ...s3PutObjectConfig,
+        CacheControl: cacheControl,
       },
       function (err) {
         if (err) reject(err);
@@ -83,9 +83,9 @@ exports.writeManifest = function (filePath, data) {
           Key: jsKey,
           Body: jsHelpers.createJsString(data),
           ContentType: "application/importmap+json",
-          CacheControl: cacheControl,
           ACL: "public-read",
           ...s3PutObjectConfig,
+          CacheControl: cacheControl,
         },
         function (err) {
           if (err) reject(err);
