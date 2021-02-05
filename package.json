@@ -12,7 +12,7 @@
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
     "lint": "eslint src",
     "format": "prettier --write .",
-    "start": "node src/web-server.js"
+    "start": "node --inspect src/web-server.js"
   },
   "repository": {
     "type": "git",
@@ -37,7 +37,7 @@
   "homepage": "https://github.com/single-spa/import-map-deployer#readme",
   "dependencies": {
     "@azure/storage-blob": "^12.1.2",
-    "@google-cloud/storage": "^3.0.3",
+    "@google-cloud/storage": "^5.7.4",
     "aws-sdk": "^2.2.27",
     "basic-auth": "^1.0.3",
     "body-parser": "^1.14.2",
