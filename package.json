@@ -12,7 +12,7 @@
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
     "lint": "eslint src",
     "format": "prettier --write .",
-    "start": "node --inspect src/web-server.js"
+    "start": "node src/web-server.js"
   },
   "repository": {
     "type": "git",
