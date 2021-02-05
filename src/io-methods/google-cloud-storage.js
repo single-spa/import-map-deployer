@@ -2,9 +2,13 @@ const { Storage } = require("@google-cloud/storage");
 
 const storage = new Storage();
 
-const regex = /^google:\/\/(.+)\/(.+)$/;
+const regex = /^(?:google|gs):\/\/(.+)\/(.+)$/;
 
 const { getCacheControl } = require("../cache-control");
+
+exports.isGooglePath = function (path) {
+  return regex.test(path);
+};
 
 function parseFilePath(filePath) {
   const [_, bucketName, fileName] = regex.exec(filePath);
@@ -28,7 +32,6 @@ exports.readManifest = function (filePath) {
 exports.writeManifest = function (filePath, data) {
   return Promise.resolve().then(() => {
     const { bucketName, fileName } = parseFilePath(filePath);
-
     return storage
       .bucket(bucketName)
       .file(fileName)

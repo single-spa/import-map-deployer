@@ -68,7 +68,7 @@ function useS3(filePath) {
 }
 
 function usesGoogle(filePath) {
-  return filePath.startsWith("google://");
+  return google.isGooglePath(filePath);
 }
 
 function useMemory(filePath) {
