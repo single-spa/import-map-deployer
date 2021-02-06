@@ -14,3 +14,7 @@ Then there is no need for GOOGLE_APPLICATION_CREDENTIALS, because it just knows.
 
 * You might have to open cors on the bucket: https://cloud.google.com/storage/docs/configuring-cors
 
+# For the future
+Instead of doing it all via the interface, or maybe via gsutil. You do Infrastructure as code.
+https://www.pulumi.com/ - https://www.pulumi.com/docs/reference/pkg/gcp/cloudrun/ - https://www.pulumi.com/docs/reference/pkg/gcp/storage/
+Or terraform: https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/storage_bucket
