@@ -305,7 +305,7 @@ config.json:
 {
   "manifestFormat": "importmap",
   "locations": {
-    "prod": "google://name-of-bucket/importmap.json"
+    "prod": "gs://name-of-bucket/importmap.json"
   }
 }
 ```
