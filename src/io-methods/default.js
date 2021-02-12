@@ -17,6 +17,8 @@ function getFilePath(env) {
     return config.locations[env];
   } else if (_.has(config, ["locations", "default"])) {
     return config.locations.default;
+  } else if (!_.isEmpty(config.locations)) {
+    return config.locations[Object.keys(config.locations)[0]];
   } else {
     return defaultFilePath;
   }
