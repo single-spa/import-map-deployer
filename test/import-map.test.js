@@ -188,4 +188,54 @@ describe(`/import-map.json`, () => {
     expect(response.body.imports.b).not.toBeDefined();
     expect(response.body.imports["b/"]).not.toBeDefined();
   });
+
+  it(`returns a 404 when you try to retrieve an import map for an environment that doesn't exist`, async () => {
+    await request(app)
+      .get("/import-map.json")
+      .query({
+        env: "envThatDoesntExist",
+      })
+      .expect(404);
+  });
+
+  it(`returns a 404 when you attempt to patch an import map environment that doesn't exist`, async () => {
+    const response = await request(app)
+      .patch("/import-map.json")
+      .query({
+        skip_url_check: true,
+        env: "envThatDoesntExist",
+      })
+      .set("accept", "json")
+      .send({
+        imports: {
+          a: "/a-1.mjs",
+        },
+      })
+      .expect(404);
+  });
+
+  it(`returns a 404 when you attempt to patch a service for an environment that doesn't exist`, async () => {
+    await request(app)
+      .patch("/services")
+      .query({
+        skip_url_check: true,
+        env: "envThatDoesntExist",
+      })
+      .set("accept", "json")
+      .send({
+        service: "a",
+        url: "/a-1-updated.mjs",
+      })
+      .expect(404);
+  });
+
+  it(`returns a 404 when you attempt to delete a service for an environment that doesn't exist`, async () => {
+    await request(app)
+      .delete("/services/b")
+      .query({
+        env: "envThatDoesntExist",
+      })
+      .set("accept", "json")
+      .expect(404);
+  });
 });

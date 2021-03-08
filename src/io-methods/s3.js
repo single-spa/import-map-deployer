@@ -1,11 +1,11 @@
 "use strict";
 
 const aws = require("aws-sdk"),
-  config = require("../config").config,
+  getConfig = require("../config").getConfig,
   jsHelpers = require("./js-file-helpers.js");
 
-if (config && config.region) {
-  aws.config.update({ region: config.region });
+if (getConfig() && getConfig().region) {
+  aws.config.update({ region: getConfig().region });
 }
 const { getCacheControl } = require("../cache-control");
 
@@ -24,8 +24,8 @@ function parseFilePath(filePath) {
 
 let s3PutObjectCacheControl;
 let s3PutObjectConfigSansCacheControl = {};
-if (config && config.s3 && config.s3.putObject) {
-  const { CacheControl, ...rest } = config.s3.putObject;
+if (getConfig() && getConfig().s3 && getConfig().s3.putObject) {
+  const { CacheControl, ...rest } = getConfig().s3.putObject;
   s3PutObjectCacheControl = CacheControl;
   s3PutObjectConfigSansCacheControl = { ...rest };
 }
@@ -33,7 +33,7 @@ if (config && config.s3 && config.s3.putObject) {
 const cacheControl = getCacheControl(s3PutObjectCacheControl);
 
 const s3 = new aws.S3({
-  endpoint: config.s3Endpoint,
+  endpoint: getConfig().s3Endpoint,
 });
 
 exports.readManifest = function (filePath) {
@@ -56,6 +56,7 @@ exports.readManifest = function (filePath) {
 };
 
 exports.writeManifest = function (filePath, data) {
+  const config = getConfig();
   const jsonPromise = new Promise(function (resolve, reject) {
     const file = parseFilePath(filePath);
     s3.putObject(

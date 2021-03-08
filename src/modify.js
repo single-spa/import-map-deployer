@@ -2,7 +2,7 @@
 // File editing
 const lock = new (require("rwlock"))();
 const ioOperations = require("./io-operations.js");
-const getConfig = require("./config").getConfig;
+const { getConfig } = require("./config");
 
 const isImportMap = () => {
   const format = getConfig().manifestFormat;
