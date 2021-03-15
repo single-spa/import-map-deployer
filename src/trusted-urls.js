@@ -1,6 +1,7 @@
-const { config } = require("./config");
+const { getConfig } = require("./config");
 
 exports.checkUrlUnsafe = (urlStr) => {
+  const config = getConfig();
   if (!config.urlSafeList) {
     return null;
   } else {

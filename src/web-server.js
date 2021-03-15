@@ -58,11 +58,13 @@ app.use(auth);
 app.use(express.static(__dirname + "/public"));
 
 function getEnv(req) {
-  if (req.query.env === undefined) {
-    return "default";
-  } else {
-    return req.query.env;
-  }
+  return req.query.env;
+}
+
+function sendError(res, ex, prefix) {
+  const status =
+    ex && ex.message && /No such environment/.test(ex.message) ? 404 : 500;
+  res.status(status).send(`${prefix} -- ${ex.toString()}`);
 }
 
 // --------- //
@@ -119,7 +121,7 @@ function handleGetManifest(req, res) {
     })
     .catch((ex) => {
       console.error(ex);
-      res.status(500).send(`Could not read manifest file -- ${ex.toString()}`);
+      sendError(res, ex, "Could not read import map");
     });
 }
 
@@ -206,8 +208,7 @@ app.patch("/import-map.json", (req, res) => {
           res.status(200).send(newImportMap);
         })
         .catch((err) => {
-          console.error(err);
-          res.status(500).send(`Could not update import map`);
+          sendError(res, err, "Could not update import map");
         });
     })
     .catch((err) => {
@@ -266,10 +267,7 @@ app.patch("/services", function (req, res) {
           res.send(json);
         })
         .catch((ex) => {
-          console.error(ex);
-          res
-            .status(500)
-            .send(`Could not write manifest file -- ${ex.toString()}`);
+          sendError(res, ex, "Could not patch service");
         });
     })
     .catch((err) => {
@@ -285,10 +283,7 @@ app.delete("/services/:serviceName", function (req, res) {
       res.send(data);
     })
     .catch((ex) => {
-      console.error(ex);
-      res
-        .status(500)
-        .send(`Could not delete service ${req.params.serviceName}`);
+      sendError(res, ex, "Could not delete service");
     });
 });
 

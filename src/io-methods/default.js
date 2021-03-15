@@ -1,30 +1,26 @@
 "use strict";
 const _ = require("lodash");
-const fs = require("./filesystem");
+const filesystem = require("./filesystem");
 const s3 = require("./s3");
 const azure = require("./azure");
 const google = require("./google-cloud-storage");
-const config = require("../config").config;
+const { getConfig } = require("../config");
 const memory = require("./memory");
 
-const defaultFilePath =
-  config && config.manifestFormat === "importmap"
-    ? "import-map.json"
-    : "sofe-manifest.json";
-
 function getFilePath(env) {
+  const config = getConfig();
   if (_.has(config, ["locations", env])) {
     return config.locations[env];
   } else if (_.has(config, ["locations", "default"])) {
     return config.locations.default;
-  } else if (!_.isEmpty(config.locations)) {
+  } else if (!env && !_.isEmpty(config.locations)) {
     return config.locations[Object.keys(config.locations)[0]];
   } else {
-    return defaultFilePath;
+    throw Error(`No such environment '${env}'. Check your configuration file.`);
   }
 }
 
-exports.readManifest = function (env) {
+exports.readManifest = async function (env) {
   var filePath = getFilePath(env);
   if (usesAzure(filePath)) {
     //uses azure
@@ -38,11 +34,11 @@ exports.readManifest = function (env) {
     return memory.readManifest(filePath);
   } else {
     //use local file
-    return fs.readManifest(filePath);
+    return filesystem.readManifest(filePath);
   }
 };
 
-exports.writeManifest = function (data, env) {
+exports.writeManifest = async function (data, env) {
   var filePath = getFilePath(env);
 
   if (usesAzure(filePath)) {
@@ -57,7 +53,7 @@ exports.writeManifest = function (data, env) {
     return memory.writeManifest(filePath, data);
   } else {
     //use local file
-    return fs.writeManifest(filePath, data);
+    return filesystem.writeManifest(filePath, data);
   }
 };
 

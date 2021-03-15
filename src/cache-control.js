@@ -1,6 +1,7 @@
-const { config } = require("./config");
+const { getConfig } = require("./config");
 
 exports.getCacheControl = (hostSpecificCacheControl) => {
+  const config = getConfig();
   if (config.cacheControl) {
     return config.cacheControl;
   }
