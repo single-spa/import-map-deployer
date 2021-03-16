@@ -2,7 +2,7 @@ const { Storage } = require("@google-cloud/storage");
 
 const storage = new Storage();
 
-const regex = /^(?:google|gs):\/\/(.+)\/(.+)$/;
+const regex = /^(?:google|gs):\/\/(.+?)\/(.+)$/;
 
 const { getCacheControl } = require("../cache-control");
 
