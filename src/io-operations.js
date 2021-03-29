@@ -1,5 +1,5 @@
 "use strict";
-const config = require("./config.js").config;
+const config = require("./config.js").getConfig();
 const getEmptyManifest = require("./modify").getEmptyManifest;
 
 let readManifest, writeManifest, username, password;
