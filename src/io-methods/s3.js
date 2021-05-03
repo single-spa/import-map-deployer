@@ -37,39 +37,28 @@ const s3 = new aws.S3({
   endpoint: getConfig().s3Endpoint,
 });
 
-exports.readManifest = function (filePath) {
-  return new Promise(async function (resolve, reject) {
-    let file = parseFilePath(filePath);
-    const objectMetadata = {
-      Bucket: file.bucket,
-      Key: file.key,
-    };
+exports.readManifest = async function (filePath) {
+  let file = parseFilePath(filePath);
+  const objectMetadata = {
+    Bucket: file.bucket,
+    Key: file.key,
+  };
 
-    try {
+  try {
+    const data = await s3.getObject(objectMetadata).promise();
+
+    return data.Body.toString();
+  } catch (err) {
+    if (err.code === "NoSuchKey") {
+      console.log(
+        `No import map found in bucket ${file.bucket}/${file.key} - creating an empty one for you.`
+      );
+      await exports.writeManifest(filePath, JSON.stringify(getEmptyManifest()));
       const data = await s3.getObject(objectMetadata).promise();
 
-      resolve(data.Body.toString());
-    } catch (err) {
-      if (err.code === "NoSuchKey") {
-        try {
-          console.log(
-            `No import map found in bucket ${file.bucket}/${file.key} - creating an empty one for you.`
-          );
-          await exports.writeManifest(
-            filePath,
-            JSON.stringify(getEmptyManifest())
-          );
-          const data = await s3.getObject(objectMetadata).promise();
-
-          resolve(data.Body.toString());
-        } catch (err) {
-          reject(err);
-        }
-      } else {
-        reject(err);
-      }
+      return data.Body.toString();
     }
-  });
+  }
 };
 
 exports.writeManifest = function (filePath, data) {
