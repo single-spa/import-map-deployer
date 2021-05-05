@@ -8,6 +8,7 @@ if (getConfig() && getConfig().region) {
   aws.config.update({ region: getConfig().region });
 }
 const { getCacheControl } = require("../cache-control");
+const { getEmptyManifest } = require("../modify");
 
 function parseFilePath(filePath) {
   const prefix = isDigitalOcean(filePath) ? "spaces://" : "s3://";
@@ -36,23 +37,28 @@ const s3 = new aws.S3({
   endpoint: getConfig().s3Endpoint,
 });
 
-exports.readManifest = function (filePath) {
-  return new Promise(function (resolve, reject) {
-    let file = parseFilePath(filePath);
-    s3.getObject(
-      {
-        Bucket: file.bucket,
-        Key: file.key,
-      },
-      function (err, data) {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(data.Body.toString());
-        }
-      }
-    );
-  });
+exports.readManifest = async function (filePath) {
+  let file = parseFilePath(filePath);
+  const objectMetadata = {
+    Bucket: file.bucket,
+    Key: file.key,
+  };
+
+  try {
+    const data = await s3.getObject(objectMetadata).promise();
+
+    return data.Body.toString();
+  } catch (err) {
+    if (err.code === "NoSuchKey") {
+      console.log(
+        `No import map found in bucket ${file.bucket}/${file.key} - creating an empty one for you.`
+      );
+      await exports.writeManifest(filePath, JSON.stringify(getEmptyManifest()));
+      const data = await s3.getObject(objectMetadata).promise();
+
+      return data.Body.toString();
+    }
+  }
 };
 
 exports.writeManifest = function (filePath, data) {
