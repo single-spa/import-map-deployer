@@ -1,6 +1,6 @@
 {
   "name": "import-map-deployer",
-  "version": "4.0.2",
+  "version": "4.1.0",
   "description": "a manifest deployer for sofe",
   "main": "src/web-server.js",
   "bin": {
