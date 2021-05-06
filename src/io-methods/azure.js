@@ -4,6 +4,7 @@ const {
 } = require("@azure/storage-blob");
 
 const { getCacheControl } = require("../cache-control");
+const { getEmptyManifest } = require("../modify");
 
 async function createBlobService(target) {
   const connectionString =
@@ -47,6 +48,11 @@ exports.readManifest = async function (target) {
   const blobService = await createBlobService(target);
   const containerClient = blobService.getContainerClient(target.azureContainer);
   const blobClient = containerClient.getBlobClient(target.azureBlob);
+  const blobExists = await blobClient.exists(target.azureBlob);
+
+  if (!blobExists) {
+    await exports.writeManifest(target, JSON.stringify(getEmptyManifest()));
+  }
 
   const downloadBlockBlobResponse = await blobClient.download();
   const response = await streamToString(
