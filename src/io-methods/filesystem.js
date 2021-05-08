@@ -1,10 +1,19 @@
 "use strict";
 const fs = require("fs/promises");
 const { getConfig } = require("../config");
+const { getEmptyManifest } = require("../modify");
 const jsHelpers = require("./js-file-helpers.js");
 
-exports.readManifest = function (filePath) {
-  return fs.readFile(filePath, "utf-8");
+exports.readManifest = async function (filePath) {
+  try {
+    await fs.access(filePath, fs.F_OK);
+
+    return fs.readFile(filePath, "utf-8");
+  } catch (missingFileErr) {
+    exports.writeManifest(filePath, JSON.stringify(getEmptyManifest()));
+
+    return fs.readFile(filePath, "utf-8");
+  }
 };
 
 exports.writeManifest = function (filePath, data) {
