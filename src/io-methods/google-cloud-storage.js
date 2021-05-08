@@ -23,7 +23,6 @@ function parseFilePath(filePath) {
 exports.readManifest = async function (filePath) {
   const { bucketName, fileName } = parseFilePath(filePath);
   const file = await storage.bucket(bucketName).file(fileName);
-
   const exists = first(await file.exists());
 
   if (!exists) {
