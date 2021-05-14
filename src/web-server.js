@@ -36,14 +36,23 @@ if (process.env.NODE_ENV !== "test") {
 app.set("etag", false);
 app.use(bodyParser.text({ type: "*/*" }));
 app.use(
-  morgan(function (tokens, req, res) {
-    return [
-      tokens.method(req, res),
-      tokens.url(req, res),
-      tokens.status(req, res),
-      JSON.stringify(req.body),
-    ].join(" ");
-  })
+  morgan(
+    function (tokens, req, res) {
+      return [
+        tokens.method(req, res),
+        tokens.url(req, res),
+        tokens.status(req, res),
+        JSON.stringify(req.body),
+      ].join(" ");
+    },
+    {
+      skip: (req, res) => {
+        return (
+          (req.url === "/health" || req.url === "/") && res.statusCode == 200
+        );
+      },
+    }
+  )
 );
 app.use(auth);
 app.use(express.static(__dirname + "/public"));
@@ -285,9 +294,12 @@ app.delete("/services/:serviceName", function (req, res) {
 
 let server;
 if (process.env.NODE_ENV !== "test") {
-  server = app.listen(getConfig().port || 5000, function () {
-    console.log("Listening at http://localhost:%s", server.address().port);
-  });
+  server = app.listen(
+    process.env.PORT || getConfig().port || 5000,
+    function () {
+      console.log("Listening at http://localhost:%s", server.address().port);
+    }
+  );
 
   exports.close = server.close;
 }

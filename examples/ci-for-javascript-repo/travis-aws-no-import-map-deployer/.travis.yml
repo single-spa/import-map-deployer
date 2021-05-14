@@ -1,0 +1,33 @@
+# See https://github.com/thawkin3/single-spa-demo-root-config/blob/master/.travis.yml
+
+language: node_js
+node_js:
+  - node
+env:
+  global:
+    # include $HOME/.local/bin for `aws`
+    - PATH=$HOME/.local/bin:$PATH
+before_install:
+  - pyenv global 3.7.1
+  - pip install -U pip
+  - pip install awscli
+script:
+  - yarn build
+  - echo "Commit sha - $TRAVIS_COMMIT"
+  - mkdir -p dist/$ORG_NAME/$PROJECT_NAME/$TRAVIS_COMMIT
+  - mv dist/*.* dist/$ORG_NAME/$PROJECT_NAME/$TRAVIS_COMMIT/
+deploy:
+  provider: s3
+  access_key_id: "$AWS_ACCESS_KEY_ID"
+  secret_access_key: "$AWS_SECRET_ACCESS_KEY"
+  bucket: "$BUCKET_NAME"
+  region: "$REGION_NAME"
+  cache-control: "max-age=31536000"
+  acl: "public_read"
+  local_dir: dist
+  skip_cleanup: true
+  on:
+    branch: master
+after_deploy:
+  - chmod +x after_deploy.sh
+  - "./after_deploy.sh"

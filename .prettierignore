@@ -4,3 +4,4 @@ yarn.lock
 LICENSE
 Dockerfile
 spec/mockServices
+*.sh

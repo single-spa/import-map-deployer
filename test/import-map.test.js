@@ -163,12 +163,29 @@ describe(`/import-map.json`, () => {
   });
 
   it(`does delete a service`, async () => {
-    const response = await request(app)
+    let response = await request(app)
+      .patch("/services")
+      .query({
+        skip_url_check: true,
+      })
+      .set("accept", "json")
+      .send({
+        service: "b",
+        url: "http://example.com/my-service/fs6d7897dsf9/js/main/my-service.js",
+      })
+      .expect(200)
+      .expect("Content-Type", /json/);
+
+    expect(response.body.imports.b).toBeDefined();
+    expect(response.body.imports["b/"]).toBeDefined();
+
+    response = await request(app)
       .delete("/services/b")
       .set("accept", "json")
       .expect(200)
       .expect("Content-Type", /json/);
 
-    expect(response.body.imports.b).toBe(undefined);
+    expect(response.body.imports.b).not.toBeDefined();
+    expect(response.body.imports["b/"]).not.toBeDefined();
   });
 });

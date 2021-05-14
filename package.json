@@ -1,6 +1,6 @@
 {
   "name": "import-map-deployer",
-  "version": "2.2.1",
+  "version": "3.1.1",
   "description": "a manifest deployer for sofe",
   "main": "src/web-server.js",
   "bin": {
@@ -16,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/single-spa/sofe-deplanifester.git"
+    "url": "git+https://github.com/single-spa/import-map-deployer.git"
   },
   "keywords": [
     "sofe"
@@ -24,17 +24,17 @@
   "author": "nhumrich",
   "license": "Apache-2.0",
   "engines": {
-    "node": ">=10.0.0"
+    "node": ">=14.0.0"
   },
   "bugs": {
-    "url": "https://github.com/single-spa/sofe-deplanifester/issues"
+    "url": "https://github.com/single-spa/import-map-deployer/issues"
   },
   "husky": {
     "hooks": {
       "pre-commit": "pretty-quick --staged && npm run lint && npm run test"
     }
   },
-  "homepage": "https://github.com/single-spa/sofe-deplanifester#readme",
+  "homepage": "https://github.com/single-spa/import-map-deployer#readme",
   "dependencies": {
     "@azure/storage-blob": "^12.1.2",
     "@google-cloud/storage": "^3.0.3",
