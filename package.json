@@ -3,9 +3,7 @@
   "version": "3.1.1",
   "description": "a manifest deployer for sofe",
   "main": "src/web-server.js",
-  "bin": {
-    "import-map-deployer": "./bin/import-map-deployer"
-  },
+  "bin": "./bin/import-map-deployer",
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watch",
@@ -29,19 +27,15 @@
   "bugs": {
     "url": "https://github.com/single-spa/import-map-deployer/issues"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "pretty-quick --staged && npm run lint && npm run test"
-    }
-  },
   "homepage": "https://github.com/single-spa/import-map-deployer#readme",
   "dependencies": {
     "@azure/storage-blob": "^12.1.2",
-    "@google-cloud/storage": "^3.0.3",
+    "@google-cloud/storage": "^5.8.5",
     "aws-sdk": "^2.2.27",
     "basic-auth": "^1.0.3",
     "body-parser": "^1.14.2",
     "dotenv": "^8.2.0",
+    "eslint-plugin-node": "^11.1.0",
     "express": "^4.13.3",
     "lodash": "^4.17.11",
     "minimist": "^1.2.0",

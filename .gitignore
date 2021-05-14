@@ -50,3 +50,14 @@ src/public/*
 .DS_Store
 
 /.idea
+
+# yarn
+.yarn/*
+.yarnrc
+.yarnrc.yml
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+yarn-error.log
+.pnp.*
