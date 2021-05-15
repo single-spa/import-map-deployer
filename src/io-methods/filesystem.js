@@ -10,7 +10,7 @@ exports.readManifest = async function (filePath) {
 
     return fs.readFile(filePath, "utf-8");
   } catch (missingFileErr) {
-    exports.writeManifest(filePath, JSON.stringify(getEmptyManifest()));
+    await exports.writeManifest(filePath, JSON.stringify(getEmptyManifest()));
 
     return fs.readFile(filePath, "utf-8");
   }
