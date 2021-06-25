@@ -238,4 +238,33 @@ describe(`/import-map.json`, () => {
       .set("accept", "json")
       .expect(404);
   });
+
+  it(`returns a 400 when you attempt to patch the import map with an invalid name`, async () => {
+    await request(app)
+      .patch("/import-map.json")
+      .query({
+        skip_url_check: true,
+      })
+      .set("accept", "json")
+      .send({
+        imports: {
+          "": "/something.js",
+        },
+      })
+      .expect(400);
+  });
+
+  it(`returns a 400 when you attempt to patch a service with an invalid name`, async () => {
+    await request(app)
+      .patch("/services")
+      .query({
+        skip_url_check: true,
+      })
+      .set("accept", "json")
+      .send({
+        service: "",
+        url: "/a-1-updated.mjs",
+      })
+      .expect(400);
+  });
 });
