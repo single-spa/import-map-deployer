@@ -234,7 +234,7 @@ app.patch("/services", function (req, res) {
   } else {
     return res.status(400).send("service key is missing");
   }
-  if (!service) {
+  if (!service || service.trim().length === 0) {
     return res
       .status(400)
       .send(`Invalid service key - "${service}" is an invalid service key`);
