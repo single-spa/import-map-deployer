@@ -32,7 +32,7 @@ exports.verifyInputFormatForServices = function (services) {
       errorsToReport.push(
         `Invalid import map in request body -- module with name '${moduleName}' does not have a string url`
       );
-    } else if (!moduleName) {
+    } else if (!moduleName || moduleName.trim().length === 0) {
       // catch times where the name evaluates to false, such as "".
       errorsToReport.push(
         `Invalid module name -- module name '${moduleName}' is invalid`
