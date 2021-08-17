@@ -95,7 +95,7 @@ describe(`not alphabetically sorted`, () => {
     });
   });
 
-  it(`should place the import into the map alphabetically instead of just at the end`, async () => {
+  it(`should not place things alphabetically and should just append to the end`, async () => {
     const response = await request(app)
       .patch("/services")
       .query({
