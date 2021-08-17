@@ -120,6 +120,7 @@ Here are the properties available in the config file:
   own way of writing the import map. The function must return a Promise that resolves with the import map as an object. Since javascript functions are
   not part of JSON, this option is only available if you provide a config.js file (instead of config.json).
 - `cacheControl` (optional): Cache-control header that will be set on the import map file when the import-map-deployer is called. Defaults to `public, must-revalidate, max-age=0`.
+- `alphabetical` (optional, defaults to false): A boolean that indicates whether to sort the import-map alphabetically by service/key/name.
 
 ### Option 1: json file
 
