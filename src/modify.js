@@ -83,7 +83,17 @@ function modifyLock(env, modifierFunc) {
 }
 
 exports.modifyImportMap = function (env, newValues) {
-  const { services: newImports, scopes: newScopes } = newValues;
+  const { services, scopes } = newValues;
+
+  const alphabetical = !!getConfig().alphabetical;
+  const newImports =
+    services && typeof services === "object" && alphabetical
+      ? sortObjectAlphabeticallyByKeys(services)
+      : services;
+  const newScopes =
+    scopes && typeof scopes === "object" && alphabetical
+      ? sortObjectAlphabeticallyByKeys(scopes)
+      : scopes;
 
   // either imports or scopes have to be defined
   if (newImports || newScopes) {
@@ -135,9 +145,25 @@ exports.modifyService = function (
         map[serviceName + "/"] = address;
       }
     }
-
-    return json;
+    const alphabetical = !!getConfig().alphabetical;
+    if (alphabetical) {
+      return {
+        imports: sortObjectAlphabeticallyByKeys(json.imports),
+        scopes: sortObjectAlphabeticallyByKeys(json.scopes),
+      };
+    } else {
+      return json;
+    }
   });
 };
 
 exports.getEmptyManifest = getEmptyManifest;
+
+function sortObjectAlphabeticallyByKeys(unordered) {
+  return Object.keys(unordered)
+    .sort()
+    .reduce((obj, key) => {
+      obj[key] = unordered[key];
+      return obj;
+    }, {});
+}

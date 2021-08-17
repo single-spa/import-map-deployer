@@ -4,22 +4,24 @@ const {
   resetManifest: resetMemoryManifest,
 } = require("../src/io-methods/memory");
 
-beforeAll(() => {
-  setConfig({
-    manifestFormat: "importmap",
-    packagesViaTrailingSlashes: true,
-    locations: {
-      prod: "memory://prod",
-    },
-  });
-});
-
-beforeEach(() => {
-  // assure we have a clean import map every test
-  resetMemoryManifest();
-});
-
 describe(`/import-map.json`, () => {
+  let errorSpy;
+  beforeAll(() => {
+    setConfig({
+      manifestFormat: "importmap",
+      packagesViaTrailingSlashes: true,
+      locations: {
+        prod: "memory://prod",
+      },
+    });
+  });
+  beforeEach(() => {
+    // assure we have a clean import map every test
+    resetMemoryManifest();
+    errorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+    errorSpy.mockClear();
+  });
+
   it(`does not return anything when it's not setup yet.`, async () => {
     const response = await request(app)
       .get("/import-map.json")
