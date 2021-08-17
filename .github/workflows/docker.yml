@@ -20,4 +20,5 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: user/app:latest
+          # According to https://docs.github.com/en/actions/reference/events-that-trigger-workflows#release `$GITHUB_REF` is going to be the tag of the release
+          tags: $GITHUB_REF,latest
