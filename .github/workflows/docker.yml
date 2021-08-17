@@ -1,0 +1,23 @@
+name: Docker stuff
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  docker:
+    # this should prevent the job from running on PRs and should help keep the keys secret
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Docker Build and Docker Push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          push: true
+          tags: user/app:latest
