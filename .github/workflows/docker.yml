@@ -7,8 +7,6 @@ on:
 
 jobs:
   docker:
-    # this should prevent the job from running on PRs and should help keep the keys secret
-    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - name: Login to DockerHub
