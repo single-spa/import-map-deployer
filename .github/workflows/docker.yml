@@ -2,9 +2,8 @@ name: Docker stuff
 # uses https://github.com/docker/build-push-action
 
 on:
-  - push
-  # release:
-  #   types: [published]
+  release:
+    types: [published]
 
 jobs:
   docker:
@@ -26,5 +25,4 @@ jobs:
         with:
           context: .
           push: true
-          # According to https://docs.github.com/en/actions/reference/events-that-trigger-workflows#release `$GITHUB_REF` is going to be the tag of the release
           tags: singlespa/import-map-deployer:${{ steps.branchStep.outputs.branch }},singlespa/import-map-deployer:latest
