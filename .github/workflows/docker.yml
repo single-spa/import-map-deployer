@@ -24,4 +24,4 @@ jobs:
           context: .
           push: true
           # According to https://docs.github.com/en/actions/reference/events-that-trigger-workflows#release `$GITHUB_REF` is going to be the tag of the release
-          tags: singlespa/import-map-deployer:$GITHUB_REF,singlespa/import-map-deployer:latest
+          tags: singlespa/import-map-deployer:${{ GITHUB_REF }},singlespa/import-map-deployer:latest
