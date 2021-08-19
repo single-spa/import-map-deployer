@@ -2,7 +2,8 @@ name: Docker stuff
 # uses https://github.com/docker/build-push-action
 
 on:
-  - release
+  release:
+    types: [published]
 
 jobs:
   docker:
