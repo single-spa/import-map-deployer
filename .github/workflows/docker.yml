@@ -9,6 +9,8 @@ on:
 jobs:
   docker:
     # this should prevent the job from running on PRs and should help keep the keys secret
+    env:
+      GITHUB_REF: ${{ GITHUB_REF }}
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
