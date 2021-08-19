@@ -15,9 +15,9 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Get the current branch name
+      - name: Get the current tag name
         shell: bash
-        run: echo "::set-output name=branch::${GITHUB_REF#refs/heads/}"
+        run: echo "::set-output name=tag::${GITHUB_REF#refs/tags/}"
         id: branchStep
       - name: Docker Build and Docker Push
         id: docker_build
@@ -25,4 +25,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: singlespa/import-map-deployer:${{ steps.branchStep.outputs.branch }},singlespa/import-map-deployer:latest
+          tags: singlespa/import-map-deployer:${{ steps.branchStep.outputs.tag }},singlespa/import-map-deployer:latest
