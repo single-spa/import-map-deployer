@@ -86,14 +86,12 @@ exports.modifyImportMap = function (env, newValues) {
   const { services, scopes } = newValues;
 
   const alphabetical = !!getConfig().alphabetical;
-  const newImports =
-    services && typeof services === "object" && alphabetical
-      ? sortObjectAlphabeticallyByKeys(services)
-      : services;
-  const newScopes =
-    scopes && typeof scopes === "object" && alphabetical
-      ? sortObjectAlphabeticallyByKeys(scopes)
-      : scopes;
+  const newImports = alphabetical
+    ? sortObjectAlphabeticallyByKeys(services)
+    : services;
+  const newScopes = alphabetical
+    ? sortObjectAlphabeticallyByKeys(scopes)
+    : scopes;
 
   // either imports or scopes have to be defined
   if (newImports || newScopes) {
@@ -160,6 +158,9 @@ exports.modifyService = function (
 exports.getEmptyManifest = getEmptyManifest;
 
 function sortObjectAlphabeticallyByKeys(unordered) {
+  if (!unordered) {
+    return unordered;
+  }
   return Object.keys(unordered)
     .sort()
     .reduce((obj, key) => {
@@ -167,3 +168,5 @@ function sortObjectAlphabeticallyByKeys(unordered) {
       return obj;
     }, {});
 }
+
+exports.sortObjectAlphabeticallyByKeys = sortObjectAlphabeticallyByKeys;

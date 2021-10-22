@@ -3,6 +3,7 @@ const { app, setConfig } = require("../src/web-server");
 const {
   resetManifest: resetMemoryManifest,
 } = require("../src/io-methods/memory");
+const { sortObjectAlphabeticallyByKeys } = require("../src/modify.js");
 
 describe(`alphabetically sorted`, () => {
   beforeAll(() => {
@@ -57,6 +58,12 @@ describe(`alphabetically sorted`, () => {
     expect(JSON.stringify(response.body.imports)).toBe(
       `{"a":"/a-1-updated.mjs","b":"/b-1.mjs","c":"/c-1.mjs"}`
     );
+  });
+
+  it("should return undefined or null if you pass them in and not throw an error", () => {
+    expect(sortObjectAlphabeticallyByKeys(undefined)).toBe(undefined);
+    expect(sortObjectAlphabeticallyByKeys(null)).toBe(null);
+    expect(JSON.stringify(sortObjectAlphabeticallyByKeys({}))).toBe("{}");
   });
 });
 
