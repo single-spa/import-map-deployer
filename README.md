@@ -41,6 +41,8 @@ If you are not comfortable with running the import-map-deployer at all, you do n
 
 If you do this, decide whether you care about the deployment race condition scenario described in the [Why does this exist?](#why-does-this-exist) section. If you are willing to live with that unlikely race condition, see these examples ([1](/examples/ci-for-javascript-repo/gitlab-aws-no-import-map-deployer), [2](/examples/bash-aws-no-import-map-deployer)) for some example CI commands.
 
+Note that several object stores (notably Google Cloud Storage and Azure Storage) allow for optimistic concurrency when uploading files. By correctly sending pre-condition headers on those services, your CI process can correctly fail and/or retry in the event of a race condition. For further reading, see [Azure's docs](https://docs.microsoft.com/en-us/azure/storage/blobs/concurrency-manage?tabs=dotnet#optimistic-concurrency) or [Google Cloud's docs](https://cloud.google.com/storage/docs/request-preconditions) on concurrency.
+
 If you do want to address the deployment race condition without using import-map-deployer, we'd love to hear what you come up with. Consider leaving a PR to these docs that explain what you did!
 
 ## Example repository
