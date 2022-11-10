@@ -185,10 +185,6 @@ Basic auth credentials can be set either in the `config.json` file (see above) o
 
 > :warning: The above environment variables will **override** the username and password from the config file.
 
-## Built-in IO Methods
-
-The import-map-deployer knows how to update import maps that are stored in the following ways:
-
 ## Building image using docker
 
 To build image using default settings
@@ -204,6 +200,10 @@ To build image with a custom container port in the `PORT` ENV variable
 $ docker build --container-port=8080 .
 # ...
 ```
+
+## Built-in IO Methods
+
+The import-map-deployer knows how to update import maps that are stored in the following ways:
 
 ### AWS S3
 
