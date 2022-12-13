@@ -46,6 +46,7 @@
     "lodash": "^4.17.11",
     "minimist": "^1.2.0",
     "morgan": "^1.8.1",
+    "node-fetch": "2",
     "request": "^2.79.0",
     "rwlock": "^5.0.0"
   },
