@@ -38,7 +38,7 @@
   "dependencies": {
     "@azure/storage-blob": "^12.1.2",
     "@google-cloud/storage": "^5.7.4",
-    "aws-sdk": "^2.2.27",
+    "aws-sdk": "^2",
     "basic-auth": "^1.0.3",
     "body-parser": "^1.14.2",
     "dotenv": "^8.2.0",
