@@ -12,6 +12,8 @@ These two steps are often performed during a CI process, to automate deployments
 
 <img src="https://drive.google.com/uc?id=1tkDltyzV-jpVLT9U5DvRDfslPyiEAB6y" alt="import-map-deployer demo">
 
+💡 JavaScript files uploaded to a CDN can be cleaned using [import-map-storage-helper](https://github.com/dolmen-tech/import-map-storage-helper).
+
 ## Why does this exist?
 
 The alternative to the import-map-deployer is to pull down the import map file, modify it, and reupload it during your CI process. That alternative has one problem: it doesn't properly handle concurrency. If two deployments occur in separate CI pipelines at the same time, it is possible they pull down the import map at the same time, modify it, and reupload. In that case, there is a race condition where the "last reupload wins," overwriting the deployment that the first reupload did.
