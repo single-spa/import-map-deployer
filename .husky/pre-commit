@@ -1,0 +1,3 @@
+#!/bin/sh
+
+pretty-quick --staged && yarn lint && yarn test

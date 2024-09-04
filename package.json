@@ -31,11 +31,6 @@
   "bugs": {
     "url": "https://github.com/single-spa/import-map-deployer/issues"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "pretty-quick --staged && yarn lint && yarn test"
-    }
-  },
   "homepage": "https://github.com/single-spa/import-map-deployer#readme",
   "dependencies": {
     "@azure/storage-blob": "^12.1.2",
