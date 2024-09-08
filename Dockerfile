@@ -1,10 +1,10 @@
-FROM node:14-alpine as build
+FROM node:20-alpine as build
 WORKDIR /www
 COPY package.json yarn.lock ./
 RUN yarn install  --production --frozen-lockfile
 COPY . /www/
 
-FROM node:14-alpine as release
+FROM node:20-alpine as release
 RUN apk --no-cache add tini
 ENTRYPOINT ["tini", "--"]
 USER node

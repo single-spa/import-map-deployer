@@ -38,6 +38,7 @@ node_modules
 
 #editor stuff
 .lvimrc
+.idea
 
 #Elm
 elm-stuff
