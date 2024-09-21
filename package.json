@@ -33,7 +33,7 @@
   },
   "homepage": "https://github.com/single-spa/import-map-deployer#readme",
   "dependencies": {
-    "@azure/storage-blob": "^12.1.2",
+    "@azure/storage-blob": "^12.24.0",
     "@google-cloud/storage": "^6.12.0",
     "aws-sdk": "^2.2.27",
     "basic-auth": "^1.1.0",
