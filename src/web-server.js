@@ -62,6 +62,7 @@ function getEnv(req) {
 }
 
 function sendError(res, ex, prefix) {
+  console.error(ex);
   const status =
     ex && ex.message && /No such environment/.test(ex.message) ? 404 : 500;
   res.status(status).send(`${prefix} -- ${ex.toString()}`);
