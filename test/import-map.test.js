@@ -104,6 +104,26 @@ describe(`/import-map.json`, () => {
     });
   });
 
+  it(`patches services with integrity`, async () => {
+    const integrity = "sha256-test";
+
+    const response = await request(app)
+      .patch("/services")
+      .query({
+        skip_url_check: true,
+      })
+      .set("accept", "json")
+      .send({
+        service: "a",
+        url: "/a-1-updated.mjs",
+        integrity,
+      })
+      .expect(200)
+      .expect("Content-Type", /json/);
+
+    expect(response.body.integrity["/a-1-updated.mjs"]).toBe(integrity);
+  });
+
   it(`does add trailing slash package`, async () => {
     const response = await request(app)
       .patch("/services")
