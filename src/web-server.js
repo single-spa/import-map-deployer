@@ -43,7 +43,7 @@ app.use(
         tokens.method(req, res),
         tokens.url(req, res),
         tokens.status(req, res),
-        // JSON.stringify(req.body),
+        JSON.stringify(req.body),
       ].join(" ");
     },
     {
