@@ -132,7 +132,8 @@ exports.modifyService = function (
   serviceName,
   url,
   remove,
-  packageDirLevel = 1
+  packageDirLevel = 1,
+  integrity
 ) {
   return modifyLock(env, (json) => {
     const map = getMapFromManifest(json);
@@ -157,6 +158,11 @@ exports.modifyService = function (
                 `https://example.com${url.startsWith("/") ? url : "" + url}`
               ).pathname;
         map[serviceName + "/"] = address;
+      }
+
+      if (integrity) {
+        json.integrity = json.integrity ?? {};
+        json.integrity[url] = integrity;
       }
     }
     const alphabetical = !!getConfig().alphabetical;

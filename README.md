@@ -424,10 +424,13 @@ Note that the `packageDirLevel` query param indicates the number of directories 
 
 Body:
 
+_integrity field is optional_
+
 ```json
 {
   "service": "my-service",
-  "url": "http://example.com/path/to/my-service.js"
+  "url": "http://example.com/path/to/my-service.js",
+  "integrity": "sha256-example"
 }
 ```
 
@@ -438,6 +441,9 @@ Response:
   "imports": {
     "my-service": "http://example.com/path/to/my-service.js",
     "my-service/": "http://example.com/path/to/"
+  },
+  "integrity": {
+    "http://example.com/path/to/my-service.js": "sha256-example"
   }
 }
 ```

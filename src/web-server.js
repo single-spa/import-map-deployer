@@ -256,7 +256,7 @@ function healthEndpoint(req, res) {
 
 app.patch("/services", function (req, res) {
   req.body = JSON.parse(req.body);
-  let service, url;
+  let service, url, integrity;
   let env = getEnv(req);
   if (req.body != undefined && req.body.hasOwnProperty("service")) {
     service = req.body.service;
@@ -272,6 +272,17 @@ app.patch("/services", function (req, res) {
     url = req.body.url;
   } else {
     return res.status(400).send("url key is missing");
+  }
+  if (req.body?.hasOwnProperty("integrity")) {
+    if (
+      typeof req.body.integrity !== "string" ||
+      req.body.integrity.trim().length === 0
+    ) {
+      return res
+        .status(400)
+        .send(`Invalid integrity - must be a non-empty string`);
+    }
+    integrity = req.body.integrity;
   }
 
   let packageDirLevel =
@@ -296,7 +307,7 @@ app.patch("/services", function (req, res) {
   verifyValidUrl(req, url)
     .then(() => {
       modify
-        .modifyService(env, service, url, false, packageDirLevel)
+        .modifyService(env, service, url, false, packageDirLevel, integrity)
         .then((json) => {
           res.send(json);
         })
