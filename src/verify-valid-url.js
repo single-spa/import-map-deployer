@@ -64,3 +64,19 @@ exports.findUrlsToValidateInServices = function (services) {
 
   return toValidateUrls;
 };
+
+exports.findUrlsToValidateInIntegrity = function (integrity) {
+  const toValidateUrls = [];
+
+  for (let specifier in integrity) {
+    const address = specifier;
+
+    if (canVerify(specifier)) {
+      toValidateUrls.push(new URL(address, specifier).href);
+    } else if (canVerify(address)) {
+      toValidateUrls.push(address);
+    }
+  }
+
+  return toValidateUrls;
+};

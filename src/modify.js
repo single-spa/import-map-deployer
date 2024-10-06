@@ -30,6 +30,13 @@ function getScopesFromManifest(manifest) {
   return manifest.scopes;
 }
 
+function getIntegrityFromManifest(manifest) {
+  if (!isImportMap()) {
+    throw Error(`Integrity only supported with manifestFormat "importmap"`);
+  }
+  return manifest.integrity;
+}
+
 function getEmptyManifest() {
   return isImportMap()
     ? { imports: {}, scopes: {} }
@@ -83,7 +90,7 @@ function modifyLock(env, modifierFunc) {
 }
 
 exports.modifyImportMap = function (env, newValues) {
-  const { services, scopes } = newValues;
+  const { services, scopes, integrity } = newValues;
 
   const alphabetical = !!getConfig().alphabetical;
   const newImports = alphabetical
@@ -92,17 +99,26 @@ exports.modifyImportMap = function (env, newValues) {
   const newScopes = alphabetical
     ? sortObjectAlphabeticallyByKeys(scopes)
     : scopes;
+  const newIntegrity = alphabetical
+    ? sortObjectAlphabeticallyByKeys(integrity)
+    : integrity;
 
   // either imports or scopes have to be defined
-  if (newImports || newScopes) {
+  if (newImports || newScopes || newIntegrity) {
     return modifyLock(env, (json) => {
       if (newImports) {
         const imports = getMapFromManifest(json);
         Object.assign(imports, newImports);
       }
       if (newScopes) {
+        json.scopes = json.scopes ?? {};
         const scopes = getScopesFromManifest(json);
         Object.assign(scopes, newScopes);
+      }
+      if (newIntegrity) {
+        json.integrity = json.integrity ?? {};
+        const integrity = getIntegrityFromManifest(json);
+        Object.assign(integrity, newIntegrity);
       }
       return json;
     });

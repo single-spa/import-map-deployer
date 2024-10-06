@@ -10,7 +10,6 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
-    "lint": "eslint src",
     "format": "prettier --write .",
     "start": "node src/web-server.js",
     "prepare": "husky"
@@ -47,10 +46,6 @@
     "rwlock": "^5.0.0"
   },
   "devDependencies": {
-    "eslint": "^7.32.0",
-    "eslint-config-node-important-stuff": "^1.1.0",
-    "eslint-config-prettier": "^6.11.0",
-    "eslint-plugin-prettier": "^3.1.3",
     "husky": "^9.1.5",
     "jest": "^26.0.1",
     "jest-cli": "^26.0.1",

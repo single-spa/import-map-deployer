@@ -16,6 +16,7 @@ const express = require("express"),
     verifyValidUrl,
     findUrlsToValidateInScopes,
     findUrlsToValidateInServices,
+    findUrlsToValidateInIntegrity,
   } = require("./verify-valid-url.js"),
   {
     verifyInputFormatForServices,
@@ -198,12 +199,39 @@ app.patch("/import-map.json", (req, res) => {
     }
   }
 
-  return Promise.all([validImportUrlPromises, validScopeUrlPromises])
+  let validIntegrityUrlPromises = Promise.resolve();
+  if (req.body.integrity) {
+    const integrityUrlsToValidate = findUrlsToValidateInIntegrity(
+      req.body.integrity
+    );
+    const unsafeUrls = integrityUrlsToValidate
+      .map(checkUrlUnsafe)
+      .filter(Boolean);
+
+    if (unsafeUrls.length > 0) {
+      return res.status(400).send({
+        error: `The following URLs are not trusted - ${unsafeUrls.join(", ")}`,
+      });
+    }
+
+    if (integrityUrlsToValidate.length > 0) {
+      validIntegrityUrlPromises = integrityUrlsToValidate.map((url) =>
+        verifyValidUrl(req, url)
+      );
+    }
+  }
+
+  return Promise.all([
+    validImportUrlPromises,
+    validScopeUrlPromises,
+    validIntegrityUrlPromises,
+  ])
     .then(() => {
       modify
         .modifyImportMap(env, {
           services: req.body.imports,
           scopes: req.body.scopes,
+          integrity: req.body.integrity,
         })
         .then((newImportMap) => {
           res.status(200).send(newImportMap);
