@@ -1,7 +1,5 @@
 # import-map-deployer
 
-[![Build Status](https://travis-ci.com/single-spa/import-map-deployer.svg?branch=master)](https://travis-ci.com/single-spa/import-map-deployer)
-
 The import-map-deployer is a backend service that updates [import map json files](https://github.com/WICG/import-maps#installation). When using
 import-map-deployer, a frontend deployment is completed in two steps:
 
@@ -14,9 +12,19 @@ These two steps are often performed during a CI process, to automate deployments
 
 ## Why does this exist?
 
+### Reason 1
+
 The alternative to the import-map-deployer is to pull down the import map file, modify it, and reupload it during your CI process. That alternative has one problem: it doesn't properly handle concurrency. If two deployments occur in separate CI pipelines at the same time, it is possible they pull down the import map at the same time, modify it, and reupload. In that case, there is a race condition where the "last reupload wins," overwriting the deployment that the first reupload did.
 
 When you have a single import map file and multiple services' deployment process modifies that import map, there is a (small) chance for a race condition where two deployments attempt to modify the import map at the same time. This could result in a CI pipeline indicating that it successfully deployed the frontend module, even though the deployment was overwritten with a stale version.
+
+### Reason 2
+
+import-map-deployer ensures that all URLs in the import map are reachable, to avoid bad deployments.
+
+### Reason 3
+
+import-map-deployer's `urlSafeList` configuration option prevents your import map from ever referencing any domains not fully trusted by your organization, even if the security credentials to import-map-deployer are compromised.
 
 ## Explanation video
 
@@ -47,7 +55,7 @@ If you do want to address the deployment race condition without using import-map
 
 ## Example repository
 
-[This github repository](https://github.com/joeldenning/live-import-map-deployer) shows an example of setting up your own Docker image that can be configured specifically for your organization.
+[This github repository](https://github.com/react-microfrontends/configured-import-map-deployer) shows an example of setting up your own Docker image that can be configured specifically for your organization.
 
 ## Related Projects
 
@@ -62,7 +70,7 @@ import-map-deployer is available on DockerHub as [`singlespa/import-map-deployer
 you can run `docker-compose up` from the project root. When running via docker-compose, it will mount a volume in the project root's directory,
 expecting a `config.json` file to be present.
 
-[Example Dockerfile](https://github.com/joeldenning/live-import-map-deployer/blob/master/Dockerfile)
+[Example Dockerfile](https://github.com/react-microfrontends/configured-import-map-deployer/blob/main/Dockerfile)
 
 ```Dockerfile
 FROM singlespa/import-map-deployer:<version-tag>
