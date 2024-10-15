@@ -137,9 +137,15 @@ exports.modifyService = function (
 ) {
   return modifyLock(env, (json) => {
     const map = getMapFromManifest(json);
+    const oldUrl = map[serviceName];
+    const oldIntegrity = json.integrity ? json.integrity[oldUrl] : null;
+
     if (remove) {
       delete map[serviceName];
       delete map[serviceName + "/"];
+      if (json.integrity) {
+        delete json.integrity[oldUrl];
+      }
     } else {
       map[serviceName] = url;
 
@@ -163,6 +169,9 @@ exports.modifyService = function (
       if (integrity) {
         json.integrity = json.integrity ?? {};
         json.integrity[url] = integrity;
+      }
+      if (oldIntegrity && json.integrity) {
+        delete json.integrity[oldUrl];
       }
     }
     const alphabetical = !!getConfig().alphabetical;
