@@ -137,6 +137,11 @@ exports.modifyService = function (
 ) {
   return modifyLock(env, (json) => {
     const map = getMapFromManifest(json);
+    const oldUrl = map[serviceName];
+    if (oldUrl && json.integrity) {
+      delete json.integrity[oldUrl];
+    }
+
     if (remove) {
       delete map[serviceName];
       delete map[serviceName + "/"];
