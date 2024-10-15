@@ -143,7 +143,7 @@ exports.modifyService = function (
     if (remove) {
       delete map[serviceName];
       delete map[serviceName + "/"];
-      if (json.integrity) {
+      if (oldUrl && json.integrity) {
         delete json.integrity[oldUrl];
       }
     } else {
@@ -170,7 +170,7 @@ exports.modifyService = function (
         json.integrity = json.integrity ?? {};
         json.integrity[url] = integrity;
       }
-      if (oldIntegrity && json.integrity) {
+      if (oldUrl && json.integrity) {
         delete json.integrity[oldUrl];
       }
     }
