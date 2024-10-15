@@ -59,6 +59,7 @@ If you do want to address the deployment race condition without using import-map
 
 ## Related Projects
 
+- [Github action for deploying to import-map-deployer](https://github.com/single-spa/action-deploy-to-import-map-deployer)
 - [Netlify Plugin for import-map-deployer](https://github.com/single-spa-books/netlify-plugin-importmap-single-spa)
 - [docker-import-maps-mfe-server](https://github.com/single-spa/docker-import-maps-mfe-server) (if you need to host in docker rather than a cloud object storage)
 
