@@ -162,7 +162,7 @@ app.patch("/import-map.json", (req, res) => {
   }
 
   // Import map validation
-  let validImportUrlPromises = Promise.resolve();
+  let validImportUrlPromises = [];
   if (req.body.imports) {
     const importUrlsToValidate = findUrlsToValidateInServices(req.body.imports);
     const unsafeUrls = importUrlsToValidate.map(checkUrlUnsafe).filter(Boolean);
@@ -181,7 +181,7 @@ app.patch("/import-map.json", (req, res) => {
   }
 
   // Scope validation
-  let validScopeUrlPromises = Promise.resolve();
+  let validScopeUrlPromises = [];
   if (req.body.scopes) {
     const scopeUrlsToValidate = findUrlsToValidateInScopes(req.body.scopes);
     const unsafeUrls = scopeUrlsToValidate.map(checkUrlUnsafe).filter(Boolean);
@@ -199,7 +199,7 @@ app.patch("/import-map.json", (req, res) => {
     }
   }
 
-  let validIntegrityUrlPromises = Promise.resolve();
+  let validIntegrityUrlPromises = [];
   if (req.body.integrity) {
     const integrityUrlsToValidate = findUrlsToValidateInIntegrity(
       req.body.integrity
@@ -222,9 +222,9 @@ app.patch("/import-map.json", (req, res) => {
   }
 
   return Promise.all([
-    validImportUrlPromises,
-    validScopeUrlPromises,
-    validIntegrityUrlPromises,
+    ...validImportUrlPromises,
+    ...validScopeUrlPromises,
+    ...validIntegrityUrlPromises,
   ])
     .then(() => {
       modify
@@ -234,7 +234,6 @@ app.patch("/import-map.json", (req, res) => {
           integrity: req.body.integrity,
         })
         .then((newImportMap) => {
-          console.log(`Patched import map. New import map`, newImportMap);
           res.status(200).send(newImportMap);
         })
         .catch((err) => {
