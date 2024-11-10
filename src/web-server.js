@@ -234,6 +234,7 @@ app.patch("/import-map.json", (req, res) => {
           integrity: req.body.integrity,
         })
         .then((newImportMap) => {
+          console.log(`Patched import map. New import map`, newImportMap);
           res.status(200).send(newImportMap);
         })
         .catch((err) => {
