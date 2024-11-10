@@ -104,27 +104,23 @@ exports.modifyImportMap = function (env, newValues) {
     : integrity;
 
   // either imports or scopes have to be defined
-  if (newImports || newScopes || newIntegrity) {
-    return modifyLock(env, (json) => {
-      if (newImports) {
-        const imports = getMapFromManifest(json);
-        Object.assign(imports, newImports);
-      }
-      if (newScopes) {
-        json.scopes = json.scopes ?? {};
-        const scopes = getScopesFromManifest(json);
-        Object.assign(scopes, newScopes);
-      }
-      if (newIntegrity) {
-        json.integrity = json.integrity ?? {};
-        const integrity = getIntegrityFromManifest(json);
-        Object.assign(integrity, newIntegrity);
-      }
-      return json;
-    });
-  } else {
-    return Promise.resolve();
-  }
+  return modifyLock(env, (json) => {
+    if (newImports) {
+      const imports = getMapFromManifest(json);
+      Object.assign(imports, newImports);
+    }
+    if (newScopes) {
+      json.scopes = json.scopes ?? {};
+      const scopes = getScopesFromManifest(json);
+      Object.assign(scopes, newScopes);
+    }
+    if (newIntegrity) {
+      json.integrity = json.integrity ?? {};
+      const integrity = getIntegrityFromManifest(json);
+      Object.assign(integrity, newIntegrity);
+    }
+    return json;
+  });
 };
 
 exports.modifyService = function (
