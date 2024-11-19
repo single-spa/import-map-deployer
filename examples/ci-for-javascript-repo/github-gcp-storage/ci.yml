@@ -1,0 +1,73 @@
+name: Deploy to GCS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy-prod:
+    name: Deploy to prod
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+
+    steps:
+      - name: Uses Node.js ${{matrix.node-version}}
+        uses: actions/checkout@v1
+
+      - name: Setup Node
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{matrix.node-version}}
+
+      - name: Run Install
+        id: install
+        env:
+          NODE_ENV: production
+        run: npm install
+
+      - name: Run Lint
+        id: lint
+        run: npm run lint
+
+      - name: Run Prettier
+        id: prettier
+        run: npm run check-format
+
+      - name: Run Jest
+        id: test
+        run: npm run test
+
+      - name: Run Build
+        id: build
+        run: npm run build
+
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: "google-github-actions/auth@v0"
+        with:
+          credentials_json: "${{secrets.GOOGLE_CREDENTIALS}}"
+
+      - name: Upload build files
+        id: upload-files
+        uses: "google-github-actions/upload-cloud-storage@v0"
+        with:
+          path: "dist"
+          destination: "${{secrets.BUCKET_NAME}}/${{secrets.PROJECT_NAME}}/${{github.sha}}"
+          parent: false
+
+      - name: Update import-map
+        run: |
+          curl --location --request PATCH '${{secrets.DEPLOYER_HOST}}/services?env=${{secrets.DEPLOYER_LOCATION}}' \
+          -u ${{secrets.DEPLOYER_USERNAME}}:${{secrets.DEPLOYER_PASSWORD}} \
+          --header 'Accept: application/json' \
+          --header 'Content-Type: application/json' \
+          --data-raw ' {
+            "service":"@${{secrets.BUCKET_NAME}}/${{secrets.PROJECT_NAME}}",
+            "url":"${{secrets.GCP_STORAGE_HOST}}/${{secrets.BUCKET_NAME}}/${{secrets.PROJECT_NAME}}/${{github.sha}}/${{secrets.BUCKET_NAME}}-${{secrets.PROJECT_NAME}}.js"
+          }'
