@@ -105,7 +105,10 @@ describe(`/import-map.json - Scopes`, () => {
 });
 
 describe(`DELETE /scopes`, () => {
+  let errorSpy;
   beforeEach(async () => {
+    errorSpy = jest.spyOn(console, "error").mockImplementation(() => {});
+    errorSpy.mockClear();
     const response = await request(app)
       .patch("/import-map.json")
       .query({
