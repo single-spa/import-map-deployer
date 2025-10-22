@@ -495,6 +495,30 @@ Example using cURL:
 curl -X DELETE localhost:5000/services/my-service
 ```
 
+#### DELETE /scopes?env=alpha&dry_run
+
+Delete scope entries using regex to match on keys that you wish to delete. A request body with the 'regexString' field is required. 'regexString' must be a non-empty string. Using the 'dry_run' query parameter will return the entries that will be deleted; not affecting the actual import map. Don't forget to escape backslash's in your regexString if they are to literally be apart of the regex... This is mandatory for JSON parsers.
+
+Example using HTTPie:
+
+```sh
+http DELETE :5000/scopes env==alpha dry_run==true regexString='^\/module\/([^/]+)\/$'
+
+http DELETE :5000/scopes regexString='^\/modules\/([^/]+)\/$'
+```
+
+Example using cURL:
+
+```sh
+curl -X DELETE "http://localhost:5000/scopes?env=alpha&dry_run=true" \
+     -H "Content-Type: application/json" \
+     -d '{"regexString": "^\/modules\/([^/]+)\/$"}'
+
+curl -X DELETE "http://localhost:5000/scopes \
+     -H "Content-Type: application/json" \
+     -d '{"regexString": "^\/modules\/([^/]+)\/$"}'
+```
+
 ##### Special Chars
 
 This project uses URI encoding: [encode URI]. If you have any service with special chars like _@_, _/_, etc... you need to use It's corresponding UTF-8 encoding character.
