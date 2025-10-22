@@ -4,6 +4,8 @@ const lock = new (require("rwlock"))();
 const ioOperations = require("./io-operations.js");
 const { getConfig } = require("./config");
 
+class NoMatchingScopesError extends Error {}
+
 const isImportMap = () => {
   const format = getConfig().manifestFormat;
   if (format === "importmap") {
@@ -175,6 +177,26 @@ exports.modifyService = function (
     } else {
       return json;
     }
+  });
+};
+
+exports.NoMatchingScopesError = NoMatchingScopesError;
+exports.deleteScopes = function (env, regex) {
+  return modifyLock(env, (json) => {
+    // I'm expecting this to always maintain the order of the keys
+    // note: pure numeric keys will always sort themselves
+    const filteredScopes = Object.fromEntries(
+      Object.entries(json.scopes).filter(([scopeKey]) => !regex.test(scopeKey))
+    );
+
+    if (
+      Object.keys(filteredScopes).length === Object.keys(json.scopes).length
+    ) {
+      throw new NoMatchingScopesError();
+    }
+
+    json.scopes = filteredScopes;
+    return json;
   });
 };
 

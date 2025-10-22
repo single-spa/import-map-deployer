@@ -332,6 +332,75 @@ app.delete("/services/:serviceName", function (req, res) {
     });
 });
 
+app.delete("/scopes", function (req, res) {
+  let body;
+  if (typeof req.body === "string") {
+    try {
+      body = JSON.parse(req.body);
+    } catch (e) {
+      return res.status(400).send("Invalid request body");
+    }
+  } else {
+    body = req.body;
+  }
+
+  if (body.regexString === undefined) {
+    return res
+      .status(400)
+      .send("The regex key in the request body must have a value");
+  }
+  if (typeof body.regexString !== "string") {
+    return res.status(400).send("The regex value must be a string");
+  }
+  if (body.regexString.length === 0) {
+    return res.status(400).send("The regex value must not be an empty string");
+  }
+
+  let regex;
+
+  try {
+    regex = new RegExp(body.regexString);
+  } catch (e) {
+    return res.status(400).send("The regex value is not valid regex");
+  }
+
+  const env = getEnv(req);
+  const isDryRun = req.query.dry_run === "true" || req.query.dry_run === "";
+
+  if (isDryRun) {
+    return ioOperations
+      .readManifest(env)
+      .then((data) => {
+        let scopesToBeDeleted = Object.fromEntries(
+          Object.entries(JSON.parse(data).scopes).filter(([key]) =>
+            regex.test(key)
+          )
+        );
+        res.send(scopesToBeDeleted);
+      })
+      .catch((ex) => {
+        sendError(
+          res,
+          ex,
+          "Unexpected error while collecting the deleted scopes for this dry run"
+        );
+      });
+  }
+
+  return modify
+    .deleteScopes(env, regex)
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((ex) => {
+      if (ex instanceof modify.NoMatchingScopesError) {
+        return res.status(404).send("No matching scopes found");
+      } else {
+        sendError(res, ex, "Could not delete scope(s)");
+      }
+    });
+});
+
 let server;
 if (process.env.NODE_ENV !== "test") {
   server = app.listen(
